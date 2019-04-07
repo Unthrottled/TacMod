@@ -7,6 +7,10 @@ import RootView from "./RootView";
 
 const store = createStore(rootReducer);
 
+if(__DEV__){
+  import('./config/ReactoTronConfig');
+}
+
 export default () =>
   <Provider store={store}>
     <RootView/>

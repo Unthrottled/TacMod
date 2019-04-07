@@ -5,6 +5,7 @@ import axios from 'axios/index';
 import {Provider, connect} from "react-redux";
 import {createStore} from "redux";
 import rootReducer from 'reducers'
+import Logger from "util/Logger";
 
 const store = createStore(rootReducer);
 
@@ -12,7 +13,7 @@ const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
   android:
     'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
+    `Shake or press menu button for dev menu ${__DEV__}`,
 });
 
 const issuer = 'http://172.17.0.1:8080/auth/realms/master';
