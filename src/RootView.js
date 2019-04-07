@@ -1,7 +1,12 @@
 import React, {Component} from 'react';
 import {Button, Platform, StyleSheet, Text, View} from 'react-native';
-import {authorize} from "react-native-app-auth";
-import axios from 'axios';
+import {authorize} from "react-native-app-auth/index";
+import axios from 'axios/index';
+import {Provider, connect} from "react-redux";
+import {createStore} from "redux";
+import rootReducer from 'reducers'
+
+const store = createStore(rootReducer);
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -41,7 +46,7 @@ const revokeToken = async (accessToken: String, refreshToken: String) => {
 };
 
 type Props = {};
-export default class App extends Component<Props> {
+class RootView extends Component<Props> {
 
   state = {
     loggedIn: false,
@@ -72,21 +77,23 @@ export default class App extends Component<Props> {
   render() {
     const {loggedIn} = this.state;
     return (
-      <View style={styles.container}>
-        {
-          loggedIn ?
-            <View>
-              <Text>You are logged in, Hurray!!</Text>
-              <Button title={'Logout'} onPress={this.logout}/>
-            </View> :
-            <View>
-              <Text style={styles.welcome}>Welcome to React Native!</Text>
-              <Text style={styles.instructions}>To get started, edit App.js</Text>
-              <Text style={styles.instructions}>{instructions}</Text>
-              <Button title={'Login Yo'} onPress={this.login}>Login Yo</Button>
-            </View>
-        }
-      </View>
+      <Provider store={store}>
+        <View style={styles.container}>
+          {
+            loggedIn ?
+              <View>
+                <Text>You are logged in, Hurray!!</Text>
+                <Button title={'Logout'} onPress={this.logout}/>
+              </View> :
+              <View>
+                <Text style={styles.welcome}>Welcome to React Native!</Text>
+                <Text style={styles.instructions}>To get started, edit App.js</Text>
+                <Text style={styles.instructions}>{instructions}</Text>
+                <Button title={'Login Yo'} onPress={this.login}>Login Yo</Button>
+              </View>
+          }
+        </View>
+      </Provider>
     );
   }
 }
@@ -109,3 +116,15 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
+
+const mapStateToProps = (state) =>
+  ({
+    accessToken: state.accessToken,
+    refreshToken: state.refreshToken,
+    idToken: state.idToken,
+    isLoggedIn: state.isLoggedIn,
+  });
+
+
+
+export default connect(mapStateToProps)(RootView)
