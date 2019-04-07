@@ -1,15 +1,20 @@
 import React from 'react';
 
 import {Provider} from "react-redux";
-import {createStore} from "redux";
+import {applyMiddleware, createStore} from "redux";
 import rootReducer from 'reducers'
 import RootView from "./RootView";
+import thunk from "redux-thunk";
+import Logger from "./util/Logger";
 
-const store = createStore(rootReducer);
+const middleware = [thunk];
 
 if(__DEV__){
-  import('./config/ReactoTronConfig');
+  const reactotron = require('./config/ReactoTronConfig');
 }
+
+const store = createStore(rootReducer,
+  applyMiddleware(...middleware));
 
 export default () =>
   <Provider store={store}>
