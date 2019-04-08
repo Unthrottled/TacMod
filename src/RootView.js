@@ -1,20 +1,10 @@
 import React, {Component} from 'react';
-import {Button, Platform, StyleSheet, Text, View} from 'react-native';
+import {Button, StyleSheet, Text, View} from 'react-native';
+import PropTypes from 'prop-types';
 import {authorize} from "react-native-app-auth/index";
 import axios from 'axios/index';
-import {Provider, connect} from "react-redux";
-import {createStore} from "redux";
-import rootReducer from 'reducers'
-import Logger from "util/Logger";
-
-const store = createStore(rootReducer);
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    `Shake or press menu button for dev menu ${__DEV__}`,
-});
+import {connect} from "react-redux";
+import {loggedInAction, loggedOutAction} from "./actions";
 
 const issuer = 'http://172.17.0.1:8080/auth/realms/master';
 const revocationEndpoint = `${issuer}/protocol/openid-connect/logout`;
@@ -35,70 +25,6 @@ const configuration = {
   dangerouslyAllowInsecureHttpRequests: true,//todo: remove dis
 };
 
-const revokeToken = async (accessToken: String, refreshToken: String) => {
-  return axios.post(revocationEndpoint,
-    `client_id=${clientId}&refresh_token=${refreshToken}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    });
-};
-
-type Props = {};
-class RootView extends Component<Props> {
-
-  state = {
-    loggedIn: false,
-    refreshToken: '',
-    accessToken: '',
-  };
-
-  logout = async () => {
-    try {
-      const {refreshToken, accessToken} = this.state;
-      // todo: refresh access token before logging out
-      await revokeToken(accessToken, refreshToken);
-      this.setState({loggedIn: false})
-    } catch (e) {
-      console.warn('Shit broke yo', e.message);
-    }
-  };
-
-  login = async () => {
-    try {
-      const {refreshToken, accessToken} = await authorize(configuration);
-      this.setState({loggedIn: true, refreshToken, accessToken})
-    } catch (error) {
-      console.warn(`Shit broke yo`, error)
-    }
-  };
-
-  render() {
-    const {loggedIn} = this.state;
-    return (
-      <Provider store={store}>
-        <View style={styles.container}>
-          {
-            loggedIn ?
-              <View>
-                <Text>You are logged in, Hurray!!</Text>
-                <Button title={'Logout'} onPress={this.logout}/>
-              </View> :
-              <View>
-                <Text style={styles.welcome}>Welcome to React Native!</Text>
-                <Text style={styles.instructions}>To get started, edit App.js</Text>
-                <Text style={styles.instructions}>{instructions}</Text>
-                <Button title={'Login Yo'} onPress={this.login}>Login Yo</Button>
-              </View>
-          }
-        </View>
-      </Provider>
-    );
-  }
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -118,14 +44,73 @@ const styles = StyleSheet.create({
   },
 });
 
+const revokeToken = async (accessToken: String, refreshToken: String) => {
+  return axios.post(revocationEndpoint,
+    `client_id=${clientId}&refresh_token=${refreshToken}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+};
+
+class RootView extends Component {
+  static propTypes = {
+    dispatch: PropTypes.func.isRequired,
+    isLoggedIn: PropTypes.bool.isRequired,
+    refreshToken: PropTypes.string.isRequired,
+    accessToken: PropTypes.string.isRequired,
+  };
+
+  logout = async () => {
+    try {
+      const {refreshToken, accessToken} = this.props;
+      // todo: refresh access token before logging out
+      await revokeToken(accessToken, refreshToken);
+      const {dispatch: dispetch} = this.props;
+      dispetch(loggedOutAction())
+    } catch (e) {
+      console.warn('Shit broke yo', e.message);
+    }
+  };
+
+  login = async () => {
+    try {
+      const authState = await authorize(configuration);
+      const {dispatch: dispetch} = this.props;
+      dispetch(loggedInAction(authState))
+    } catch (error) {
+      console.warn(`Shit broke yo`, error)
+    }
+  };
+
+  render() {
+    const {isLoggedIn} = this.props;
+    return (
+      <View style={styles.container}>
+        {
+          isLoggedIn ?
+            <View>
+              <Text>You are logged in, Hurray!!</Text>
+              <Button title={'Logout'} onPress={this.logout}/>
+            </View> :
+            <View>
+              <Text style={styles.welcome}>Welcome to the world of Tomorrow!</Text>
+              <Button title={'Login Yo'} onPress={this.login}>Login Yo</Button>
+            </View>
+        }
+      </View>
+    );
+  }
+}
+
 const mapStateToProps = (state) =>
   ({
-    accessToken: state.accessToken,
-    refreshToken: state.refreshToken,
-    idToken: state.idToken,
-    isLoggedIn: state.isLoggedIn,
+    accessToken: state.security.accessToken,
+    refreshToken: state.security.refreshToken,
+    idToken: state.security.idToken,
+    isLoggedIn: state.security.isLoggedIn,
   });
-
-
 
 export default connect(mapStateToProps)(RootView)
