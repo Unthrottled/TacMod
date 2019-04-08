@@ -13,7 +13,8 @@ import {PersistGate} from "redux-persist/lib/integration/react";
 const middleware = [thunk];
 
 if (__DEV__) {
-  require('./config/ReactoTronConfig');
+  const reactoTron = require('./config/ReactoTronConfig').default;
+  // middleware.push(reactoTron.createEnhancer());
 }
 
 // todo: figure out if you want to safely store tokens

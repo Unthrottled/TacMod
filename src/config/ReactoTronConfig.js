@@ -7,7 +7,6 @@ const reactoTron = Reactotron
     host: '172.17.0.1'
   })
   .use(reactotronRedux())
-  .useReactNative()
   .connect() ;
 
 export default reactoTron;
