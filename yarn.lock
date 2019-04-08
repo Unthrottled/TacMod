@@ -4978,6 +4978,11 @@ react-native-app-auth@4.3.1:
   resolved "https://registry.yarnpkg.com/react-native-app-auth/-/react-native-app-auth-4.3.1.tgz#e5bbef023cb916a89280e7e8094d43a547b2e076"
   integrity sha512-OCn0P+bDqkwDSlxH1i56/FyFpJM2wfbDB6HdMLrkdbs6N/Dxzmb7Fkb1krvlxS9BZ/l/r7xpms8fDcI+dESYcA==
 
+react-native-sensitive-info@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-sensitive-info/-/react-native-sensitive-info-5.3.0.tgz#dab9f346a6f7cc6d4c520c4973e60854b7a82ef8"
+  integrity sha512-bAY05Tye8QDr1Bytv950P7ToxQjan6ZzVdF34Y/RWz7O5b2wvfRLJIafmuY/XN5DboQF+ShIUPxIuBf09vVBAg==
+
 react-native@0.59.3:
   version "0.59.3"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.59.3.tgz#b984bbe457f63d5515046d32ea5721fd22843548"
@@ -5154,6 +5159,11 @@ realpath-native@^1.1.0:
   integrity sha512-wlgPA6cCIIg9gKz0fgAPjnzh4yR/LnXovwuo9hvyGvx3h8nX4+/iLZplfUWasXpqD8BdnGnP5njOFjkUwPzvjA==
   dependencies:
     util.promisify "^1.0.0"
+
+redux-persist-sensitive-storage@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/redux-persist-sensitive-storage/-/redux-persist-sensitive-storage-1.0.0.tgz#19f5e5bd8ce4c4a4bc852eec61d18360abe07b66"
+  integrity sha512-AD8JyDsTpj+H+ZOGcg1qs9MkdcNOmHsBu+QL2kq2aKDB5HaCjy15qP4eryz7RVhWBatu4WC51R//1bfKHNb6yg==
 
 redux-persist@^5.10.0:
   version "5.10.0"
