@@ -1,4 +1,4 @@
-package com.sogos;
+package io.acari.sogos;
 
 import com.facebook.react.ReactActivity;
 

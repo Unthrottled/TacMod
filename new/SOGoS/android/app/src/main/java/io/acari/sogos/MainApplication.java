@@ -1,6 +1,5 @@
-package com.sogos;
+package io.acari.sogos;
 
-import acari.sogos.BuildConfig;
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;

@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.sogos"
+        applicationId "io.acari.sogos"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
