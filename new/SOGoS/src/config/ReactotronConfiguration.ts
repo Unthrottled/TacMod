@@ -4,8 +4,7 @@ import {reactotronRedux} from 'reactotron-redux';
 const reactoTron = Reactotron.configure({
   name: 'SOGoS',
   host: '172.21.0.1',
-})
-  // @ts-ignore
+}).useReactNative()
   .use(reactotronRedux())
   .connect();
 

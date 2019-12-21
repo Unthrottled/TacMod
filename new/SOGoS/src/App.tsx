@@ -1,20 +1,15 @@
-import React, {ReactNode} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import React, {FC} from 'react';
+import {SafeAreaView, ScrollView, StatusBar, StyleSheet} from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/lib/integration/react';
 import {fetchApplicationConfiguration} from './config/Configuration';
+import RootView from './RootView';
 
 const {store, persistor} = fetchApplicationConfiguration();
 
-const App: () => ReactNode = () => {
+const App: FC = () => {
   return (
     <>
       <Provider store={store}>
@@ -24,7 +19,7 @@ const App: () => ReactNode = () => {
             <ScrollView
               contentInsetAdjustmentBehavior="automatic"
               style={styles.scrollView}>
-              <Text>yeet</Text>
+              <RootView />
             </ScrollView>
           </SafeAreaView>
         </PersistGate>
