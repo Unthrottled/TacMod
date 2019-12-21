@@ -14,6 +14,7 @@ export interface InitialConfig {
   tokenEndpoint: string;
   openIDConnectURI: string;
   provider: string;
+  issuer: string;
   callbackURI?: string;
   apiURL?: string;
 }

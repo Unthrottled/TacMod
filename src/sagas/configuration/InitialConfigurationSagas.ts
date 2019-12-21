@@ -43,7 +43,7 @@ export function* initialConfigurationSaga() {
 
 export function* initialConfigurationFetchSaga() {
   const {initial} = yield select(selectConfigurationState);
-  if (!initial.callbackURI) {
+  if (!initial.authorizationEndpoint) {
     const {payload: backendConfigurations} = yield take(
       RECEIVED_INITIAL_CONFIGURATION,
     );

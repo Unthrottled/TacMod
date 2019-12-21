@@ -1,5 +1,5 @@
-import {TokenRequest, TokenResponse} from '@openid/appauth';
 import {OAuthConfig} from '../types/ConfigurationTypes';
+import {AuthorizeResult} from 'react-native-app-auth';
 
 export const LOGGED_ON: 'LOGGED_ON' = 'LOGGED_ON';
 export const LOGGED_OFF: 'LOGGED_OFF' = 'LOGGED_OFF';
@@ -32,13 +32,13 @@ export const requestAuthorizationGrantCheck = (oauthConfig: OAuthConfig) => ({
   payload: oauthConfig,
 });
 
-export const createTokenReceptionEvent = (tokenResponse: TokenResponse) => ({
+export const createTokenReceptionEvent = (tokenResponse: AuthorizeResult) => ({
   type: RECEIVED_TOKENS,
   payload: tokenResponse,
 });
 
 export type TokenFailurePayload = {
-  tokenRequest: TokenRequest;
+  tokenRequest: AuthorizeResult;
   error: any;
 };
 

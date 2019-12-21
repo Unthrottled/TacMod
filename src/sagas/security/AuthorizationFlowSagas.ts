@@ -1,5 +1,5 @@
 import {
-  createCheckedAuthorizationEvent,
+  createCheckedAuthorizationEvent, createLoggedOnAction,
   createTokenReceptionEvent,
 } from '../../events/SecurityEvents';
 import {call, put, take} from 'redux-saga/effects';
@@ -7,7 +7,7 @@ import {
   createRequestForInitialConfigurations,
   FOUND_INITIAL_CONFIGURATION,
 } from '../../events/ConfigurationEvents';
-import {authorize} from 'react-native-app-auth';
+import {AuthConfiguration, authorize} from 'react-native-app-auth';
 
 export function* authorizationGrantSaga() {
   yield call(performAuthorizationGrantFlowSaga, false);
@@ -28,8 +28,19 @@ export function* performAuthorizationGrantFlowSaga(
       FOUND_INITIAL_CONFIGURATION,
     );
     try {
-      const authState = yield call(authorize, initialConfigurations);
+      const authConfigurations: AuthConfiguration = {
+        issuer: initialConfigurations.issuer,
+        scopes: ['openid', 'profile', 'email', 'offline_access'],
+        redirectUrl: 'io.acari.sogos:/engage',
+        additionalParameters: {
+          prompt: 'login',
+        },
+        clientId: 'sogos-app',
+        dangerouslyAllowInsecureHttpRequests: true, //todo: remove dis
+      };
+      const authState = yield call(authorize, authConfigurations);
       yield put(createTokenReceptionEvent(authState));
+      yield put(createLoggedOnAction());
     } catch (e) {
       // todo: handle login failure
     }
