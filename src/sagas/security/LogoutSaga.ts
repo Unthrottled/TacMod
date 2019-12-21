@@ -13,6 +13,7 @@ export function* logoffPreFlightSaga() {
 }
 
 export default function* logoutSaga() {
+  yield call(logoffPreFlightSaga);
   const oAuthConfig = yield call(oauthConfigurationSaga);
   try {
     const security: SecurityState = yield select(selectSecurityState);
@@ -20,5 +21,4 @@ export default function* logoutSaga() {
       tokenToRevoke: security.refreshToken,
     });
   } catch (e) {}
-  yield call(logoffPreFlightSaga);
 }
