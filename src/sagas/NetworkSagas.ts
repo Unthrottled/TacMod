@@ -62,11 +62,11 @@ export function* waitForWifi() {
 }
 
 function* initialNetworkStateSaga() {
-  if (navigator.onLine) {
-    yield put(createFoundWifiEvent());
-  } else {
-    yield put(createLostWifiEvent());
-  }
+  // if (navigator.onLine) {
+  yield put(createFoundWifiEvent());
+  // } else {
+  //   yield put(createLostWifiEvent());
+  // }
 }
 
 function* initialInternetStateSaga() {

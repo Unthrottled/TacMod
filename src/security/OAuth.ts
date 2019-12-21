@@ -3,7 +3,7 @@ import {SecurityState} from '../reducers/SecurityReducer';
 export const shouldCheckForAuthorizationGrant = (
   securityState: SecurityState,
 ) => {
-  return !isAccessTokenValid(securityState);
+  return !isRefreshTokenValid(securityState);
 };
 
 export const canRefreshToken = (securityState: SecurityState) => {
