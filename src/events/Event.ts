@@ -1,9 +1,7 @@
-import {Action} from "redux";
+import {Action} from 'redux';
 
-export interface BaseEvent extends Action<String> {
-
-}
+export interface BaseEvent extends Action<String> {}
 
 export interface PayloadEvent<T> extends BaseEvent {
-    payload: T
+  payload: T;
 }

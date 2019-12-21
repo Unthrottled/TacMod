@@ -1,36 +1,36 @@
-import {EventTypes} from "./EventTypes";
+import {EventTypes} from './EventTypes';
 
 export interface KeyResult {
-    id: string;
-    objectiveId: string;
-    valueStatement: string;
-    antecedenceTime?: number;
+  id: string;
+  objectiveId: string;
+  valueStatement: string;
+  antecedenceTime?: number;
 }
 export interface ColorType {
-    hex: string;
-    opacity: number;
+  hex: string;
+  opacity: number;
 }
 
 export interface IconCustomization {
-    background: ColorType;
+  background: ColorType;
 }
 
 export interface Objective {
-    id: string;
-    valueStatement: string;
-    antecedenceTime: number;
-    keyResults: KeyResult[];
-    iconCustomization: IconCustomization;
-    associatedActivities: string[];
-    categories: string[];
+  id: string;
+  valueStatement: string;
+  antecedenceTime: number;
+  keyResults: KeyResult[];
+  iconCustomization: IconCustomization;
+  associatedActivities: string[];
+  categories: string[];
 }
 
 export interface CachedObjective {
-    uploadType: EventTypes;
-    objective: Objective;
+  uploadType: EventTypes;
+  objective: Objective;
 }
 
 export interface ObjectiveCacheEvent {
-    objective: CachedObjective;
-    userGUID: string;
+  objective: CachedObjective;
+  userGUID: string;
 }

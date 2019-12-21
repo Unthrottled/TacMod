@@ -62,7 +62,7 @@ const RootView: FC = () => {
   const logout = async () => {
     try {
       await revoke(configuration, {
-        tokenToRevoke: refreshToken
+        tokenToRevoke: refreshToken,
       });
       dispetch(loggedOutAction());
     } catch (e) {

@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux';
 // import userReducer, {UserState} from "./UserReducer";
-import securityReducer, {SecurityState} from "./SecurityReducer";
+import securityReducer, {SecurityState} from './SecurityReducer';
 // import configurationReducer, {ConfigurationState} from "./ConfigurationReducer";
 // import activityReducer, {ActivityState} from "./ActivityReducer";
 // import networkReducer, {NetworkState} from "./NetworkReducer";
@@ -39,8 +39,8 @@ const rootReducer = (): Reducer<any, any> =>
     // misc: MiscellaneousReducer,
   });
 
-export const selectSecurityState =
-  (globalState: GlobalState): SecurityState => globalState.security;
+export const selectSecurityState = (globalState: GlobalState): SecurityState =>
+  globalState.security;
 //
 // export const selectMiscState =
 //   (globalState: GlobalState): MiscellaneousState => globalState.misc;

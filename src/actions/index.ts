@@ -1,4 +1,4 @@
-import Logger from "../util/Logger";
+import Logger from '../util/Logger';
 
 export const LOGIN: 'LOGIN' = 'LOGIN';
 export const LOGOUT: 'LOGOUT' = 'LOGOUT';
@@ -9,13 +9,13 @@ export const createLoggedInAction = authState => ({
     accessToken: authState.accessToken,
     idToken: authState.idToken,
     refreshToken: authState.refreshToken,
-  }
+  },
 });
 
 // todo: track when user logs out
 export const createLoggedOutAction = () => ({
   type: LOGOUT,
-  payload: {}
+  payload: {},
 });
 
 export const loggedInAction = authState => (dispetch, state) => {
