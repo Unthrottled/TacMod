@@ -1,27 +1,9 @@
 import React, {FC, useEffect} from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
-import {revoke} from 'react-native-app-auth/index';
-import axios from 'axios/index';
 import {useDispatch, useSelector} from 'react-redux';
-import {loggedOutAction} from './actions';
 import {selectSecurityState} from './reducers';
-import {AuthConfiguration} from 'react-native-app-auth';
-import {createRequestLogonEvent} from './events/SecurityEvents';
+import {createRequestLogonEvent, requestLogoff} from './events/SecurityEvents';
 import {createApplicationInitializedEvent} from './events/ApplicationLifecycleEvents';
-
-const issuer = 'http://172.21.0.1:8080/auth/realms/master';
-const revocationEndpoint = `${issuer}/protocol/openid-connect/logout`;
-const clientId = 'sogos-app';
-const configuration: AuthConfiguration = {
-  issuer,
-  clientId,
-  redirectUrl: 'io.acari.sogos:/engage',
-  scopes: ['openid', 'profile', 'email', 'offline_access'],
-  additionalParameters: {
-    prompt: 'login',
-  },
-  dangerouslyAllowInsecureHttpRequests: true, //todo: remove dis
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -42,31 +24,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const revokeToken = async (accessToken: String, refreshToken: String) => {
-  return axios.post(
-    revocationEndpoint,
-    `client_id=${clientId}&refresh_token=${refreshToken}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-    },
-  );
-};
-
 const RootView: FC = () => {
-  const {isLoggedIn, refreshToken, accessToken} = useSelector(
-    selectSecurityState,
-  );
+  const {isLoggedIn} = useSelector(selectSecurityState);
   const dispetch = useDispatch();
 
   const logout = async () => {
     try {
-      await revoke(configuration, {
-        tokenToRevoke: refreshToken,
-      });
-      dispetch(loggedOutAction());
+      dispetch(requestLogoff());
     } catch (e) {
       console.warn('Shit broke yo', e.message);
     }

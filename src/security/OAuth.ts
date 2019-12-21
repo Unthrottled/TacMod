@@ -41,6 +41,7 @@ export const isRefreshTokenValid = (securityState: SecurityState) => {
   return (
     securityState &&
     securityState.refreshTokenInformation &&
-    securityState.refreshTokenInformation.expiresAt - 900 >= nowInSeconds()
+    (!securityState.refreshTokenInformation.expiresAt ||
+      securityState.refreshTokenInformation.expiresAt - 900 >= nowInSeconds())
   );
 };

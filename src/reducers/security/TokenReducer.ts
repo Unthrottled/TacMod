@@ -2,33 +2,27 @@ import {SecurityState} from '../SecurityReducer';
 import jwtDecode from 'jwt-decode';
 import {AuthorizeResult} from 'react-native-app-auth';
 
-const getRefreshTokenInformation = (refreshToken: string | undefined) => {
-  if (refreshToken) {
-    const decodedToken: any = jwtDecode(refreshToken);
-    return {
-      refreshTokenInformation: {
-        issuedAt: decodedToken.iat,
-        expiresAt: decodedToken.exp,
-      },
-    };
-  } else {
-    return {};
-  }
+const getRefreshTokenInformation = (refreshToken: string) => {
+  const decodedToken: any = jwtDecode(refreshToken);
+  return {
+    issuedAt: decodedToken.iat,
+    expiresAt: decodedToken.exp,
+  };
 };
 
 export const tokenReceptionReducer = (
   state: SecurityState,
   tokenReceptionPayload: AuthorizeResult,
 ): SecurityState => {
-  console.warn(JSON.stringify(tokenReceptionPayload));
   return {
     ...state,
     accessToken: tokenReceptionPayload.accessToken,
-    // accessTokenInformation: {
-    //   // issuedAt: tokenReceptionPayload.issuedAt,
-    //   // expiresAt: tokenReceptionPayload.issuedAt + (tokenReceptionPayload.expiresIn || 0)
-    // },
-    ...getRefreshTokenInformation(tokenReceptionPayload.refreshToken),
+    accessTokenInformation: getRefreshTokenInformation(
+      tokenReceptionPayload.accessToken,
+    ),
+    refreshTokenInformation: getRefreshTokenInformation(
+      tokenReceptionPayload.refreshToken,
+    ),
     refreshToken: tokenReceptionPayload.refreshToken || state.refreshToken,
     idToken: tokenReceptionPayload.idToken,
   };
