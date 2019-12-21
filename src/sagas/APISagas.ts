@@ -3,7 +3,6 @@ import {buffers, END, eventChannel} from 'redux-saga';
 import axios from 'axios';
 import oboe from 'oboe';
 import {
-  accessTokenWithoutSessionExtensionSaga,
   accessTokenWithSessionExtensionSaga,
 } from './security/AccessTokenSagas';
 import {selectConfigurationState} from '../reducers';
@@ -131,7 +130,7 @@ export function* performGetWithoutSessionExtension(
     performGetWithToken,
     url,
     options,
-    accessTokenWithoutSessionExtensionSaga,
+      accessTokenWithSessionExtensionSaga,
   );
 }
 

@@ -3,7 +3,6 @@ import {
   createReceivedOAuthConfigurations,
   RECEIVED_REMOTE_OAUTH_CONFIGURATION,
 } from '../../events/ConfigurationEvents';
-import {createOauthConfigurationObject} from '../../security/StupidShit';
 import {selectConfigurationState} from '../../reducers';
 
 export function* securityRequestSaga() {
@@ -17,6 +16,6 @@ export function* fetchOAuthConfiguration() {
     const {payload} = yield take(RECEIVED_REMOTE_OAUTH_CONFIGURATION);
     return payload;
   } else {
-    return createOauthConfigurationObject(oauth);
+    return oauth;
   }
 }

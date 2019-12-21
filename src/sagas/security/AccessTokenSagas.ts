@@ -4,10 +4,7 @@ import {
   RECEIVED_TOKENS,
 } from '../../events/SecurityEvents';
 import {canRefreshToken} from '../../security/OAuth';
-import {
-  refreshTokenWithoutReplacementSaga,
-  refreshTokenWithReplacementSaga,
-} from './RefreshTokenSagas';
+import {refreshTokenWithReplacementSaga} from './RefreshTokenSagas';
 import {SessionExpiredException} from '../../types/SecurityTypes';
 import {SecurityState} from '../../reducers/SecurityReducer';
 import {selectSecurityState} from '../../reducers';
@@ -17,13 +14,6 @@ export function* accessTokenWithSessionExtensionSaga() {
   return yield call(
     accessTokenSagas,
     getOrRefreshAccessTokenWithSessionExtension,
-  );
-}
-
-export function* accessTokenWithoutSessionExtensionSaga() {
-  return yield call(
-    accessTokenSagas,
-    getOrRefreshAccessTokenWithoutSessionExtension,
   );
 }
 
@@ -40,14 +30,6 @@ export function* getOrRefreshAccessTokenWithSessionExtension() {
   return yield call(
     getOrRefreshAccessToken,
     refreshTokenWithReplacementSaga,
-    canRefreshToken,
-  );
-}
-
-export function* getOrRefreshAccessTokenWithoutSessionExtension() {
-  return yield call(
-    getOrRefreshAccessToken,
-    refreshTokenWithoutReplacementSaga,
     canRefreshToken,
   );
 }
