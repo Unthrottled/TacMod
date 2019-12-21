@@ -8,6 +8,7 @@ import {
   FOUND_INITIAL_CONFIGURATION,
 } from '../../events/ConfigurationEvents';
 import {AuthConfiguration, authorize} from 'react-native-app-auth';
+import {oauthConfigurationSaga} from "../configuration/ConfigurationConvienenceSagas";
 
 export function* authorizationGrantSaga() {
   yield call(performAuthorizationGrantFlowSaga, false);
@@ -22,23 +23,10 @@ export function* performAuthorizationGrantFlowSaga(
   shouldRequestLogon: boolean,
 ) {
   if (shouldRequestLogon) {
-    const scope = 'openid profile email';
     yield put(createRequestForInitialConfigurations());
-    const {payload: initialConfigurations} = yield take(
-      FOUND_INITIAL_CONFIGURATION,
-    );
+    const oAuthConfig = yield call(oauthConfigurationSaga);
     try {
-      const authConfigurations: AuthConfiguration = {
-        issuer: initialConfigurations.issuer,
-        scopes: ['openid', 'profile', 'email', 'offline_access'],
-        redirectUrl: 'io.acari.sogos:/engage',
-        additionalParameters: {
-          prompt: 'login',
-        },
-        clientId: 'sogos-app',
-        dangerouslyAllowInsecureHttpRequests: true, //todo: remove dis
-      };
-      const authState = yield call(authorize, authConfigurations);
+      const authState = yield call(authorize, oAuthConfig);
       yield put(createTokenReceptionEvent(authState));
       yield put(createLoggedOnAction());
     } catch (e) {

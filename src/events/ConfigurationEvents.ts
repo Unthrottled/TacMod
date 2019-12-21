@@ -1,5 +1,6 @@
 import {InitialConfig, OAuthConfig} from '../types/ConfigurationTypes';
 import {BaseEvent, PayloadEvent} from './Event';
+import {AuthConfiguration} from "react-native-app-auth";
 
 export const REQUESTED_OAUTH_CONFIGURATION: 'REQUESTED_OAUTH_CONFIGURATION' =
   'REQUESTED_OAUTH_CONFIGURATION';
@@ -27,8 +28,8 @@ export const createFailedToGetRemoteOAuthConfigurationsEvent = (): BaseEvent => 
 });
 
 export const createReceivedOAuthConfigurations = (
-  oauthConfig: OAuthConfig,
-): PayloadEvent<OAuthConfig> => ({
+  oauthConfig: AuthConfiguration,
+): PayloadEvent<AuthConfiguration> => ({
   type: RECEIVED_OAUTH_CONFIGURATION,
   payload: oauthConfig,
 });

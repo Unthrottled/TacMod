@@ -10,6 +10,7 @@ import {call, put, select, take} from 'redux-saga/effects';
 import {selectConfigurationState} from '../../reducers';
 import {waitForWifi} from '../NetworkSagas';
 import {createOutOfSyncEvent} from '../../events/ApplicationLifecycleEvents';
+import {AuthConfiguration} from "react-native-app-auth";
 
 /**
  * Gets the configurations from the backend to know what authorization server to talk to.

@@ -20,13 +20,14 @@ export const tokenReceptionReducer = (
   state: SecurityState,
   tokenReceptionPayload: AuthorizeResult,
 ): SecurityState => {
+  console.warn(JSON.stringify(tokenReceptionPayload));
   return {
     ...state,
     accessToken: tokenReceptionPayload.accessToken,
-    accessTokenInformation: {
-      // issuedAt: tokenReceptionPayload.issuedAt,
-      // expiresAt: tokenReceptionPayload.issuedAt + (tokenReceptionPayload.expiresIn || 0)
-    },
+    // accessTokenInformation: {
+    //   // issuedAt: tokenReceptionPayload.issuedAt,
+    //   // expiresAt: tokenReceptionPayload.issuedAt + (tokenReceptionPayload.expiresIn || 0)
+    // },
     ...getRefreshTokenInformation(tokenReceptionPayload.refreshToken),
     refreshToken: tokenReceptionPayload.refreshToken || state.refreshToken,
     idToken: tokenReceptionPayload.idToken,
