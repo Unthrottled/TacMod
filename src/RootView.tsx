@@ -1,11 +1,13 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
-import {authorize, revoke} from 'react-native-app-auth/index';
+import {revoke} from 'react-native-app-auth/index';
 import axios from 'axios/index';
 import {useDispatch, useSelector} from 'react-redux';
-import {loggedInAction, loggedOutAction} from './actions';
+import {loggedOutAction} from './actions';
 import {selectSecurityState} from './reducers';
 import {AuthConfiguration} from 'react-native-app-auth';
+import {createRequestLogonEvent} from './events/SecurityEvents';
+import {createApplicationInitializedEvent} from './events/ApplicationLifecycleEvents';
 
 const issuer = 'http://172.21.0.1:8080/auth/realms/master';
 const revocationEndpoint = `${issuer}/protocol/openid-connect/logout`;
@@ -71,13 +73,11 @@ const RootView: FC = () => {
   };
 
   const login = async () => {
-    try {
-      const authState = await authorize(configuration);
-      dispetch(loggedInAction(authState));
-    } catch (error) {
-      console.warn('Shit broke yo', error);
-    }
+    dispetch(createRequestLogonEvent());
   };
+  useEffect(() => {
+    dispetch(createApplicationInitializedEvent());
+  }, [dispetch]);
 
   return (
     <>

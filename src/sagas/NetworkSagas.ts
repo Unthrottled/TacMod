@@ -13,6 +13,7 @@ import {
   RECEIVED_PARTIAL_INITIAL_CONFIGURATION,
 } from '../events/ConfigurationEvents';
 
+// todo: make online work
 export const createOnlineChannel = () => createNetworkChannel('online');
 export const createOfflineChannel = () => createNetworkChannel('offline');
 
@@ -25,27 +26,27 @@ export const createNetworkChannel = (event: string) => {
 };
 
 function* onlineSaga() {
-  const onlineEventChannel = yield call(createOnlineChannel);
+  // const onlineEventChannel = yield call(createOnlineChannel);
   try {
-    while (true) {
-      yield take(onlineEventChannel);
-      yield put(createFoundWifiEvent());
-    }
+    // while (true) {
+    //   yield take(onlineEventChannel);
+    yield put(createFoundWifiEvent());
+    // }
   } catch (e) {
     console.log('shit broke in online saga', e);
   }
 }
 
 function* offlineSaga(): any {
-  const onlineEventChannel = yield call(createOfflineChannel);
-  try {
-    while (true) {
-      yield take(onlineEventChannel);
-      yield put(createLostWifiEvent());
-    }
-  } catch (e) {
-    yield fork(offlineSaga);
-  }
+  // const onlineEventChannel = yield call(createOfflineChannel);
+  // try {
+  //   while (true) {
+  //     yield take(onlineEventChannel);
+  //     yield put(createLostWifiEvent());
+  //   }
+  // } catch (e) {
+  //   yield fork(offlineSaga);
+  // }
 }
 
 export function* isOnline() {
@@ -55,9 +56,9 @@ export function* isOnline() {
 
 export function* waitForWifi() {
   const {isOnline} = yield select(selectNetworkState);
-  if (!isOnline) {
-    yield take(FOUND_WIFI);
-  }
+  // if (!isOnline) {
+  //   yield take(FOUND_WIFI);
+  // }
 }
 
 function* initialNetworkStateSaga() {

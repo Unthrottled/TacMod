@@ -19,7 +19,7 @@ export function* initialConfigurationSaga() {
     yield call(waitForWifi);
     const {data: configData} = yield call(
       performFullOpenGet,
-      '/config/initial.json',
+      'http://172.21.0.1:3000/config/initial.json', //todo: configur
     );
     const {
       data: {currentTime},
@@ -33,9 +33,6 @@ export function* initialConfigurationSaga() {
       yield put(
         createReceivedInitialConfigurationsEvent({
           ...data,
-          callbackURI: `${window.location.protocol}//${
-            window.location.hostname
-          }${window.location.port ? ':' + window.location.port : ''}`,
         }),
       );
     }
