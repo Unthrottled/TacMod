@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import {View} from 'react-native';
 import {Portal, FAB} from 'react-native-paper';
 import {theme} from '../App';
 
@@ -18,13 +17,16 @@ const ActivityHub = () => {
         icon={open ? 'close' : 'plus'}
         actions={[
           {
-            icon: 'plus',
-            label: 'ya boi',
+            icon: 'timer',
+            label: 'Timed Activity',
             onPress: () => console.log('Pressed add'),
           },
           {
-            icon: 'email',
-            label: 'Email',
+            icon: require('../images/Tomato.png'),
+            label: 'Pomodoro Timer',
+            style: {
+
+            },
             onPress: () => console.log('Pressed email'),
           },
         ]}
