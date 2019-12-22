@@ -8,6 +8,7 @@ export const TACTICAL_ACTIVITIES_URL = '/tactical/activity';
 export function* tacticalActivitiesFetchSaga() {
   try {
     const data = yield call(performStreamedGet, TACTICAL_ACTIVITIES_URL);
+    console.warn('from the backend', JSON.stringify(data));
     yield put(createFetchedTacticalActivitesEvent(data));
   } catch (e) {
     yield put(
