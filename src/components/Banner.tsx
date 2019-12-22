@@ -3,7 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import ReachIcon from '../images/ReachIcon';
 import {Caption, Paragraph} from 'react-native-paper';
 
-const styles = StyleSheet.create({
+export const bannerStyles = StyleSheet.create({
   parent: {
     height: '100%',
   },
@@ -32,13 +32,13 @@ const styles = StyleSheet.create({
 });
 
 const Banner: FC = ({children}) => (
-  <View style={styles.banner}>
-    <View style={styles.container}>
+  <View style={bannerStyles.banner}>
+    <View style={bannerStyles.container}>
       <Text style={{fontSize: 35}}>SOGoS</Text>
-      <Caption style={styles.secondary}>
+      <Caption style={bannerStyles.secondary}>
         Strategic Orchestration and Governance System
       </Caption>
-      <Paragraph style={styles.secondary}>
+      <Paragraph style={bannerStyles.secondary}>
         Find and reach your maximum potential! Push yourself to the limits of
         your ability. Knowing you rest easy when you really need to.
       </Paragraph>

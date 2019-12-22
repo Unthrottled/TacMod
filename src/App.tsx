@@ -1,7 +1,4 @@
 import React, {FC} from 'react';
-import {SafeAreaView, ScrollView, StatusBar, StyleSheet} from 'react-native';
-
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/lib/integration/react';
 import {fetchApplicationConfiguration} from './config/Configuration';
