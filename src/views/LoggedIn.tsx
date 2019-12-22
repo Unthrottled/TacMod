@@ -67,10 +67,6 @@ const LoggedIn: FC = () => {
           <ReachIcon />
         </View>
       </View>
-      <Text>You are logged in, Hurray!!</Text>
-      <Button mode={'contained'} onPress={logout}>
-        LOGOUT
-      </Button>
     </LoggedInLayout>
   );
 };
