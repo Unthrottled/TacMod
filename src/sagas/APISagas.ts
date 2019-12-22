@@ -2,11 +2,10 @@ import {call, select, take} from 'redux-saga/effects';
 import {buffers, END, eventChannel} from 'redux-saga';
 import axios from 'axios';
 import oboe from 'oboe';
-import {
-  accessTokenWithSessionExtensionSaga,
-} from './security/AccessTokenSagas';
+import {accessTokenWithSessionExtensionSaga} from './security/AccessTokenSagas';
 import {selectConfigurationState} from '../reducers';
 import {ConfigurationState} from '../reducers/ConfigurationReducer';
+import Stream from '../native/Stream';
 
 const SHITS_BROKE_YO: string = "SHIT'S BROKE YO";
 
@@ -48,30 +47,9 @@ export function* performStreamedGet<T>(url: String, options = {headers: {}}) {
     options,
   );
   const fullURL = yield call(constructURL, url);
-  const streamChannel = yield call(createStreamChannel, {
-    url: fullURL,
-    method: 'GET',
-    headers,
-    body: '',
-  });
-  const aggregate = [];
-  let error;
-  try {
-    while (true) {
-      const itemChunk = yield take(streamChannel);
-      if (itemChunk !== SHITS_BROKE_YO) {
-        aggregate.unshift(itemChunk);
-      } else {
-        error = itemChunk;
-      }
-    }
-  } finally {
-    if (!error) {
-      return aggregate; //dis dumb
-    } else {
-      throw new Error('yeet');
-    }
-  }
+  const result = yield call(Stream.performGet, fullURL);
+  console.warn(JSON.stringify(result));
+  return [];
 }
 
 export function* createHeaders(
@@ -130,7 +108,7 @@ export function* performGetWithoutSessionExtension(
     performGetWithToken,
     url,
     options,
-      accessTokenWithSessionExtensionSaga,
+    accessTokenWithSessionExtensionSaga,
   );
 }
 

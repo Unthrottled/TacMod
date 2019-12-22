@@ -7,6 +7,7 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
 import com.facebook.soloader.SoLoader
+import io.acari.sogos.stream.StreamPackage
 import java.lang.reflect.InvocationTargetException
 
 
@@ -18,7 +19,8 @@ class MainApplication : Application(), ReactApplication {
     }
 
     override fun getPackages(): List<ReactPackage> {
-      val packages: List<ReactPackage> = PackageList(this).packages
+      val packages: MutableList<ReactPackage> = PackageList(this).packages
+      packages.add(StreamPackage())
       return packages
     }
 
