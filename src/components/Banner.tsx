@@ -22,19 +22,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
     textAlign: 'center',
-    margin: 10,
+    margin: 15,
     maxHeight: 400,
   },
   secondary: {
     color: 'slategrey',
     textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#e49d2c',
-    color: '#585858',
-    textDecorationColor: '#585858',
-    paddingTop: 5,
-    paddingBottom: 5,
   },
 });
 

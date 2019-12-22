@@ -3,6 +3,7 @@ import {useDispatch} from 'react-redux';
 import {createApplicationInitializedEvent} from '../events/ApplicationLifecycleEvents';
 import {requestLogoff} from '../events/SecurityEvents';
 import {Button, Text, View} from 'react-native';
+import LoggedInLayout from "../components/LoggedInLayout";
 
 const LoggedIn: FC = () => {
   const dispetch = useDispatch();
@@ -20,10 +21,10 @@ const LoggedIn: FC = () => {
   };
 
   return (
-    <View>
+    <LoggedInLayout>
       <Text>You are logged in, Hurray!!</Text>
       <Button title={'Logout'} onPress={logout} />
-    </View>
+    </LoggedInLayout>
   );
 };
 
