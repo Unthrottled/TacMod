@@ -50,10 +50,11 @@ const LoggedIn: FC = () => {
           ...bannerStyles.banner,
           ...styles.banner,
         }}>
-        <View style={{
+        <View
+          style={{
             ...bannerStyles.container,
             paddingTop: 10,
-        }}>
+          }}>
           <Headline>SOGoS</Headline>
           <Caption style={bannerStyles.secondary}>
             Strategic Orchestration and Governance System

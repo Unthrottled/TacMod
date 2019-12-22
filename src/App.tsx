@@ -7,7 +7,7 @@ import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 
 const {store, persistor} = fetchApplicationConfiguration();
 
-const theme = {
+export const theme = {
   ...DefaultTheme,
   roundness: 2,
   colors: {
