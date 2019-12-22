@@ -9,9 +9,10 @@ class StreamModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
   @ReactMethod
   fun performGet(
       url: String,
+      headers: ReadableMap,
       promise: Promise
   ) {
-    val thing  = Arguments.createArray()
+    val thing = Arguments.createArray()
     thing.pushString(url)
     promise.resolve(thing)
   }
