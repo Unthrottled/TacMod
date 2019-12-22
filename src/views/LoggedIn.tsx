@@ -8,6 +8,7 @@ import {Caption, Card, Headline, Paragraph} from 'react-native-paper';
 import ReachIcon from '../images/ReachIcon';
 import {GlobalState, selectUserState} from '../reducers';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import SettingsIcon from "../images/SettingsIcon";
 
 const mapStateToProps = (state: GlobalState) => {
   const {
@@ -21,9 +22,10 @@ const mapStateToProps = (state: GlobalState) => {
 
 const styles = StyleSheet.create({
   banner: {
-    maxHeight: 250,
     marginTop: 30,
-    marginBottom: 0,
+    backgroundColor: '#F5FCFF',
+    borderRadius: 10,
+    margin: 15,
   },
   card: {
     margin: 15,
@@ -31,7 +33,8 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     marginRight: 'auto',
-    maxWidth: 150,
+    maxWidth: 200,
+    padding: 10,
     marginLeft: 'auto',
   },
   cardBullshit: {
@@ -57,7 +60,6 @@ const LoggedIn: FC = () => {
         <View
           style={{
             ...bannerStyles.container,
-            paddingTop: 10,
           }}>
           <Headline>SOGoS</Headline>
           <Caption style={bannerStyles.secondary}>
@@ -73,11 +75,11 @@ const LoggedIn: FC = () => {
       </View>
       <Card style={styles.card}>
         <View style={styles.cardContent}>
-          <Icon name={'gear'} size={100} style={{textAlign: 'center'}} />
-          <Headline style={{textAlign: 'center', fontWeight: 'bold'}}>
+          <SettingsIcon/>
+          <Headline style={{textAlign: 'center', fontWeight: '300'}}>
             Settings
           </Headline>
-          <Paragraph style={{textAlign: 'center'}}>
+          <Paragraph style={{textAlign: 'center',...bannerStyles.secondary}}>
             Everybody is different. Tailor the experience to your abilities.
           </Paragraph>
         </View>
