@@ -1,13 +1,13 @@
 import React, {FC, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {createApplicationInitializedEvent} from '../events/ApplicationLifecycleEvents';
-import {requestLogoff} from '../events/SecurityEvents';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import LoggedInLayout from '../components/LoggedInLayout';
 import {bannerStyles} from '../components/Banner';
-import {Button, Caption, Headline, Paragraph, Title} from 'react-native-paper';
+import {Caption, Card, Headline, Paragraph} from 'react-native-paper';
 import ReachIcon from '../images/ReachIcon';
 import {GlobalState, selectUserState} from '../reducers';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const mapStateToProps = (state: GlobalState) => {
   const {
@@ -25,6 +25,18 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 0,
   },
+  card: {
+    margin: 15,
+    borderRadius: 10,
+  },
+  cardContent: {
+    marginRight: 'auto',
+    maxWidth: 150,
+    marginLeft: 'auto',
+  },
+  cardBullshit: {
+    textAlign: 'center',
+  },
 });
 
 const LoggedIn: FC = () => {
@@ -34,14 +46,6 @@ const LoggedIn: FC = () => {
   useEffect(() => {
     dispetch(createApplicationInitializedEvent());
   }, [dispetch]);
-
-  const logout = async () => {
-    try {
-      dispetch(requestLogoff());
-    } catch (e) {
-      console.warn('Shit broke yo', e.message);
-    }
-  };
 
   return (
     <LoggedInLayout>
@@ -67,6 +71,17 @@ const LoggedIn: FC = () => {
           <ReachIcon />
         </View>
       </View>
+      <Card style={styles.card}>
+        <View style={styles.cardContent}>
+          <Icon name={'gear'} size={100} style={{textAlign: 'center'}} />
+          <Headline style={{textAlign: 'center', fontWeight: 'bold'}}>
+            Settings
+          </Headline>
+          <Paragraph style={{textAlign: 'center'}}>
+            Everybody is different. Tailor the experience to your abilities.
+          </Paragraph>
+        </View>
+      </Card>
     </LoggedInLayout>
   );
 };
