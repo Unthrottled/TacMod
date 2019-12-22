@@ -11,7 +11,7 @@ const ActivityHub = () => {
         visible={true}
         open={open}
         fabStyle={{
-          backgroundColor: theme.colors.primary
+          backgroundColor: theme.colors.primary,
         }}
         color={theme.colors.text}
         icon={open ? 'close' : 'plus'}
@@ -24,9 +24,6 @@ const ActivityHub = () => {
           {
             icon: require('../images/Tomato.png'),
             label: 'Pomodoro Timer',
-            style: {
-
-            },
             onPress: () => console.log('Pressed email'),
           },
         ]}
