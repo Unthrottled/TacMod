@@ -1,7 +1,7 @@
 import {TacticalActivity} from '../types/TacticalTypes';
 import {GlobalState, selectTacticalActivityState} from '../reducers';
 import {useSelector} from 'react-redux';
-import {Portal} from 'react-native-paper';
+import {Headline, Portal, Text} from 'react-native-paper';
 import {
   Animated,
   FlatList,
@@ -15,6 +15,7 @@ import React, {useEffect, useState} from 'react';
 import {theme} from '../App';
 import {numberObjectToArray} from '../miscellanous/Tools';
 import ActivityIcon from '../images/ActivityIcon';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const mapStateToProps = (state: GlobalState) => {
   const {activities} = selectTacticalActivityState(state);
@@ -36,6 +37,8 @@ const styles = StyleSheet.create({
   },
   activityIcons: {
     flexDirection: 'column',
+    marginRight: 'auto',
+    marginLeft: 'auto',
     width: '100%',
   },
   container: {
@@ -59,7 +62,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   item: {
-    marginRight: 10,
+    marginLeft: 50,
     marginBottom: 16,
   },
 });
@@ -108,7 +111,7 @@ const ActivitySelection = (props: Props) => {
             styles.backdrop,
             {
               opacity: backdropOpacity,
-              backgroundColor: theme.colors.backdrop,
+              backgroundColor: 'rgba(0,0,0,0.90)',
             },
           ]}
         />
@@ -116,20 +119,33 @@ const ActivitySelection = (props: Props) => {
           <SafeAreaView pointerEvents={'box-none'} style={styles.safeArea}>
             <FlatList
               style={styles.activityIcons}
-              numColumns={3}
+              numColumns={2}
               data={activityArray}
               renderItem={({item: activity}) => (
-                <ActivityIcon
-                  key={activity.id}
-                  activity={activity}
-                  style={[styles.item] as StyleProp<ViewStyle>}
-                  onPress={() => {
-                    props.onActivitySelection(activity);
-                  }}
-                  accessibilityTraits="button"
-                  accessibilityComponentType="button"
-                  accessibilityRole="button"
-                />
+                <View
+                  style={styles.item}>
+                  <View style={{alignItems: 'center'}}>
+                    <Headline numberOfLines={1} ellipsizeMode={'tail'}
+                      style={{
+                        color: 'white',
+                        textAlign: 'left',
+                        maxWidth: 130,
+                      }}>
+                      {activity.name}
+                    </Headline>
+                    <Icon name={'chevron-down'} color={'white'} />
+                  </View>
+                  <ActivityIcon
+                    activity={activity}
+                    key={activity.id}
+                    onPress={() => {
+                      props.onActivitySelection(activity);
+                    }}
+                    accessibilityTraits="button"
+                    accessibilityComponentType="button"
+                    accessibilityRole="button"
+                  />
+                </View>
               )}
               keyExtractor={a => a.id}
             />
