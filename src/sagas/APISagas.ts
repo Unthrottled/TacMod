@@ -47,9 +47,7 @@ export function* performStreamedGet<T>(url: String, options = {headers: {}}) {
     options,
   );
   const fullURL = yield call(constructURL, url);
-  const result = yield call(Stream.performGet, fullURL, headers);
-  console.warn(JSON.stringify(result));
-  return [];
+  return yield call(Stream.performGet, fullURL, headers);
 }
 
 export function* createHeaders(
