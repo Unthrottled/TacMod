@@ -30,11 +30,15 @@ type Props = {
 };
 const styles = StyleSheet.create({
   safeArea: {
-    alignItems: 'flex-end',
+    alignItems: 'center',
+  },
+  activityIcons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   container: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
   },
   fab: {
     marginHorizontal: 16,
@@ -53,11 +57,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   item: {
-    marginHorizontal: 24,
+    marginRight: 10,
     marginBottom: 16,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
   },
 });
 
@@ -80,7 +81,6 @@ const ActivitySelection = (props: Props) => {
     );
   }, [open, activities]);
 
-  console.warn(JSON.stringify(activities));
   const activityArray = numberObjectToArray(activities);
 
   useEffect(() => {
@@ -129,7 +129,6 @@ const ActivitySelection = (props: Props) => {
       })
     : backdrop;
 
-  console.warn(JSON.stringify(activityArray));
   const scales = activityOpacities.map(opacity =>
     open
       ? opacity.interpolate({
@@ -152,9 +151,10 @@ const ActivitySelection = (props: Props) => {
           ]}
         />
         <SafeAreaView pointerEvents="box-none" style={styles.safeArea}>
-          <View pointerEvents={open ? 'box-none' : 'none'}>
+          <View pointerEvents={open ? 'box-none' : 'none'} style={styles.activityIcons}>
             {activityArray.map((activity, i) => (
               <FAB
+                key={activity.id}
                 small
                 icon={'plus'}
                 style={
@@ -164,6 +164,7 @@ const ActivitySelection = (props: Props) => {
                       opacity: activityOpacities[i],
                       backgroundColor: theme.colors.surface,
                     },
+                    styles.item,
                   ] as StyleProp<ViewStyle>
                 }
                 onPress={() => {
