@@ -13,6 +13,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import {theme} from '../App';
 import {numberObjectToArray} from '../miscellanous/Tools';
+import ActivityIcon from '../images/ActivityIcon';
 
 const mapStateToProps = (state: GlobalState) => {
   const {activities} = selectTacticalActivityState(state);
@@ -151,30 +152,34 @@ const ActivitySelection = (props: Props) => {
           ]}
         />
         <SafeAreaView pointerEvents="box-none" style={styles.safeArea}>
-          <View pointerEvents={open ? 'box-none' : 'none'} style={styles.activityIcons}>
-            {activityArray.map((activity, i) => (
-              <FAB
-                key={activity.id}
-                small
-                icon={'plus'}
-                style={
-                  [
-                    {
-                      transform: [{scale: scales[i]}],
-                      opacity: activityOpacities[i],
-                      backgroundColor: theme.colors.surface,
-                    },
-                    styles.item,
-                  ] as StyleProp<ViewStyle>
-                }
-                onPress={() => {
-                  props.onActivitySelection(activity);
-                }}
-                accessibilityTraits="button"
-                accessibilityComponentType="button"
-                accessibilityRole="button"
-              />
-            ))}
+          <View
+            pointerEvents={open ? 'box-none' : 'none'}
+            style={styles.activityIcons}>
+            {activityArray.map((activity, i) => {
+              // @ts-ignore
+              const value = (activityOpacities[i] || {_value: 0})._value;
+              return (
+                <ActivityIcon
+                  key={activity.id}
+                  activity={activity}
+                  style={
+                    [
+                      {
+                        transform: [{scale: scales[i]}],
+                        opacity: value,
+                      },
+                      styles.item,
+                    ] as StyleProp<ViewStyle>
+                  }
+                  onPress={() => {
+                    props.onActivitySelection(activity);
+                  }}
+                  accessibilityTraits="button"
+                  accessibilityComponentType="button"
+                  accessibilityRole="button"
+                />
+              );
+            })}
           </View>
         </SafeAreaView>
       </View>
