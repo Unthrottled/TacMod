@@ -1,15 +1,15 @@
 import {TacticalActivity} from '../types/TacticalTypes';
 import {GlobalState, selectTacticalActivityState} from '../reducers';
 import {useSelector} from 'react-redux';
-import {FAB, Portal, Text} from 'react-native-paper';
+import {Portal} from 'react-native-paper';
 import {
-  StyleSheet,
-  View,
   Animated,
+  FlatList,
   SafeAreaView,
   StyleProp,
+  StyleSheet,
+  View,
   ViewStyle,
-  ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {theme} from '../App';
@@ -35,8 +35,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activityIcons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: 'column',
     width: '100%',
   },
   container: {
@@ -115,23 +114,25 @@ const ActivitySelection = (props: Props) => {
         />
         {open && (
           <SafeAreaView pointerEvents={'box-none'} style={styles.safeArea}>
-            <ScrollView pointerEvents={'box-none'} style={styles.activityIcons}>
-              {activityArray.map((activity, i) => {
-                return (
-                  <ActivityIcon
-                    key={activity.id}
-                    activity={activity}
-                    style={[styles.item] as StyleProp<ViewStyle>}
-                    onPress={() => {
-                      props.onActivitySelection(activity);
-                    }}
-                    accessibilityTraits="button"
-                    accessibilityComponentType="button"
-                    accessibilityRole="button"
-                  />
-                );
-              })}
-            </ScrollView>
+            <FlatList
+              style={styles.activityIcons}
+              numColumns={3}
+              data={activityArray}
+              renderItem={({item: activity}) => (
+                <ActivityIcon
+                  key={activity.id}
+                  activity={activity}
+                  style={[styles.item] as StyleProp<ViewStyle>}
+                  onPress={() => {
+                    props.onActivitySelection(activity);
+                  }}
+                  accessibilityTraits="button"
+                  accessibilityComponentType="button"
+                  accessibilityRole="button"
+                />
+              )}
+              keyExtractor={a => a.id}
+            />
           </SafeAreaView>
         )}
       </View>
