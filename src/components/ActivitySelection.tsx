@@ -1,7 +1,7 @@
 import {TacticalActivity} from '../types/TacticalTypes';
 import {GlobalState, selectTacticalActivityState} from '../reducers';
 import {useSelector} from 'react-redux';
-import {Headline, Portal, Text} from 'react-native-paper';
+import {FAB, Headline, Portal, Text} from 'react-native-paper';
 import {
   Animated,
   FlatList,
@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
     marginLeft: 'auto',
     width: '100%',
+    marginBottom: 100
   },
   container: {
     ...StyleSheet.absoluteFillObject,
@@ -117,15 +118,22 @@ const ActivitySelection = (props: Props) => {
         />
         {open && (
           <SafeAreaView pointerEvents={'box-none'} style={styles.safeArea}>
+            <FAB
+              color={'black'}
+              icon={'close'}
+              style={{marginTop: 100, backgroundColor: 'red'}}
+              onPress={props.onClose}
+            />
             <FlatList
               style={styles.activityIcons}
               numColumns={2}
               data={activityArray}
               renderItem={({item: activity}) => (
-                <View
-                  style={styles.item}>
+                <View style={styles.item}>
                   <View style={{alignItems: 'center'}}>
-                    <Headline numberOfLines={1} ellipsizeMode={'tail'}
+                    <Headline
+                      numberOfLines={1}
+                      ellipsizeMode={'tail'}
                       style={{
                         color: 'white',
                         textAlign: 'left',
