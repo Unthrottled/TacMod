@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   StyleProp,
   ViewStyle,
+  ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {theme} from '../App';
@@ -36,6 +37,7 @@ const styles = StyleSheet.create({
   activityIcons: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    width: '100%',
   },
   container: {
     ...StyleSheet.absoluteFillObject,
@@ -65,22 +67,9 @@ const styles = StyleSheet.create({
 
 const ActivitySelection = (props: Props) => {
   const {activities} = useSelector(mapStateToProps);
-  const [backdrop, setBackdrop] = useState<Animated.Value>(
-    new Animated.Value(0),
-  );
-  const [activityOpacities, setActivityOpacities] = useState<Animated.Value[]>(
-    [],
-  );
+  const [backdrop] = useState<Animated.Value>(new Animated.Value(0));
 
   const {open} = props;
-
-  useEffect(() => {
-    setActivityOpacities(
-      numberObjectToArray(activities).map(
-        () => new Animated.Value(open ? 1 : 0),
-      ),
-    );
-  }, [open, activities]);
 
   const activityArray = numberObjectToArray(activities);
 
@@ -92,18 +81,6 @@ const ActivitySelection = (props: Props) => {
           duration: 250,
           useNativeDriver: true,
         }),
-        Animated.stagger(
-          50,
-          activityOpacities
-            .map(animation =>
-              Animated.timing(animation, {
-                toValue: 1,
-                duration: 150,
-                useNativeDriver: true,
-              }),
-            )
-            .reverse(),
-        ),
       ]).start();
     } else {
       Animated.parallel([
@@ -112,16 +89,9 @@ const ActivitySelection = (props: Props) => {
           duration: 200,
           useNativeDriver: true,
         }),
-        ...activityOpacities.map(animation =>
-          Animated.timing(animation, {
-            toValue: 0,
-            duration: 150,
-            useNativeDriver: true,
-          }),
-        ),
       ]).start();
     }
-  }, [activityOpacities, backdrop, open]);
+  }, [backdrop, open]);
 
   const backdropOpacity = open
     ? backdrop.interpolate({
@@ -130,14 +100,6 @@ const ActivitySelection = (props: Props) => {
       })
     : backdrop;
 
-  const scales = activityOpacities.map(opacity =>
-    open
-      ? opacity.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0.8, 1],
-        })
-      : 1,
-  );
   return (
     <Portal>
       <View pointerEvents="box-none" style={styles.container}>
@@ -151,37 +113,27 @@ const ActivitySelection = (props: Props) => {
             },
           ]}
         />
-        <SafeAreaView pointerEvents="box-none" style={styles.safeArea}>
-          <View
-            pointerEvents={open ? 'box-none' : 'none'}
-            style={styles.activityIcons}>
-            {activityArray.map((activity, i) => {
-              // @ts-ignore
-              const value = (activityOpacities[i] || {_value: 0})._value;
-              return (
-                <ActivityIcon
-                  key={activity.id}
-                  activity={activity}
-                  style={
-                    [
-                      {
-                        transform: [{scale: scales[i]}],
-                        opacity: value,
-                      },
-                      styles.item,
-                    ] as StyleProp<ViewStyle>
-                  }
-                  onPress={() => {
-                    props.onActivitySelection(activity);
-                  }}
-                  accessibilityTraits="button"
-                  accessibilityComponentType="button"
-                  accessibilityRole="button"
-                />
-              );
-            })}
-          </View>
-        </SafeAreaView>
+        {open && (
+          <SafeAreaView pointerEvents={'box-none'} style={styles.safeArea}>
+            <ScrollView pointerEvents={'box-none'} style={styles.activityIcons}>
+              {activityArray.map((activity, i) => {
+                return (
+                  <ActivityIcon
+                    key={activity.id}
+                    activity={activity}
+                    style={[styles.item] as StyleProp<ViewStyle>}
+                    onPress={() => {
+                      props.onActivitySelection(activity);
+                    }}
+                    accessibilityTraits="button"
+                    accessibilityComponentType="button"
+                    accessibilityRole="button"
+                  />
+                );
+              })}
+            </ScrollView>
+          </SafeAreaView>
+        )}
       </View>
     </Portal>
   );
