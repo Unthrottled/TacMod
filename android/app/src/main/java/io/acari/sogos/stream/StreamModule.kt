@@ -28,7 +28,7 @@ class StreamModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
     }
 
     val request = Request.Builder()
-        .url(url)
+        .url("$url?asArray=true")
         .headers(requestHeaders.build())
         .build()
 
@@ -41,26 +41,32 @@ class StreamModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
         response.use { res ->
           if (res.isSuccessful) {
             val fullResponse = res.body()?.charStream()?.use {
-              val items = Arguments.createArray()
-              val reader = BufferedReader(it)
-              var line: String? = reader.readLine()
-              while (line != null) {
-                println(line)
-//                val json = JSONObject(line)
-//                items.pushMap(Arguments.makeNativeMap(toMap(json)))
-                line = reader.readLine()
+              try{
+                val reader = BufferedReader(it)
+                val stringBuilder = StringBuilder()
+                var line: String? = reader.readLine()
+                while (line != null) {
+                  stringBuilder.append(line)
+                  line = reader.readLine()
+                }
+                val jsonArray = JSONArray(stringBuilder.toString())
+
+                val items = Arguments.createArray()
+                for (item in 0 until jsonArray.length() - 1) {
+                  items.pushMap(Arguments.makeNativeMap(toMap(jsonArray.getJSONObject(item))))
+                }
+
+                items
+              } catch (e: Throwable) {
+                null
               }
-              items
             }
 
             if (fullResponse != null) {
               promise.resolve(fullResponse)
-            } else {
-              promise.reject(IllegalStateException("Unable to get stuff from $url"))
             }
-          } else {
-            promise.reject(res.code().toString(), "Shit did not work")
           }
+          promise.reject(res.code().toString(), "Shit did not work")
         }
       }
     })
