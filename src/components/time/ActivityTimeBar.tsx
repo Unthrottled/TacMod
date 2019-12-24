@@ -26,9 +26,11 @@ import omit from 'lodash/omit';
 import {dictionaryReducer} from '../../reducers/StrategyReducer';
 import {numberObjectToArray} from '../../miscellanous/Tools';
 import {HasId, NumberDictionary, StringDictionary} from '../../types/BaseTypes';
-import {Portal, Text} from 'react-native-paper';
+import {Headline, Portal, Text} from 'react-native-paper';
 import {PomodoroTimer} from './PomodoroTimer';
 import Stopwatch from './Stopwatch';
+import ActivityIcon from '../../images/ActivityIcon';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const fontSize = 40;
 
@@ -62,8 +64,9 @@ const classes = StyleSheet.create({
     paddingRight: 16,
   },
   activityIcon: {
+    alignItems: 'center',
     lineHeight: 1,
-    marginLeft: 16,
+    marginBottom: 16,
   },
 });
 
@@ -295,6 +298,30 @@ const ActivityTimeBar = () => {
               marginRight: 'auto',
               marginLeft: 'auto',
             }}>
+            {tacticalActivity && (
+              <View style={classes.activityIcon}>
+                <View style={{alignItems: 'center'}}>
+                  <Headline
+                    numberOfLines={1}
+                    ellipsizeMode={'tail'}
+                    style={{
+                      color: 'white',
+                      textAlign: 'left',
+                      maxWidth: 130,
+                    }}>
+                    {tacticalActivity.name}
+                  </Headline>
+                  <Icon name={'chevron-down'} color={'white'} />
+                </View>
+                <ActivityIcon
+                  activity={tacticalActivity}
+                  size={{
+                    width: '50px',
+                    height: '50px',
+                  }}
+                />
+              </View>
+            )}
             {isTimer ? (
               <PomodoroTimer
                 startTimeInSeconds={getTimerTime(
