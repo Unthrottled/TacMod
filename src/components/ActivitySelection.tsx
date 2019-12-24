@@ -1,22 +1,23 @@
 import {TacticalActivity} from '../types/TacticalTypes';
 import {GlobalState, selectTacticalActivityState} from '../reducers';
 import {useSelector} from 'react-redux';
-import {FAB, Headline, Portal, Text} from 'react-native-paper';
+import {Avatar, FAB, Headline, Portal} from 'react-native-paper';
 import {
   Animated,
   FlatList,
   SafeAreaView,
-  StyleProp,
   StyleSheet,
+  TouchableOpacity,
   View,
-  ViewStyle,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {theme} from '../App';
 import {numberObjectToArray} from '../miscellanous/Tools';
-import ActivityIcon from '../images/ActivityIcon';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {OpenedSelection} from './ActivityHub';
+import OtherIcon from 'react-native-vector-icons/Fontisto';
+import ActivityIcon from '../images/ActivityIcon';
 
+const generic69 = 'GENERIC69';
 const mapStateToProps = (state: GlobalState) => {
   const {activities} = selectTacticalActivityState(state);
   return {
@@ -29,7 +30,7 @@ type Props = {
   onClose: () => void;
   onActivitySelection: (arg1: TacticalActivity) => void;
   onGenericActivitySelection: () => void;
-  genericIcon: JSX.Element;
+  genericIcon: OpenedSelection;
 };
 const styles = StyleSheet.create({
   safeArea: {
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
     marginLeft: 'auto',
     width: '100%',
-    marginBottom: 100
+    marginBottom: 100,
   },
   container: {
     ...StyleSheet.absoluteFillObject,
@@ -75,6 +76,19 @@ const ActivitySelection = (props: Props) => {
   const {open} = props;
 
   const activityArray = numberObjectToArray(activities);
+  const fullArray = [...activityArray];
+  useEffect(() => {
+    fullArray.push({
+      categories: [],
+      iconCustomization: {
+        background: {opacity: 0, hex: ''},
+        line: {opacity: 0, hex: ''},
+      },
+      name: 'GENERIC',
+      rank: 9001,
+      id: generic69,
+    });
+  }, [activityArray, fullArray]);
 
   useEffect(() => {
     if (open) {
@@ -127,7 +141,7 @@ const ActivitySelection = (props: Props) => {
             <FlatList
               style={styles.activityIcons}
               numColumns={2}
-              data={activityArray}
+              data={fullArray}
               renderItem={({item: activity}) => (
                 <View style={styles.item}>
                   <View style={{alignItems: 'center'}}>
@@ -143,16 +157,38 @@ const ActivitySelection = (props: Props) => {
                     </Headline>
                     <Icon name={'chevron-down'} color={'white'} />
                   </View>
-                  <ActivityIcon
-                    activity={activity}
-                    key={activity.id}
-                    onPress={() => {
-                      props.onActivitySelection(activity);
-                    }}
-                    accessibilityTraits="button"
-                    accessibilityComponentType="button"
-                    accessibilityRole="button"
-                  />
+                  {activity.id === generic69 ? (
+                    props.genericIcon === OpenedSelection.POMODORO ? (
+                      <TouchableOpacity
+                        onPress={props.onGenericActivitySelection}>
+                        <Avatar.Image
+                          size={125}
+                          style={{
+                            backgroundColor: 'rgba(0,0,0,0)',
+                          }}
+                          source={require('../images/Tomato_big.png')}
+                        />
+                      </TouchableOpacity>
+                    ) : (
+                      <OtherIcon
+                        size={125}
+                        color={'white'}
+                        name={'stopwatch'}
+                        onPress={props.onGenericActivitySelection}
+                      />
+                    )
+                  ) : (
+                    <ActivityIcon
+                      activity={activity}
+                      key={activity.id}
+                      onPress={() => {
+                        props.onActivitySelection(activity);
+                      }}
+                      accessibilityTraits="button"
+                      accessibilityComponentType="button"
+                      accessibilityRole="button"
+                    />
+                  )}
                 </View>
               )}
               keyExtractor={a => a.id}

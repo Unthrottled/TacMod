@@ -45,9 +45,18 @@ export const buildCommenceActivityContents = (
   workStartedWomboCombo: new Date().getTime(),
 });
 
+export enum OpenedSelection {
+  POMODORO,
+  STOPWATCH,
+  NEITHER,
+}
+
 const ActivityHub = () => {
   const [open, setOpen] = useState(false);
   const [activitiesOpen, setActivitiesOpen] = useState(false);
+  const [openedSelection, setOpenedSelection] = useState(
+    OpenedSelection.NEITHER,
+  );
 
   const {loadDuration} = useSelector(mapStateToProps);
 
@@ -86,6 +95,28 @@ const ActivityHub = () => {
     commenceActivity(GENERIC_ACTIVITY_NAME, {});
   };
 
+  const closeActivitySelection = () => {
+    setActivitiesOpen(false);
+    setOpenedSelection(OpenedSelection.NEITHER);
+  };
+
+  const selectActivity = (activity: TacticalActivity) => {
+    if (openedSelection === OpenedSelection.STOPWATCH) {
+      commenceObjectiveActivity(activity);
+    } else if (openedSelection === OpenedSelection.POMODORO) {
+      commenceTimedObjectiveActivity(activity);
+    }
+    closeActivitySelection();
+  };
+  const selectGenericActivity = () => {
+    if (openedSelection === OpenedSelection.STOPWATCH) {
+      commenceGenericActivity();
+    } else if (openedSelection === OpenedSelection.POMODORO) {
+      commenceGenericTimedActivity();
+    }
+    closeActivitySelection();
+  };
+
   return (
     <Portal>
       <FAB.Group
@@ -100,13 +131,16 @@ const ActivityHub = () => {
           {
             icon: 'timer',
             label: 'Timed Activity',
-            onPress: () => console.log('Pressed add'),
+            onPress: () => {
+              setOpenedSelection(OpenedSelection.STOPWATCH);
+              setActivitiesOpen(true);
+            },
           },
           {
             icon: require('../images/Tomato.png'),
             label: 'Pomodoro Timer',
             onPress: () => {
-              console.log('Pressed email');
+              setOpenedSelection(OpenedSelection.POMODORO);
               setActivitiesOpen(true);
             },
           },
@@ -115,15 +149,10 @@ const ActivityHub = () => {
       />
       <ActivitySelection
         open={activitiesOpen}
-        onClose={() => setActivitiesOpen(false)}
-        onActivitySelection={activity => {
-          console.warn(JSON.stringify(activity));
-          setActivitiesOpen(false);
-        }}
-        onGenericActivitySelection={() => {
-          console.warn('chose generic action');
-        }}
-        genericIcon={<></>}
+        onClose={closeActivitySelection}
+        onActivitySelection={selectActivity}
+        onGenericActivitySelection={selectGenericActivity}
+        genericIcon={openedSelection}
       />
     </Portal>
   );
