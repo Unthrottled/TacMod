@@ -83,7 +83,7 @@ export const PomodoroTimer: FC<Props> = ({
       {!hidePause && (
         <IconButton
           icon={'swap-vert'}
-          color={'inherit'}
+          color={'white'}
           style={classes.swappo}
           onPress={openSelection}
         />
@@ -93,7 +93,7 @@ export const PomodoroTimer: FC<Props> = ({
       </View>
       <View style={classes.actionButton}>
         {!hidePause && (
-          <IconButton icon={'pause'} color={'inherit'} onPress={pauseTimer} />
+          <IconButton icon={'pause'} color={'white'} onPress={pauseTimer} />
         )}
       </View>
       <ActivitySelection

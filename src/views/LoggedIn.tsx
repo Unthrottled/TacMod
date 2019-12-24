@@ -8,8 +8,9 @@ import {Caption, Card, Headline, Paragraph} from 'react-native-paper';
 import ReachIcon from '../images/ReachIcon';
 import {GlobalState, selectUserState} from '../reducers';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import SettingsIcon from "../images/SettingsIcon";
-import ActivityTimeBar from "../components/time/ActivityTimeBar";
+import SettingsIcon from '../images/SettingsIcon';
+import ActivityTimeBar from '../components/time/ActivityTimeBar';
+import PausedPomodoro from '../components/time/PausedPomodoro';
 
 const mapStateToProps = (state: GlobalState) => {
   const {
@@ -76,16 +77,17 @@ const LoggedIn: FC = () => {
       </View>
       <Card style={styles.card}>
         <View style={styles.cardContent}>
-          <SettingsIcon/>
+          <SettingsIcon />
           <Headline style={{textAlign: 'center', fontWeight: '300'}}>
             Settings
           </Headline>
-          <Paragraph style={{textAlign: 'center',...bannerStyles.secondary}}>
+          <Paragraph style={{textAlign: 'center', ...bannerStyles.secondary}}>
             Everybody is different. Tailor the experience to your abilities.
           </Paragraph>
         </View>
       </Card>
-      <ActivityTimeBar/>
+      <ActivityTimeBar />
+      <PausedPomodoro />
     </LoggedInLayout>
   );
 };

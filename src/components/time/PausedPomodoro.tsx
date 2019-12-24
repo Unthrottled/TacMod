@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Animated, StyleSheet, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   GlobalState,
@@ -23,40 +23,43 @@ import {
 } from '../../types/ActivityTypes';
 import {startNonTimedActivity} from '../../actions/ActivityActions';
 import {StringDictionary} from '../../types/BaseTypes';
-import {IconButton} from 'react-native-paper';
-import ActivityIcon from "../../images/ActivityIcon";
+import {IconButton, Portal, Text} from 'react-native-paper';
+import ActivityIcon from '../../images/ActivityIcon';
+import {useState} from 'react';
+import {useEffect} from 'react';
 
-const classes = StyleSheet.create({
-  container: {
-    top: '0',
-    width: '100%',
-    height: '100%',
-  },
-  contents: {
-    top: '30%',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  stopWatch: {
-    margin: 'auto',
-  },
-  icon: {},
-  cancel: {},
-  cancelIcon: {
-    color: 'red',
-    background: 'rgba(240, 0,0,0.25)',
-    padding: 4,
-  },
-  pivotContainer: {
-    marginTop: 8,
-  },
-  pivotLabel: {
-    display: 'flex',
-    marginBottom: 8,
-    justifyContent: 'center',
-  },
-});
+const classes = StyleSheet.create(
+  StyleSheet.create({
+    container: {
+      ...StyleSheet.absoluteFillObject,
+      justifyContent: 'center',
+    },
+    backdrop: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    pomoCount: {
+      display: 'flex',
+    },
+    timer: {
+      bottom: 0,
+      width: '100%',
+      display: 'flex',
+      paddingTop: 8,
+      paddingBottom: 8,
+      zIndex: 69,
+    },
+    recovery: {},
+    close: {
+      position: 'relative',
+      paddingRight: 16,
+    },
+    activityIcon: {
+      alignItems: 'center',
+      lineHeight: 1,
+      marginBottom: 16,
+    },
+  }),
+);
 
 const mapStateToProps = (state: GlobalState) => {
   const {currentActivity, previousActivity, shouldTime} = selectActivityState(
@@ -109,45 +112,90 @@ const PausedPomodoro = () => {
     shouldTime &&
     isPausedActivity(currentActivity) &&
     timedType === ActivityTimedType.STOP_WATCH;
+
+  const [backdrop] = useState<Animated.Value>(new Animated.Value(0));
+  useEffect(() => {
+    if (isPausedPomodoro) {
+      Animated.parallel([
+        Animated.timing(backdrop, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(backdrop, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [backdrop, isPausedPomodoro]);
+
+  const backdropOpacity = isPausedPomodoro
+    ? backdrop.interpolate({
+        inputRange: [0, 0.5, 1],
+        outputRange: [0, 1, 1],
+      })
+    : backdrop;
+
   return isPausedPomodoro ? (
-    <View style={classes.container}>
-      <View style={classes.contents}>
-        <View style={classes.stopWatch} />
-        <View>
-          <Stopwatch
-            startTimeInSeconds={getTime(antecedenceTime)}
-            fontSize={40}
-            activityId={activityId}
-          />
-        </View>
-        <View style={classes.stopWatch}>
-          <IconButton
-            icon={'play'}
-            color={'inherit'}
-            onPress={resumePreviousActivity}
-          />
-          <IconButton
-            icon={'stop'}
-            style={classes.cancel}
-            color={'inherit'}
-            onPress={stopActivity}
-          />
-        </View>
-        {(tacticalActivity ||
-          getActivityName(currentActivity) === GENERIC_ACTIVITY_NAME) && (
-          <View style={classes.pivotContainer}>
-            <View style={classes.pivotLabel}>
-              <View>
-                Pivoted to: {getActivityName(currentActivity).replace(/_/, ' ')}{' '}
+    <Portal>
+      <View pointerEvents={'box-none'} style={classes.container}>
+        <Animated.View
+          pointerEvents={isPausedPomodoro ? 'auto' : 'none'}
+          style={[
+            classes.backdrop,
+            {
+              opacity: backdropOpacity,
+              backgroundColor: 'rgba(8,11,19,0.9)',
+            },
+          ]}
+        />
+        <View
+          style={{
+            marginRight: 'auto',
+            marginLeft: 'auto',
+          }}>
+          <View style={{alignItems: 'center'}}>
+            {(tacticalActivity ||
+              getActivityName(currentActivity) === GENERIC_ACTIVITY_NAME) && (
+              <View style={{marginBottom: 30, alignItems: 'center'}}>
+                <View>
+                  <Text style={{fontSize: 30, color: 'white'}}>
+                    Pivoted to:{' '}
+                    {getActivityName(currentActivity).replace(/_/, ' ')}{' '}
+                  </Text>
+                </View>
+                {tacticalActivity && (
+                  <ActivityIcon activity={tacticalActivity} />
+                )}
               </View>
-            </View>
-            {tacticalActivity && (
-              <ActivityIcon activity={tacticalActivity} />
             )}
+
+            <Stopwatch
+              startTimeInSeconds={getTime(antecedenceTime)}
+              fontSize={40}
+              activityId={activityId}
+            />
+            <IconButton
+              icon={'play-circle'}
+              size={125}
+              color={'green'}
+              onPress={resumePreviousActivity}
+            />
+            <IconButton
+              icon={'stop-circle'}
+              style={{marginTop: 20}}
+              color={'red'}
+              onPress={stopActivity}
+            />
           </View>
-        )}
+        </View>
       </View>
-    </View>
+    </Portal>
   ) : null;
 };
 
