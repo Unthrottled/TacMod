@@ -3,8 +3,8 @@ import {StyleSheet, View} from 'react-native';
 import {TimeDisplay} from './TimeDisplay';
 import ActivitySelection from '../ActivitySelection';
 import {GENERIC_ACTIVITY_NAME, OpenedSelection} from './ActivityHub';
-import {theme} from '../../App';
 import {IconButton} from 'react-native-paper';
+import {theme} from "../../Theme";
 
 const classes = StyleSheet.create({
   stopwatchContainer: {},
@@ -19,10 +19,6 @@ const classes = StyleSheet.create({
     marginTop: 'auto',
   },
   bigIcon: {
-    fontSize: '175px',
-    padding: '25px',
-    background: theme.colors.primary,
-    borderRadius: 8,
   },
 });
 
@@ -33,7 +29,7 @@ interface Props {
   onComplete?: () => void;
   onResume?: () => void;
   onBreak?: () => void;
-  fontSize?: string;
+  fontSize?: number;
   pivotActivity?: (name: string, stuff: {activityID?: string}) => void;
   hidePause?: boolean;
 }

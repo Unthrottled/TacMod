@@ -53,7 +53,7 @@ const Stopwatch: FC<Props> = ({
     setRememberedActivity(activityId);
   }
   const getPauseButton = () => (
-    <IconButton icon={'pause'} color={'inherit'} onPress={pauseTimer} />
+    <IconButton icon={'pause'} onPress={pauseTimer} />
   );
 
   return (

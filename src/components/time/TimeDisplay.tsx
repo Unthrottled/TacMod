@@ -16,9 +16,11 @@ const getDisplayTime = (hours: number, minutes: number, seconds: number) => {
 export const TimeDisplay = ({
   timeElapsed,
   fontSize,
+  color,
 }: {
   timeElapsed: number;
   fontSize?: number;
+  color?: string;
 }) => {
   const hours = Math.floor(timeElapsed / 3600);
   const remainingTimeForMinutes = timeElapsed - hours * 3600;
@@ -26,5 +28,10 @@ export const TimeDisplay = ({
   const seconds = remainingTimeForMinutes - minutes * 60;
   const displayTime = getDisplayTime(hours, minutes, seconds);
   const actualFontSize = fontSize || 12;
-  return <Text style={{fontSize: actualFontSize}}>{displayTime}</Text>;
+  const actualColor = color || 'white';
+  return (
+    <Text style={{fontSize: actualFontSize, color: actualColor}}>
+      {displayTime}
+    </Text>
+  );
 };

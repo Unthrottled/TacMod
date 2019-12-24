@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {FAB, Portal} from 'react-native-paper';
-import {theme} from '../../App';
 import uuid from 'uuid/v4';
 import {ActivityTimedType, ActivityType} from '../../types/ActivityTypes';
 import {
@@ -13,6 +12,7 @@ import {TacticalActivity} from '../../types/TacticalTypes';
 import {useDispatch, useSelector} from 'react-redux';
 import {startTimedActivity} from '../../actions/ActivityActions';
 import ActivitySelection from '../ActivitySelection';
+import {theme} from "../../Theme";
 
 export const GENERIC_ACTIVITY_NAME = 'GENERIC_ACTIVITY';
 

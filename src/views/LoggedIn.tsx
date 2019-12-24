@@ -9,6 +9,7 @@ import ReachIcon from '../images/ReachIcon';
 import {GlobalState, selectUserState} from '../reducers';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SettingsIcon from "../images/SettingsIcon";
+import ActivityTimeBar from "../components/time/ActivityTimeBar";
 
 const mapStateToProps = (state: GlobalState) => {
   const {
@@ -84,6 +85,7 @@ const LoggedIn: FC = () => {
           </Paragraph>
         </View>
       </Card>
+      <ActivityTimeBar/>
     </LoggedInLayout>
   );
 };

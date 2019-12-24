@@ -1,9 +1,7 @@
-import React, {Dispatch} from 'react';
+import React, {Dispatch, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import uuid from 'uuid/v4';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import {PomodoroTimer} from './PomodoroTimer';
-import Stopwatch from './Stopwatch';
+import {Animated, StyleSheet, View} from 'react-native';
 import {
   GlobalState,
   selectActivityState,
@@ -28,9 +26,11 @@ import omit from 'lodash/omit';
 import {dictionaryReducer} from '../../reducers/StrategyReducer';
 import {numberObjectToArray} from '../../miscellanous/Tools';
 import {HasId, NumberDictionary, StringDictionary} from '../../types/BaseTypes';
-import TomatoIcon from '../../images/TomatoIcon';
-import ActivityIcon from '../../images/ActivityIcon';
-import {Icon} from 'react-native-vector-icons/Icon';
+import {Portal, Text} from 'react-native-paper';
+import {PomodoroTimer} from './PomodoroTimer';
+import Stopwatch from './Stopwatch';
+
+const fontSize = 40;
 
 export const mapTacticalActivitiesToID = <T extends HasId>(
   tacticalActivities: NumberDictionary<T>,
@@ -38,6 +38,13 @@ export const mapTacticalActivitiesToID = <T extends HasId>(
   numberObjectToArray(tacticalActivities).reduce(dictionaryReducer, {});
 
 const classes = StyleSheet.create({
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+  },
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
+  },
   pomoCount: {
     display: 'flex',
   },
@@ -52,7 +59,6 @@ const classes = StyleSheet.create({
   recovery: {},
   close: {
     position: 'relative',
-    cursor: 'pointer',
     paddingRight: 16,
   },
   activityIcon: {
@@ -241,66 +247,83 @@ const ActivityTimeBar = () => {
     mappedTacticalActivities[getActivityID(currentActivity)];
 
   const isTimeBarActivity = shouldTime && !isPausedActivity(currentActivity);
+
+  const [backdrop] = useState<Animated.Value>(new Animated.Value(0));
+  useEffect(() => {
+    if (isTimeBarActivity) {
+      Animated.parallel([
+        Animated.timing(backdrop, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(backdrop, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [backdrop, isTimeBarActivity]);
+
+  const backdropOpacity = isTimeBarActivity
+    ? backdrop.interpolate({
+        inputRange: [0, 0.5, 1],
+        outputRange: [0, 1, 1],
+      })
+    : backdrop;
+
   return isTimeBarActivity ? (
-    <View>
-      <View style={getTimerBarClasses()}>
-        {tacticalActivity && (
-          <View style={classes.activityIcon}>
-            <ActivityIcon
-              activity={tacticalActivity}
-              size={{
-                width: '50px',
-                height: '50px',
-              }}
-            />
+    <Portal>
+      <View pointerEvents={'box-none'} style={classes.container}>
+        <Animated.View
+          pointerEvents={isTimeBarActivity ? 'auto' : 'none'}
+          style={[
+            classes.backdrop,
+            {
+              opacity: backdropOpacity,
+              backgroundColor: 'rgba(9,19,9,0.9)',
+            },
+          ]}>
+          <View
+            style={{
+              marginTop: 'auto',
+              marginBottom: 'auto',
+              marginRight: 'auto',
+              marginLeft: 'auto',
+            }}>
+            {isTimer ? (
+              <PomodoroTimer
+                startTimeInSeconds={getTimerTime(
+                  antecedenceTime + (duration || 0),
+                )}
+                onComplete={completedPomodoro}
+                onPause={startPausedRecovery}
+                pivotActivity={pivotActivity}
+                onBreak={startRecovery}
+                hidePause={isRecovery}
+                onResume={startRecoveryOrResume}
+                activityId={activityId}
+                fontSize={40}
+              />
+            ) : (
+              <Stopwatch
+                startTimeInSeconds={getTime(
+                  currentActivity.content.workStartedWomboCombo ||
+                    new Date().valueOf(),
+                )}
+                fontSize={fontSize}
+                onPause={startPausedRecovery}
+                activityId={activityId}
+              />
+            )}
           </View>
-        )}
-        {!tacticalActivity && isTimer && !isRecovery && (
-          <TomatoIcon
-            size={{
-              width: '50px',
-              height: '50px',
-            }}
-          />
-        )}
-        <View style={{flexGrow: 1}}>
-          {isTimer ? (
-            <PomodoroTimer
-              startTimeInSeconds={getTimerTime(
-                antecedenceTime + (duration || 0),
-              )}
-              onComplete={completedPomodoro}
-              onPause={startPausedRecovery}
-              pivotActivity={pivotActivity}
-              onBreak={startRecovery}
-              hidePause={isRecovery}
-              onResume={startRecoveryOrResume}
-              activityId={activityId}
-            />
-          ) : (
-            <Stopwatch
-              startTimeInSeconds={getTime(
-                currentActivity.content.workStartedWomboCombo ||
-                  new Date().valueOf(),
-              )}
-              onPause={startPausedRecovery}
-              activityId={activityId}
-            />
-          )}
-        </View>
-        {isTimer && name !== RECOVERY && (
-          <View style={classes.pomoCount}>
-            <View style={{marginRight: '5px'}}>
-              {numberOfCompletedPomodoro}:
-            </View>
-            <TomatoIcon size={{width: 24, height: 24}} />
-          </View>
-        )}
-        <TouchableOpacity onPress={stopActivity} style={classes.close}>
-          <Icon name={'stop'} />
-        </TouchableOpacity>
+        </Animated.View>
       </View>
-    </View>
+    </Portal>
   ) : null;
 };
 
