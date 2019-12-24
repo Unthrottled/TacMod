@@ -32,7 +32,7 @@ import Stopwatch from './Stopwatch';
 import ActivityIcon from '../../images/ActivityIcon';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const fontSize = 40;
+export const timeFontSize = 40;
 
 export const mapTacticalActivitiesToID = <T extends HasId>(
   tacticalActivities: NumberDictionary<T>,
@@ -300,7 +300,7 @@ const ActivityTimeBar = () => {
             }}>
             {tacticalActivity && (
               <View style={classes.activityIcon}>
-                <View style={{alignItems: 'center'}}>
+                <View style={{alignItems: 'center', marginBottom: 10}}>
                   <Headline
                     numberOfLines={1}
                     ellipsizeMode={'tail'}
@@ -342,7 +342,7 @@ const ActivityTimeBar = () => {
                   currentActivity.content.workStartedWomboCombo ||
                     new Date().valueOf(),
                 )}
-                fontSize={fontSize}
+                fontSize={timeFontSize}
                 onPause={startPausedRecovery}
                 activityId={activityId}
               />

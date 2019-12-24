@@ -7,7 +7,7 @@ import {
   selectTacticalActivityState,
 } from '../../reducers';
 import Stopwatch from './Stopwatch';
-import {getTime, resumeActivity} from './ActivityTimeBar';
+import {getTime, resumeActivity, timeFontSize} from './ActivityTimeBar';
 import uuid from 'uuid/v4';
 import {numberObjectToArray} from '../../miscellanous/Tools';
 import {dictionaryReducer} from '../../reducers/StrategyReducer';
@@ -177,7 +177,7 @@ const PausedPomodoro = () => {
 
             <Stopwatch
               startTimeInSeconds={getTime(antecedenceTime)}
-              fontSize={40}
+              fontSize={timeFontSize}
               activityId={activityId}
             />
             <IconButton

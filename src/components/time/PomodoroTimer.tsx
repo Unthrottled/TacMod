@@ -1,25 +1,22 @@
 import React, {FC, useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {TimeDisplay} from './TimeDisplay';
 import ActivitySelection from '../ActivitySelection';
 import {GENERIC_ACTIVITY_NAME, OpenedSelection} from './ActivityHub';
 import {IconButton} from 'react-native-paper';
-import {theme} from "../../Theme";
+import {timeFontSize} from './ActivityTimeBar';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import Icon from "react-native-vector-icons/Fontisto";
 
 const classes = StyleSheet.create({
-  stopwatchContainer: {},
+  stopwatchContainer: {
+    alignItems: 'center'
+  },
   actionButton: {
-    marginLeft: 24,
-    lineHeight: 1,
-    marginTop: 'auto',
   },
   swappo: {
-    marginRight: 24,
-    lineHeight: 1,
-    marginTop: 'auto',
   },
-  bigIcon: {
-  },
+  bigIcon: {},
 });
 
 interface Props {
@@ -80,20 +77,19 @@ export const PomodoroTimer: FC<Props> = ({
   const openSelection = () => setSelectionOpen(true);
   return (
     <View style={classes.stopwatchContainer}>
-      {!hidePause && (
-        <IconButton
-          icon={'swap-vert'}
-          color={'white'}
-          style={classes.swappo}
-          onPress={openSelection}
-        />
-      )}
       <View style={{margin: 'auto'}}>
-        <TimeDisplay timeElapsed={timeElapsed} />
+        <TimeDisplay fontSize={timeFontSize} timeElapsed={timeElapsed} />
       </View>
       <View style={classes.actionButton}>
         {!hidePause && (
-          <IconButton icon={'pause'} color={'white'} onPress={pauseTimer} />
+          <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+            <TouchableOpacity style={{flexGrow: 1}} onPress={openSelection}>
+              <MaterialIcon color={'white'} name={'swap-vert'} size={50} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={pauseTimer}>
+              <MaterialIcon color={'white'} name={'pause'} size={50} />
+            </TouchableOpacity>
+          </View>
         )}
       </View>
       <ActivitySelection
