@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import {StyleSheet, View} from 'react-native';
 import MenuAppBar from './MenuAppBar';
-import ActivityHub from "./ActivityHub";
+import ActivityHub from "./time/ActivityHub";
 const styles = StyleSheet.create({
   container: {
     height: '100%',

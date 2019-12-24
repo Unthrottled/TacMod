@@ -13,7 +13,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import {numberObjectToArray} from '../miscellanous/Tools';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {OpenedSelection} from './ActivityHub';
+import {OpenedSelection} from './time/ActivityHub';
 import OtherIcon from 'react-native-vector-icons/Fontisto';
 import ActivityIcon from '../images/ActivityIcon';
 
