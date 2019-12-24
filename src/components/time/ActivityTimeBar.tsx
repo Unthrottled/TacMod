@@ -26,7 +26,7 @@ import omit from 'lodash/omit';
 import {dictionaryReducer} from '../../reducers/StrategyReducer';
 import {numberObjectToArray} from '../../miscellanous/Tools';
 import {HasId, NumberDictionary, StringDictionary} from '../../types/BaseTypes';
-import {Headline, Portal, Text} from 'react-native-paper';
+import {FAB, Headline, Portal, Text} from 'react-native-paper';
 import {PomodoroTimer} from './PomodoroTimer';
 import Stopwatch from './Stopwatch';
 import ActivityIcon from '../../images/ActivityIcon';
@@ -348,6 +348,17 @@ const ActivityTimeBar = () => {
               />
             )}
           </View>
+          <FAB
+            color={'black'}
+            icon={'close'}
+            style={{
+              backgroundColor: 'red',
+              right: 16,
+              position: 'absolute',
+              bottom: 16,
+            }}
+            onPress={stopActivity}
+          />
         </Animated.View>
       </View>
     </Portal>

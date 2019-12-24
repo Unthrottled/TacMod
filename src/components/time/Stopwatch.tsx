@@ -6,9 +6,7 @@ import {IconButton} from 'react-native-paper';
 const classes = StyleSheet.create({
   stopwatchContainer: {},
   actionButton: {
-    marginLeft: 16,
-    lineHeight: 1,
-    marginTop: 'auto',
+    alignItems: 'center'
   },
 });
 
@@ -53,12 +51,12 @@ const Stopwatch: FC<Props> = ({
     setRememberedActivity(activityId);
   }
   const getPauseButton = () => (
-    <IconButton icon={'pause'} onPress={pauseTimer} />
+    <IconButton icon={'pause'} size={40} color={'white'} onPress={pauseTimer} />
   );
 
   return (
     <View style={classes.stopwatchContainer}>
-      <View style={{margin: 'auto'}}>
+      <View>
         <TimeDisplay timeElapsed={timeElapsed} fontSize={fontSize} />
       </View>
       <View style={classes.actionButton}>{onPause && getPauseButton()}</View>
