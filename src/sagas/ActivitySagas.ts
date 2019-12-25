@@ -17,6 +17,7 @@ function* listenToActivityEvents() {
   yield takeEvery(FOUND_WIFI, activitySyncSaga);
   yield takeEvery(REQUESTED_SYNC, activitySyncSaga);
   yield takeEvery(STARTED_TIMED_ACTIVITY, activityNotificationSaga);
+  yield takeEvery('notify', activityNotificationSaga);
   yield fork(activityLogonSaga);
   yield fork(currentActivitySaga);
   yield fork(pomodoroActivityInitializationSaga);

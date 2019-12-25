@@ -7,7 +7,6 @@ import {bannerStyles} from '../components/Banner';
 import {Caption, Card, Headline, Paragraph} from 'react-native-paper';
 import ReachIcon from '../images/ReachIcon';
 import {GlobalState, selectUserState} from '../reducers';
-import PushNotification from 'react-native-push-notification';
 import SettingsIcon from '../images/SettingsIcon';
 import ActivityTimeBar from '../components/time/ActivityTimeBar';
 import PausedPomodoro from '../components/time/PausedPomodoro';
@@ -78,10 +77,8 @@ const LoggedIn: FC = () => {
       <Card
         style={styles.card}
         onPress={() => {
-          PushNotification.localNotification({
-            //... You can use all the options from localNotifications
-            message: "My Notification Message", // (required)
-            date: new Date(Date.now() + 60 * 1000) // in 60 secs
+          dispetch({
+            type: 'notify'
           });
         }}>
         <View style={styles.cardContent}>

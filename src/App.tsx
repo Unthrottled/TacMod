@@ -7,6 +7,7 @@ import {Provider as PaperProvider} from 'react-native-paper';
 import {theme} from "./Theme";
 
 const {store, persistor} = fetchApplicationConfiguration();
+export const appStor = store;
 
 const App: FC = () => {
   return (
