@@ -237,13 +237,6 @@ const ActivityTimeBar = () => {
   const isTimer = timedType === ActivityTimedType.TIMER;
 
   const isRecovery = isActivityRecovery(currentActivity);
-  const getTimerBarClasses = () => {
-    const timerBarClasses: any = [classes.timer];
-    if (isRecovery) {
-      timerBarClasses.push(classes.recovery);
-    }
-    return timerBarClasses.join(' ');
-  };
 
   const mappedTacticalActivities = mapTacticalActivitiesToID(activities);
   const tacticalActivity =

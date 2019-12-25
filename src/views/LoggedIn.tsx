@@ -76,11 +76,7 @@ const LoggedIn: FC = () => {
       </View>
       <Card
         style={styles.card}
-        onPress={() => {
-          dispetch({
-            type: 'notify'
-          });
-        }}>
+        onPress={() => {}}>
         <View style={styles.cardContent}>
           <SettingsIcon />
           <Headline style={{textAlign: 'center', fontWeight: '300'}}>

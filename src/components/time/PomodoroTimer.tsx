@@ -3,19 +3,15 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {TimeDisplay} from './TimeDisplay';
 import ActivitySelection from '../ActivitySelection';
 import {GENERIC_ACTIVITY_NAME, OpenedSelection} from './ActivityHub';
-import {IconButton} from 'react-native-paper';
 import {timeFontSize} from './ActivityTimeBar';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import Icon from "react-native-vector-icons/Fontisto";
 
 const classes = StyleSheet.create({
   stopwatchContainer: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
-  actionButton: {
-  },
-  swappo: {
-  },
+  actionButton: {},
+  swappo: {},
   bigIcon: {},
 });
 
