@@ -7,7 +7,7 @@ import {bannerStyles} from '../components/Banner';
 import {Caption, Card, Headline, Paragraph} from 'react-native-paper';
 import ReachIcon from '../images/ReachIcon';
 import {GlobalState, selectUserState} from '../reducers';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import PushNotification from 'react-native-push-notification';
 import SettingsIcon from '../images/SettingsIcon';
 import ActivityTimeBar from '../components/time/ActivityTimeBar';
 import PausedPomodoro from '../components/time/PausedPomodoro';
@@ -75,7 +75,15 @@ const LoggedIn: FC = () => {
           <ReachIcon />
         </View>
       </View>
-      <Card style={styles.card}>
+      <Card
+        style={styles.card}
+        onPress={() => {
+          PushNotification.localNotification({
+            //... You can use all the options from localNotifications
+            message: "My Notification Message", // (required)
+            date: new Date(Date.now() + 60 * 1000) // in 60 secs
+          });
+        }}>
         <View style={styles.cardContent}>
           <SettingsIcon />
           <Headline style={{textAlign: 'center', fontWeight: '300'}}>
