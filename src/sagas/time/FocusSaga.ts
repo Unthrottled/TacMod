@@ -2,7 +2,7 @@ import {call, put, select, take} from 'redux-saga/effects';
 import {buffers, eventChannel} from 'redux-saga';
 import {ActivityTimedType} from '../../types/ActivityTypes';
 import {extractStartTime} from './StopwatchSaga';
-import {GlobalState, selectActivityState} from '../../reducers';
+import {selectActivityState} from '../../reducers';
 import {createTimeSetEvent} from '../../events/TimeEvents';
 
 export const createFocusChannel = () => {
@@ -10,21 +10,14 @@ export const createFocusChannel = () => {
     const listener = () => {
       statusObserver(true);
     };
-    window.addEventListener('focus', listener);
-    return () => window.removeEventListener('focus', listener);
+    //todo: background foreground listening
+    // window.addEventListener('focus', listener);
+    return () => {};
   }, buffers.expanding(100));
 };
 
 function* updateTime() {
-  const {shouldTime, currentActivity} = yield select(
-    (globalState: GlobalState) => {
-      const {shouldTime, currentActivity} = selectActivityState(globalState);
-      return {
-        shouldTime,
-        currentActivity,
-      };
-    },
-  );
+  const {shouldTime, currentActivity} = yield select(selectActivityState);
   const {
     content: {timedType},
   } = currentActivity;
