@@ -242,6 +242,7 @@ const ActivityTimeBar = () => {
               marginBottom: 'auto',
               marginRight: 'auto',
               marginLeft: 'auto',
+              alignItems: 'center',
             }}>
             {tacticalActivity && (
               <View style={classes.activityIcon}>
