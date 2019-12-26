@@ -104,11 +104,9 @@ export const resumeActivity = (
 };
 
 const mapStateToProps = (state: GlobalState) => {
-  const {
-    currentActivity,
-    previousActivity,
-    shouldTime,
-  } = selectActivityState(state);
+  const {currentActivity, previousActivity, shouldTime} = selectActivityState(
+    state,
+  );
   const {
     pomodoro: {settings},
     activity: {activities},
@@ -186,6 +184,13 @@ const ActivityTimeBar = () => {
   const isTimer = timedType === ActivityTimedType.TIMER;
 
   const isRecovery = isActivityRecovery(currentActivity);
+  const backgroundStyle = isRecovery
+    ? {
+        backgroundColor: 'rgb(33,150,243)',
+      }
+    : {
+        backgroundColor: 'rgb(76,175,80)',
+      };
 
   const mappedTacticalActivities = mapTacticalActivitiesToID(activities);
   const tacticalActivity =
@@ -230,7 +235,7 @@ const ActivityTimeBar = () => {
             classes.backdrop,
             {
               opacity: backdropOpacity,
-              backgroundColor: 'rgba(9,19,9,0.9)',
+              ...backgroundStyle,
             },
           ]}>
           <View

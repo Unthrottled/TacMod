@@ -140,6 +140,16 @@ const PausedPomodoro = () => {
       })
     : backdrop;
 
+  const colourz = tacticalActivity
+    ? {
+        play: '#ffffff',
+        background: 'rgb(76,175,80)',
+      }
+    : {
+        play: '#39af41',
+        background: 'rgba(8,11,19,0.9)',
+      };
+
   return isPausedPomodoro ? (
     <Portal>
       <View pointerEvents={'box-none'} style={classes.container}>
@@ -149,7 +159,7 @@ const PausedPomodoro = () => {
             classes.backdrop,
             {
               opacity: backdropOpacity,
-              backgroundColor: 'rgba(8,11,19,0.9)',
+              backgroundColor: colourz.background,
             },
           ]}
         />
@@ -178,11 +188,12 @@ const PausedPomodoro = () => {
             <IconButton
               icon={'play-circle'}
               size={125}
-              color={'green'}
+              color={colourz.play}
               onPress={resumePreviousActivity}
             />
             <IconButton
               icon={'stop-circle'}
+              size={40}
               style={{marginTop: 20}}
               color={'red'}
               onPress={stopActivity}
