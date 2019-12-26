@@ -1,4 +1,5 @@
 - Time Display
+- Prevent pomodoro recovery start if current activity is not the same
 - Fetch Activities on fab press
 - To Foreground time update.
 - Settings

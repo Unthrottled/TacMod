@@ -23,7 +23,7 @@ import {
 } from '../../types/ActivityTypes';
 import {startNonTimedActivity} from '../../actions/ActivityActions';
 import {StringDictionary} from '../../types/BaseTypes';
-import {IconButton, Portal, Text} from 'react-native-paper';
+import {FAB, IconButton, Portal, Text} from 'react-native-paper';
 import ActivityIcon from '../../images/ActivityIcon';
 import {useState} from 'react';
 import {useEffect} from 'react';
@@ -140,7 +140,11 @@ const PausedPomodoro = () => {
       })
     : backdrop;
 
-  const colourz = tacticalActivity
+  const isPivot =
+    tacticalActivity ||
+    getActivityName(currentActivity) === GENERIC_ACTIVITY_NAME;
+
+  const colourz = isPivot
     ? {
         play: '#ffffff',
         background: 'rgb(76,175,80)',
@@ -149,7 +153,6 @@ const PausedPomodoro = () => {
         play: '#39af41',
         background: 'rgba(8,11,19,0.9)',
       };
-
   return isPausedPomodoro ? (
     <Portal>
       <View pointerEvents={'box-none'} style={classes.container}>
@@ -169,8 +172,7 @@ const PausedPomodoro = () => {
             marginLeft: 'auto',
           }}>
           <View style={{alignItems: 'center'}}>
-            {(tacticalActivity ||
-              getActivityName(currentActivity) === GENERIC_ACTIVITY_NAME) && (
+            {isPivot && (
               <View style={{marginBottom: 30, alignItems: 'center'}}>
                 <View>
                   <Text style={{fontSize: 30, color: 'white'}}>
@@ -191,15 +193,19 @@ const PausedPomodoro = () => {
               color={colourz.play}
               onPress={resumePreviousActivity}
             />
-            <IconButton
-              icon={'stop-circle'}
-              size={40}
-              style={{marginTop: 20}}
-              color={'red'}
-              onPress={stopActivity}
-            />
           </View>
         </View>
+        <FAB
+          color={'black'}
+          icon={'close'}
+          style={{
+            backgroundColor: 'red',
+            right: 16,
+            position: 'absolute',
+            bottom: 16,
+          }}
+          onPress={stopActivity}
+        />
       </View>
     </Portal>
   ) : null;
