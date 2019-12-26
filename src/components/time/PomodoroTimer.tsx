@@ -5,6 +5,8 @@ import ActivitySelection from '../ActivitySelection';
 import {GENERIC_ACTIVITY_NAME, OpenedSelection} from './ActivityHub';
 import {timeFontSize} from './ActivityTimeBar';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import {useSelector} from "react-redux";
+import {selectTimeState} from "../../reducers";
 
 const classes = StyleSheet.create({
   stopwatchContainer: {
@@ -16,56 +18,25 @@ const classes = StyleSheet.create({
 });
 
 interface Props {
-  startTimeInSeconds: number;
-  activityId: string;
   onPause?: () => void;
-  onComplete?: () => void;
   onResume?: () => void;
-  onBreak?: () => void;
   fontSize?: number;
   pivotActivity?: (name: string, stuff: {activityID?: string}) => void;
   hidePause?: boolean;
 }
 
 export const PomodoroTimer: FC<Props> = ({
-  startTimeInSeconds,
-  activityId,
-  onComplete,
   onPause,
+  fontSize,
   pivotActivity,
-  onBreak,
   onResume,
   hidePause,
 }) => {
-  const [isPaused, setIsPaused] = useState(false);
   const pauseTimer = () => {
     onPause && onPause();
-    setIsPaused(true);
   };
 
-  const [rememberedActivity, setRememberedActivity] = useState(
-    activityId || '',
-  );
-  const activityTheSame = rememberedActivity === activityId;
-  const [timeElapsed, setTimeElapsed] = useState(startTimeInSeconds || 0);
-  useEffect(() => {
-    let timeout: any;
-    if (timeElapsed < 1 && activityTheSame) {
-      onComplete && onComplete();
-    } else if (!isPaused) {
-      timeout = setTimeout(() => {
-        setTimeElapsed(timeElapsed - 1);
-      }, 1000);
-    }
-    return () => {
-      timeout && clearTimeout(timeout);
-    };
-  });
-
-  if (!activityTheSame) {
-    setTimeElapsed(startTimeInSeconds);
-    setRememberedActivity(activityId);
-  }
+  const timeElapsed = useSelector(selectTimeState).timeElapsed;
 
   const [selectionOpen, setSelectionOpen] = useState(false);
 

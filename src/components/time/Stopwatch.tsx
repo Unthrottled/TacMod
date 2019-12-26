@@ -2,57 +2,30 @@ import React, {FC, useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {TimeDisplay} from './TimeDisplay';
 import {IconButton} from 'react-native-paper';
+import {useSelector} from 'react-redux';
+import {selectTimeState} from '../../reducers';
 
 const classes = StyleSheet.create({
   stopwatchContainer: {},
   actionButton: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
 });
 
 interface Props {
-  startTimeInSeconds: number;
-  activityId: string;
   onPause?: () => void;
   onResume?: () => void;
   fontSize?: number;
 }
-const Stopwatch: FC<Props> = ({
-  startTimeInSeconds,
-  activityId,
-  onPause,
-  fontSize,
-}) => {
-  const [isPaused, setIsPaused] = useState(false);
+const Stopwatch: FC<Props> = ({onPause, fontSize}) => {
   const pauseTimer = () => {
     onPause && onPause();
-    setIsPaused(true);
   };
-  const [timeElapsed, setTimeElapsed] = useState(startTimeInSeconds || 0);
-
-  useEffect(() => {
-    let timeout: any;
-    if (!isPaused) {
-      timeout = setTimeout(() => {
-        setTimeElapsed(timeElapsed + 1);
-      }, 1000);
-    }
-    return () => {
-      timeout && clearTimeout(timeout);
-    };
-  });
-  const [rememberedActivity, setRememberedActivity] = useState(
-    activityId || '',
-  );
-
-  const activityTheSame = rememberedActivity === activityId;
-  if (!activityTheSame) {
-    setTimeElapsed(startTimeInSeconds);
-    setRememberedActivity(activityId);
-  }
   const getPauseButton = () => (
     <IconButton icon={'pause'} size={40} color={'white'} onPress={pauseTimer} />
   );
+
+  const timeElapsed = useSelector(selectTimeState).timeElapsed;
 
   return (
     <View style={classes.stopwatchContainer}>

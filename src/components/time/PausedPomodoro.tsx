@@ -7,7 +7,7 @@ import {
   selectTacticalActivityState,
 } from '../../reducers';
 import Stopwatch from './Stopwatch';
-import {getTime, resumeActivity, timeFontSize} from './ActivityTimeBar';
+import {resumeActivity, timeFontSize} from './ActivityTimeBar';
 import uuid from 'uuid/v4';
 import {numberObjectToArray} from '../../miscellanous/Tools';
 import {dictionaryReducer} from '../../reducers/StrategyReducer';
@@ -82,8 +82,7 @@ const PausedPomodoro = () => {
     activities,
   } = useSelector(mapStateToProps);
   const {
-    antecedenceTime,
-    content: {uuid: activityId, timedType},
+    content: {timedType},
   } = currentActivity;
 
   const mappedTacticalActivities: StringDictionary<
@@ -175,11 +174,7 @@ const PausedPomodoro = () => {
               </View>
             )}
 
-            <Stopwatch
-              startTimeInSeconds={getTime(antecedenceTime)}
-              fontSize={timeFontSize}
-              activityId={activityId}
-            />
+            <Stopwatch fontSize={timeFontSize} />
             <IconButton
               icon={'play-circle'}
               size={125}

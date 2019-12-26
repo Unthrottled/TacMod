@@ -70,11 +70,6 @@ const classes = StyleSheet.create({
   },
 });
 
-export const getTime = (antecedenceTime: number) =>
-  Math.floor((new Date().getTime() - antecedenceTime || 0) / 1000);
-const getTimerTime = (stopTime: number) =>
-  Math.floor((stopTime - new Date().getTime()) / 1000);
-
 export const resumeActivity = (
   dispetch: Dispatch<any>,
   previousActivity: Activity,
@@ -140,8 +135,7 @@ const ActivityTimeBar = () => {
   } = useSelector(mapStateToProps);
 
   const {
-    antecedenceTime,
-    content: {uuid: activityId, timedType, duration, name},
+    content: {timedType, name},
   } = currentActivity;
 
   const dispetch: Dispatch<any> = useDispatch();
@@ -152,26 +146,6 @@ const ActivityTimeBar = () => {
         type: ActivityType.ACTIVE,
         timedType: ActivityTimedType.NONE,
         uuid: uuid(),
-      }),
-    );
-  };
-
-  const startRecovery = (autoStart: boolean = false) => {
-    dispetch(
-      startTimedActivity({
-        name: RECOVERY,
-        type: ActivityType.ACTIVE,
-        timedType: ActivityTimedType.TIMER,
-        duration:
-          (numberOfCompletedPomodoro + 1) % 4 === 0
-            ? pomodoroSettings.longRecoveryDuration
-            : pomodoroSettings.shortRecoveryDuration,
-        uuid: uuid(),
-        ...(autoStart
-          ? {
-              autoStart: true,
-            }
-          : {}),
       }),
     );
   };
@@ -198,16 +172,7 @@ const ActivityTimeBar = () => {
     );
   };
 
-  const completedPomodoro = () => {
-    if (name === RECOVERY) {
-      resumePreviousActivity(true);
-    } else {
-      startRecovery(true);
-      dispetch(createCompletedPomodoroEvent());
-    }
-  };
-
-  function resumePreviousActivity(autoStart: boolean = false) {
+  const resumePreviousActivity = () => {
     dispetch(
       startTimedActivity({
         ...omit(previousActivity.content, ['autoStart']),
@@ -216,22 +181,9 @@ const ActivityTimeBar = () => {
               duration: pomodoroSettings.loadDuration,
             }
           : {}),
-        ...(autoStart
-          ? {
-              autoStart: true,
-            }
-          : {}),
         uuid: uuid(),
       }),
     );
-  }
-
-  const startRecoveryOrResume = () => {
-    if (name === RECOVERY) {
-      resumePreviousActivity();
-    } else {
-      startRecovery();
-    }
   };
 
   const isTimer = timedType === ActivityTimedType.TIMER;
@@ -317,27 +269,16 @@ const ActivityTimeBar = () => {
             )}
             {isTimer ? (
               <PomodoroTimer
-                startTimeInSeconds={getTimerTime(
-                  antecedenceTime + (duration || 0),
-                )}
-                onComplete={completedPomodoro}
                 onPause={startPausedRecovery}
+                onResume={resumePreviousActivity}
                 pivotActivity={pivotActivity}
-                onBreak={startRecovery}
                 hidePause={isRecovery}
-                onResume={startRecoveryOrResume}
-                activityId={activityId}
                 fontSize={40}
               />
             ) : (
               <Stopwatch
-                startTimeInSeconds={getTime(
-                  currentActivity.content.workStartedWomboCombo ||
-                    new Date().valueOf(),
-                )}
                 fontSize={timeFontSize}
                 onPause={startPausedRecovery}
-                activityId={activityId}
               />
             )}
           </View>
