@@ -19,5 +19,5 @@ export function* tacticalActivitiesFetchSaga() {
 }
 
 export function* tacticalActivityObservationSaga() {
-  yield call(console.log, 'Viewed Tactical Activities Again');
+  yield call(tacticalActivitiesFetchSaga);
 }

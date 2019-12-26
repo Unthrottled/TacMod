@@ -13,6 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {startTimedActivity} from '../../actions/ActivityActions';
 import ActivitySelection from '../ActivitySelection';
 import {theme} from "../../Theme";
+import {createViewedTacticalActivitesEvent} from "../../events/TacticalEvents";
 
 export const GENERIC_ACTIVITY_NAME = 'GENERIC_ACTIVITY';
 
@@ -145,7 +146,12 @@ const ActivityHub = () => {
             },
           },
         ]}
-        onStateChange={({open}) => setOpen(open)}
+        onStateChange={({open}) => {
+          if(open){
+            dispetch(createViewedTacticalActivitesEvent());
+          }
+          setOpen(open);
+        }}
       />
       <ActivitySelection
         open={activitiesOpen}
