@@ -1,7 +1,6 @@
 - Prevent pomodoro recovery start if current activity is not the same
-- To Foreground time update.
-- Settings
 - Menu Navigation
+- Settings
 
 - unlink react native vector icons.
 - manual sync
