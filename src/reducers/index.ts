@@ -13,11 +13,13 @@ import TacticalReducer, {
 import MiscellaneousReducer, {MiscellaneousState} from './MiscellaneousReducer';
 import {TacticalState} from '../types/TacticalTypes';
 import {Reducer} from 'react';
+import timeReducer, {TimeState} from './TimeReducer';
 
 export interface GlobalState {
   security: SecurityState;
   user: UserState;
   configuration: ConfigurationState;
+  time: TimeState;
   activity: ActivityState;
   network: NetworkState;
   history: HistoryState;
@@ -33,6 +35,7 @@ const rootReducer = (): Reducer<any, any> =>
     configuration: configurationReducer,
     activity: activityReducer,
     network: networkReducer,
+    time: timeReducer,
     history: HistoryReducer,
     strategy: StrategyReducer,
     tactical: TacticalReducer,
@@ -41,6 +44,9 @@ const rootReducer = (): Reducer<any, any> =>
 
 export const selectSecurityState = (globalState: GlobalState): SecurityState =>
   globalState.security;
+
+export const selectTimeState = (globalState: GlobalState): TimeState =>
+  globalState.time;
 
 export const selectMiscState = (globalState: GlobalState): MiscellaneousState =>
   globalState.misc;
