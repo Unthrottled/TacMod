@@ -108,7 +108,6 @@ const mapStateToProps = (state: GlobalState) => {
     currentActivity,
     previousActivity,
     shouldTime,
-    completedPomodoro: {count},
   } = selectActivityState(state);
   const {
     pomodoro: {settings},
@@ -120,7 +119,6 @@ const mapStateToProps = (state: GlobalState) => {
     previousActivity,
     pomodoroSettings: settings,
     activities,
-    numberOfCompletedPomodoro: count,
   };
 };
 
@@ -131,7 +129,6 @@ const ActivityTimeBar = () => {
     previousActivity,
     pomodoroSettings,
     activities,
-    numberOfCompletedPomodoro,
   } = useSelector(mapStateToProps);
 
   const {

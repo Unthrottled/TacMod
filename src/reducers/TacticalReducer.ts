@@ -30,9 +30,9 @@ export interface TacticalActivityState {
 export const INITIAL_TACTICAL_STATE: TacticalState = {
   pomodoro: {
     settings: {
-      loadDuration: 5000, //milliseconds
-      shortRecoveryDuration: 5000,
-      longRecoveryDuration: 5000,
+      loadDuration: 1620000, //milliseconds
+      shortRecoveryDuration: 180000,
+      longRecoveryDuration: 2400000,
     },
     cache: {},
   },
@@ -55,12 +55,11 @@ const TacticalReducer = (
       return {
         ...updatedState,
         pomodoro: {
-          ...INITIAL_TACTICAL_STATE.pomodoro,
-          // ...state.pomodoro,
-          // settings: {
-          //   ...state.pomodoro.settings,
-          //   ...action.payload,
-          // },
+          ...state.pomodoro,
+          settings: {
+            ...state.pomodoro.settings,
+            ...action.payload,
+          },
         },
       };
     case CACHED_SETTINGS: {

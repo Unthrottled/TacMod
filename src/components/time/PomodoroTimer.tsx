@@ -5,8 +5,13 @@ import ActivitySelection from '../ActivitySelection';
 import {GENERIC_ACTIVITY_NAME, OpenedSelection} from './ActivityHub';
 import {timeFontSize} from './ActivityTimeBar';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import {useSelector} from "react-redux";
-import {selectTimeState} from "../../reducers";
+import {useSelector} from 'react-redux';
+import {
+  GlobalState,
+  selectActivityState,
+  selectTimeState,
+} from '../../reducers';
+import {Avatar, Text} from 'react-native-paper';
 
 const classes = StyleSheet.create({
   stopwatchContainer: {
@@ -36,7 +41,14 @@ export const PomodoroTimer: FC<Props> = ({
     onPause && onPause();
   };
 
-  const timeElapsed = useSelector(selectTimeState).timeElapsed;
+  const {timeElapsed, pomoCount} = useSelector((globalState: GlobalState) => {
+    const timeState = selectTimeState(globalState);
+    const activityState = selectActivityState(globalState);
+    return {
+      timeElapsed: timeState.timeElapsed,
+      pomoCount: activityState.completedPomodoro.count,
+    };
+  });
 
   const [selectionOpen, setSelectionOpen] = useState(false);
 
@@ -49,13 +61,27 @@ export const PomodoroTimer: FC<Props> = ({
       </View>
       <View style={classes.actionButton}>
         {!hidePause && (
-          <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-            <TouchableOpacity style={{flexGrow: 1}} onPress={openSelection}>
-              <MaterialIcon color={'white'} name={'swap-vert'} size={50} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={pauseTimer}>
-              <MaterialIcon color={'white'} name={'pause'} size={50} />
-            </TouchableOpacity>
+          <View style={{alignItems: 'center'}}>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+              <TouchableOpacity style={{flexGrow: 1}} onPress={openSelection}>
+                <MaterialIcon color={'white'} name={'swap-vert'} size={50} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={pauseTimer}>
+                <MaterialIcon color={'white'} name={'pause'} size={50} />
+              </TouchableOpacity>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Avatar.Image
+                size={25}
+                style={{
+                  marginTop: 4,
+                  backgroundColor: 'rgba(0,0,0,0)',
+                }}
+                source={require('../../images/Tomato_big.png')}
+              />
+              <Text style={{fontSize: 25, color: 'white'}}>: {pomoCount}</Text>
+            </View>
           </View>
         )}
       </View>
