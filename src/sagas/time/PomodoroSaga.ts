@@ -89,11 +89,11 @@ export function* pomodoroSaga(activityThatStartedThis: Activity) {
     if (areActivitiesSame) {
       if (timeElapsed > 0) {
         yield put(createTimeDecrementEvent());
-        const after = new Date().valueOf();
-        const waitFor = 1000 - (after - before);
-        const waiter = new Promise(resolve =>
-          BackgroundTimer.setTimeout(resolve, waitFor),
-        );
+        const waiter = new Promise(resolve => {
+          const after = new Date().valueOf();
+          const waitFor = 1000 - (after - before);
+          return BackgroundTimer.setTimeout(resolve, waitFor);
+        });
         const {newCurrentActivity} = yield race({
           currentActivity: call(waitForCurrentActivity),
           timeElapsed: call(() => waiter),

@@ -1,3 +1,2 @@
 - Prevent pomodoro recovery start if current activity is not the same
-- timer lag
 - capture when device last did something.

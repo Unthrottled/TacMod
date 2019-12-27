@@ -31,11 +31,11 @@ export function* stopWatchSaga(activityThatStartedThis: Activity) {
     );
     if (areActivitiesSame) {
       yield put(createTimeIncrementEvent());
-      const after = new Date().valueOf();
-      const waitFor = 1000 - (after - before);
-      const waiter = new Promise(resolve =>
-        BackgroundTimer.setTimeout(resolve, waitFor),
-      );
+      const waiter = new Promise(resolve => {
+        const after = new Date().valueOf();
+        const waitFor = 1000 - (after - before);
+        BackgroundTimer.setTimeout(resolve, waitFor < 0 ? 0 : waitFor);
+      });
       const {newCurrentActivity} = yield race({
         currentActivity: call(waitForCurrentActivity),
         timeElapsed: call(() => waiter),
