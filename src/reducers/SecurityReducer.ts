@@ -4,6 +4,7 @@ import {
   LOGGED_OFF,
   LOGGED_ON,
   RECEIVED_TOKENS,
+  REQUESTED_LOGOFF,
 } from '../events/SecurityEvents';
 import {tokenReceptionReducer} from './security/TokenReducer';
 import {RECEIVED_USER} from '../events/UserEvents';
@@ -21,6 +22,7 @@ export type SecurityState = {
   isExpired: boolean;
   isInitialized: boolean;
   isOutOfSync: boolean;
+  isLoggingOut: boolean;
 };
 
 const defaultTokenInfo = {
@@ -38,6 +40,7 @@ const INITIAL_SECURITY_STATE: SecurityState = {
   isExpired: false,
   isInitialized: false,
   isOutOfSync: false,
+  isLoggingOut: false,
 };
 
 const securityReducer = (state = INITIAL_SECURITY_STATE, action: any) => {
@@ -75,6 +78,11 @@ const securityReducer = (state = INITIAL_SECURITY_STATE, action: any) => {
       return {
         ...state,
         ...action.payload.security,
+      };
+    case REQUESTED_LOGOFF:
+      return {
+        ...state,
+        isLoggingOut: true,
       };
     default:
       return state;

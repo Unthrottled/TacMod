@@ -33,14 +33,14 @@ const LoggedOut: FC = () => {
     dispetch(createRequestLogonEvent());
   };
 
-  const {isLoggedIn} = useSelector(selectSecurityState);
+  const {isLoggedIn, isLoggingOut} = useSelector(selectSecurityState);
   const {navigate} = useNavigation();
   useEffect(() => {
     dispetch(createApplicationInitializedEvent());
-    if (isLoggedIn) {
+    if (isLoggedIn && !isLoggingOut) {
       navigate({routeName: 'AuthLoading'});
     }
-  }, [dispetch, isLoggedIn, navigate]);
+  }, [dispetch, isLoggedIn, isLoggingOut, navigate]);
 
   return (
     <View style={styles.container}>
