@@ -2,6 +2,7 @@ import {call, put} from 'redux-saga/effects';
 import {createReceivedOAuthConfigurations} from '../../events/ConfigurationEvents';
 import {initialConfigurationFetchSaga} from './InitialConfigurationSagas';
 import {AuthConfiguration} from 'react-native-app-auth';
+import Config from 'react-native-config';
 
 export function* securityRequestSaga() {
   const initialConfig = yield call(initialConfigurationFetchSaga);
@@ -13,7 +14,7 @@ export function* securityRequestSaga() {
       prompt: 'login',
     },
     clientId: 'sogos-app',
-    dangerouslyAllowInsecureHttpRequests: true, //todo: remove dis
+    dangerouslyAllowInsecureHttpRequests: Config.DANGER_ZONE,
   };
   yield put(createReceivedOAuthConfigurations(authConfigurations));
 }

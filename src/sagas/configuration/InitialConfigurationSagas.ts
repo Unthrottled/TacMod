@@ -10,7 +10,7 @@ import {call, put, select, take} from 'redux-saga/effects';
 import {selectConfigurationState} from '../../reducers';
 import {waitForWifi} from '../NetworkSagas';
 import {createOutOfSyncEvent} from '../../events/ApplicationLifecycleEvents';
-import {AuthConfiguration} from "react-native-app-auth";
+import Config from "react-native-config";
 
 /**
  * Gets the configurations from the backend to know what authorization server to talk to.
@@ -20,7 +20,7 @@ export function* initialConfigurationSaga() {
     yield call(waitForWifi);
     const {data: configData} = yield call(
       performFullOpenGet,
-      'http://172.21.0.1:3000/config/initial.json', //todo: configur
+      `${Config.UI_URL}/config/initial.json`,
     );
     const {
       data: {currentTime},

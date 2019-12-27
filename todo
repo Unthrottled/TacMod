@@ -1,2 +1,1 @@
-- Prevent pomodoro recovery start if current activity is not the same
-- capture when device last did something.
+- API Configuration
