@@ -200,6 +200,7 @@ const PausedPomodoro = () => {
           icon={'close'}
           style={{
             backgroundColor: 'red',
+            opacity: 0.69,
             right: 16,
             position: 'absolute',
             bottom: 16,

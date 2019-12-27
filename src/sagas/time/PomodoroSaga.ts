@@ -97,7 +97,7 @@ export function* pomodoroSaga(activityThatStartedThis: Activity) {
         const waiter = new Promise(resolve => {
           const after = new Date().valueOf();
           const waitFor =
-            1000 - (after - before) - Math.floor(Math.random() * 42);
+            1000 - (after - before) - Math.floor(Math.random() * 25);
           return BackgroundTimer.setTimeout(resolve, waitFor < 0 ? 0 : waitFor);
         });
         const {newCurrentActivity} = yield race({

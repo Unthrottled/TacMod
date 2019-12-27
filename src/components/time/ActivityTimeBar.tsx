@@ -7,7 +7,6 @@ import {
   selectActivityState,
   selectTacticalState,
 } from '../../reducers';
-import {createCompletedPomodoroEvent} from '../../events/ActivityEvents';
 import {buildCommenceActivityContents} from './ActivityHub';
 import {
   startNonTimedActivity,
@@ -26,7 +25,7 @@ import omit from 'lodash/omit';
 import {dictionaryReducer} from '../../reducers/StrategyReducer';
 import {numberObjectToArray} from '../../miscellanous/Tools';
 import {HasId, NumberDictionary, StringDictionary} from '../../types/BaseTypes';
-import {FAB, Headline, Portal, Text} from 'react-native-paper';
+import {FAB, Headline, Portal} from 'react-native-paper';
 import {PomodoroTimer} from './PomodoroTimer';
 import Stopwatch from './Stopwatch';
 import ActivityIcon from '../../images/ActivityIcon';
@@ -290,6 +289,7 @@ const ActivityTimeBar = () => {
             icon={'close'}
             style={{
               backgroundColor: 'red',
+              opacity: 0.69,
               right: 16,
               position: 'absolute',
               bottom: 16,
