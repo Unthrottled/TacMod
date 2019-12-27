@@ -1,7 +1,5 @@
 - Prevent pomodoro recovery start if current activity is not the same
 - unlink react native vector icons.
 - timer lag
-- offline mode
 - login welcome glitch
-- error snackbar
 - capture when device last did something.

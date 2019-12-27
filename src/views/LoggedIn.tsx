@@ -48,6 +48,11 @@ const LoggedIn: FC = () => {
   const {fullName} = useSelector(mapStateToProps);
   const {navigate} = useNavigation();
 
+  const dispetch = useDispatch();
+  useEffect(() => {
+    dispetch(createApplicationInitializedEvent());
+  }, [dispetch]);
+
   return (
     <LoggedInLayout>
       <View
