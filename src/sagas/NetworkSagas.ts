@@ -1,4 +1,4 @@
-import {all, call, fork, put, race, select, take} from 'redux-saga/effects';
+import {call, all, fork, put, race, select, take} from 'redux-saga/effects';
 import {eventChannel} from 'redux-saga';
 import {
   createFoundInternetEvent,
@@ -12,41 +12,31 @@ import {
   FAILED_RECEPTION_INITIAL_CONFIGURATION,
   RECEIVED_PARTIAL_INITIAL_CONFIGURATION,
 } from '../events/ConfigurationEvents';
+import NetInfo from '@react-native-community/netinfo';
 
-// todo: make online work
-export const createOnlineChannel = () => createNetworkChannel('online');
-export const createOfflineChannel = () => createNetworkChannel('offline');
-
-export const createNetworkChannel = (event: string) => {
+export const createNetworkChannel = () => {
   return eventChannel(statusObserver => {
-    const statusHandler = (status: any) => statusObserver(status);
-    window.addEventListener(event, statusHandler);
-    return () => window.removeEventListener(event, statusHandler);
+    NetInfo.addEventListener(state => {
+      statusObserver(state.isConnected);
+    });
+    return () => {};
   });
 };
 
 function* onlineSaga() {
-  // const onlineEventChannel = yield call(createOnlineChannel);
+  const onlineEventChannel = yield call(createNetworkChannel);
   try {
-    // while (true) {
-    //   yield take(onlineEventChannel);
-    yield put(createFoundWifiEvent());
-    // }
+    while (true) {
+      const hasWifi = yield take(onlineEventChannel);
+      if (hasWifi) {
+        yield put(createFoundWifiEvent());
+      } else {
+        yield put(createLostWifiEvent());
+      }
+    }
   } catch (e) {
     console.log('shit broke in online saga', e);
   }
-}
-
-function* offlineSaga(): any {
-  // const onlineEventChannel = yield call(createOfflineChannel);
-  // try {
-  //   while (true) {
-  //     yield take(onlineEventChannel);
-  //     yield put(createLostWifiEvent());
-  //   }
-  // } catch (e) {
-  //   yield fork(offlineSaga);
-  // }
 }
 
 export function* isOnline() {
@@ -56,17 +46,18 @@ export function* isOnline() {
 
 export function* waitForWifi() {
   const {isOnline} = yield select(selectNetworkState);
-  // if (!isOnline) {
-  //   yield take(FOUND_WIFI);
-  // }
+  if (!isOnline) {
+    yield take(FOUND_WIFI);
+  }
 }
 
 function* initialNetworkStateSaga() {
-  // if (navigator.onLine) {
-  yield put(createFoundWifiEvent());
-  // } else {
-  //   yield put(createLostWifiEvent());
-  // }
+  const netState = yield call(NetInfo.fetch);
+  if (netState.isConnected) {
+    yield put(createFoundWifiEvent());
+  } else {
+    yield put(createLostWifiEvent());
+  }
 }
 
 function* initialInternetStateSaga() {
@@ -91,7 +82,6 @@ function* listenToNetworkEvents() {
   yield fork(initialNetworkStateSaga);
   yield fork(initialInternetStateSaga);
   yield fork(onlineSaga);
-  yield fork(offlineSaga);
 }
 
 export default function* rootSaga() {
