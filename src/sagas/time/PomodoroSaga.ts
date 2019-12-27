@@ -96,8 +96,9 @@ export function* pomodoroSaga(activityThatStartedThis: Activity) {
         yield put(createTimeDecrementEvent());
         const waiter = new Promise(resolve => {
           const after = new Date().valueOf();
-          const waitFor = 1000 - (after - before);
-          return BackgroundTimer.setTimeout(resolve, waitFor);
+          const waitFor =
+            1000 - (after - before) - Math.floor(Math.random() * 42);
+          return BackgroundTimer.setTimeout(resolve, waitFor < 0 ? 0 : waitFor);
         });
         const {newCurrentActivity} = yield race({
           currentActivity: call(waitForCurrentActivity),
