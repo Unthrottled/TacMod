@@ -27,6 +27,11 @@ import {
   createStartedTimedActivityEvent,
 } from '../../events/ActivityEvents';
 import omit from 'lodash/omit';
+import {performGet} from '../APISagas';
+import {
+  CURRENT_ACTIVITY_URL,
+  handleNewActivity,
+} from '../activity/CurrentActivitySaga';
 
 const getTimerTime = (stopTime: number) =>
   Math.floor((stopTime - new Date().getTime()) / 1000);
@@ -100,29 +105,32 @@ export function* pomodoroSaga(activityThatStartedThis: Activity) {
         });
         shouldKeepTiming = !newCurrentActivity;
       } else {
-        if (isActivityRecovery(activityThatStartedThis)) {
-          // @ts-ignore real
-          const activityContent: ActivityContent = {
-            ...omit(previousActivity.content, ['autoStart']),
-            duration: pomodoroSettings.loadDuration,
-            autoStart: true,
-            uuid: uuid(),
-          };
-          yield call(commenceTimedActivity, activityContent);
-        } else {
-          const activityContent = {
-            name: RECOVERY,
-            type: ActivityType.ACTIVE,
-            timedType: ActivityTimedType.TIMER,
-            duration:
-              (numberOfCompletedPomodoro + 1) % 4 === 0
-                ? pomodoroSettings.longRecoveryDuration
-                : pomodoroSettings.shortRecoveryDuration,
-            uuid: uuid(),
-            autoStart: true,
-          };
-          yield call(commenceTimedActivity, activityContent);
-          yield put(createCompletedPomodoroEvent());
+        const currentActivitySame = yield call(checkCurrentActivity);
+        if (currentActivitySame) {
+          if (isActivityRecovery(activityThatStartedThis)) {
+            // @ts-ignore real
+            const activityContent: ActivityContent = {
+              ...omit(previousActivity.content, ['autoStart']),
+              duration: pomodoroSettings.loadDuration,
+              autoStart: true,
+              uuid: uuid(),
+            };
+            yield call(commenceTimedActivity, activityContent);
+          } else {
+            const activityContent = {
+              name: RECOVERY,
+              type: ActivityType.ACTIVE,
+              timedType: ActivityTimedType.TIMER,
+              duration:
+                (numberOfCompletedPomodoro + 1) % 4 === 0
+                  ? pomodoroSettings.longRecoveryDuration
+                  : pomodoroSettings.shortRecoveryDuration,
+              uuid: uuid(),
+              autoStart: true,
+            };
+            yield call(commenceTimedActivity, activityContent);
+            yield put(createCompletedPomodoroEvent());
+          }
         }
         shouldKeepTiming = false;
       }
@@ -130,4 +138,20 @@ export function* pomodoroSaga(activityThatStartedThis: Activity) {
       shouldKeepTiming = false;
     }
   } while (shouldKeepTiming);
+}
+
+export function* checkCurrentActivity() {
+  try {
+    const {data: activity} = yield call(performGet, CURRENT_ACTIVITY_URL);
+    const {currentActivity} = yield select(selectActivityState);
+    const areSame = activitiesEqual(activity, currentActivity);
+    if (!areSame) {
+      // There is more than one device controlling SOGoS now
+      yield call(handleNewActivity, activity);
+    }
+    return areSame;
+  } catch (e) {
+    // todo: what do I do?
+    return true;
+  }
 }
