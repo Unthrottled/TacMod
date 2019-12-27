@@ -1,26 +1,17 @@
-import React, {FC} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {useSelector} from 'react-redux';
-import {selectSecurityState} from './reducers';
 import LoggedIn from './views/LoggedIn';
 import LoggedOut from './views/LoggedOut';
+import {createAppContainer, createSwitchNavigator} from 'react-navigation';
+import AuthLoading from './views/AuthLoading';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#eaeaf0',
+const AppNavigator = createSwitchNavigator(
+  {
+    AuthLoading: AuthLoading,
+    LoggedIn: LoggedIn,
+    Login: LoggedOut,
   },
-});
+  {
+    initialRouteName: 'AuthLoading',
+  },
+);
 
-const RootView: FC = () => {
-  const {isLoggedIn} = useSelector(selectSecurityState);
-  return (
-    <>
-      <View style={styles.container}>
-        {isLoggedIn ? <LoggedIn /> : <LoggedOut />}
-      </View>
-    </>
-  );
-};
-
-export default RootView;
+export default createAppContainer(AppNavigator);

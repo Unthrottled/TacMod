@@ -44,12 +44,7 @@ const styles = StyleSheet.create({
 });
 
 const LoggedIn: FC = () => {
-  const dispetch = useDispatch();
-  const {fullName, guid} = useSelector(mapStateToProps);
-
-  useEffect(() => {
-    dispetch(createApplicationInitializedEvent());
-  }, [dispetch]);
+  const {fullName} = useSelector(mapStateToProps);
 
   return (
     <LoggedInLayout>
@@ -74,9 +69,7 @@ const LoggedIn: FC = () => {
           <ReachIcon />
         </View>
       </View>
-      <Card
-        style={styles.card}
-        onPress={() => {}}>
+      <Card style={styles.card} onPress={() => {}}>
         <View style={styles.cardContent}>
           <SettingsIcon />
           <Headline style={{textAlign: 'center', fontWeight: '300'}}>

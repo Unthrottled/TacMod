@@ -1,8 +1,9 @@
 - Prevent pomodoro recovery start if current activity is not the same
 - Menu Navigation
 - Settings
-
 - unlink react native vector icons.
 - manual sync
+- timer lag
+- login welcome glitch
 - error snackbar
 - capture when device last did something.

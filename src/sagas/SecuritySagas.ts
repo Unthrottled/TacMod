@@ -1,4 +1,4 @@
-import {all, fork, takeEvery} from 'redux-saga/effects';
+import {call, all, fork, takeEvery} from 'redux-saga/effects';
 import {INITIALIZED_APPLICATION} from '../events/ApplicationLifecycleEvents';
 import oauthInitializationSaga from './security/SecurityInitializationSaga';
 import {
@@ -15,7 +15,7 @@ import {oauthConfigurationSaga} from './configuration/ConfigurationConvienenceSa
 
 function* securityRequestSaga() {
   const oauthConfig = yield oauthConfigurationSaga();
-  yield oauthInitializationSaga(oauthConfig); // Log user in or refresh tokens
+  yield call(oauthInitializationSaga, oauthConfig);
 }
 
 function* listenToStartupEvent() {
