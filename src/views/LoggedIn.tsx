@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
 const LoggedIn: FC = () => {
   const {fullName} = useSelector(mapStateToProps);
   const {navigate} = useNavigation();
+
   return (
     <LoggedInLayout>
       <View
@@ -73,7 +74,7 @@ const LoggedIn: FC = () => {
       <Card
         style={styles.card}
         onPress={() => {
-          navigate('Settings');
+          navigate({routeName: 'Settings'});
         }}>
         <View style={styles.cardContent}>
           <SettingsIcon />

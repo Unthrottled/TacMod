@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Appbar, Menu} from 'react-native-paper';
 import {useDispatch} from 'react-redux';
 import {requestLogoff} from '../events/SecurityEvents';
-import {useNavigation} from "react-navigation-hooks";
+import {useNavigation} from 'react-navigation-hooks';
 
 const MenuOptions = () => {
   const [open, setOpen] = useState(false);
@@ -11,7 +11,7 @@ const MenuOptions = () => {
   const {navigate} = useNavigation();
   const logUserOut = (): void => {
     dispetch(requestLogoff());
-    navigate('Login');
+    navigate({routeName: 'Login'});
   };
 
   const navigateToSettings = () => {

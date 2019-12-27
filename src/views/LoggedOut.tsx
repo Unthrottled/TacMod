@@ -38,7 +38,7 @@ const LoggedOut: FC = () => {
   useEffect(() => {
     dispetch(createApplicationInitializedEvent());
     if (isLoggedIn) {
-      navigate('AuthLoading');
+      navigate({routeName: 'AuthLoading'});
     }
   }, [dispetch, isLoggedIn, navigate]);
 
