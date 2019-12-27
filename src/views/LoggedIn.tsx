@@ -10,6 +10,7 @@ import {GlobalState, selectUserState} from '../reducers';
 import SettingsIcon from '../images/SettingsIcon';
 import ActivityTimeBar from '../components/time/ActivityTimeBar';
 import PausedPomodoro from '../components/time/PausedPomodoro';
+import {useNavigation} from 'react-navigation-hooks';
 
 const mapStateToProps = (state: GlobalState) => {
   const {
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
 
 const LoggedIn: FC = () => {
   const {fullName} = useSelector(mapStateToProps);
-
+  const {navigate} = useNavigation();
   return (
     <LoggedInLayout>
       <View
@@ -69,7 +70,11 @@ const LoggedIn: FC = () => {
           <ReachIcon />
         </View>
       </View>
-      <Card style={styles.card} onPress={() => {}}>
+      <Card
+        style={styles.card}
+        onPress={() => {
+          navigate('Settings');
+        }}>
         <View style={styles.cardContent}>
           <SettingsIcon />
           <Headline style={{textAlign: 'center', fontWeight: '300'}}>

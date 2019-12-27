@@ -1,5 +1,4 @@
 - Prevent pomodoro recovery start if current activity is not the same
-- Menu Navigation
 - Settings
 - unlink react native vector icons.
 - manual sync
