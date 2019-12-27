@@ -1,18 +1,39 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import LoggedInLayout from '../components/LoggedInLayout';
 import {
   createUpdatedPomodoroSettingsEvent,
   createViewedSettingsEvent,
 } from '../events/TacticalEvents';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  selectMiscState,
-  selectPomodoroState,
-  selectTacticalState,
-} from '../reducers';
+import {selectPomodoroState} from '../reducers';
 import {useNavigation} from 'react-navigation-hooks';
-import Slider from "@react-native-community/slider";
+import Slider from '@react-native-community/slider';
+import {Avatar, Headline, IconButton, Paragraph} from 'react-native-paper';
+import {theme} from '../Theme';
+import {bannerStyles} from '../components/Banner';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+
+const styles = StyleSheet.create({
+  banner: {
+    marginTop: 10,
+    backgroundColor: '#F5FCFF',
+    borderRadius: 10,
+    margin: 15,
+  },
+  card: {
+    margin: 15,
+    borderRadius: 10,
+  },
+  cardContent: {
+    marginRight: 15,
+    padding: 10,
+    marginLeft: 15,
+  },
+  cardBullshit: {
+    textAlign: 'center',
+  },
+});
 
 const restMarks = [
   {
@@ -99,9 +120,7 @@ const Settings = () => {
     pomodoroSettings.shortRecoveryDuration / MINUTE_CONVERSION,
   );
 
-  const saveRecoveryTime: (
-    value: number,
-  ) => void = ( time) => {
+  const saveRecoveryTime: (value: number) => void = time => {
     // @ts-ignore real
     setRecoveryTime(time);
   };
@@ -110,9 +129,7 @@ const Settings = () => {
     pomodoroSettings.longRecoveryDuration / MINUTE_CONVERSION,
   );
 
-  const saveLongRecoveryTime: (
-    value: number,
-  ) => void = ( time) => {
+  const saveLongRecoveryTime: (value: number) => void = time => {
     // @ts-ignore real
     setLongRecoveryTime(time);
   };
@@ -120,9 +137,7 @@ const Settings = () => {
     pomodoroSettings.loadDuration / MINUTE_CONVERSION,
   );
 
-  const saveWorkTime: (
-    value: number,
-  ) => void = ( time) => {
+  const saveWorkTime: (value: number) => void = time => {
     // @ts-ignore real
     setWorkTime(time);
   };
@@ -137,47 +152,81 @@ const Settings = () => {
         longRecoveryDuration: longRecoveryTime * 60000,
       }),
     );
-    navigate('/');
+    navigate({routeName: 'LoggedIn'});
   };
 
   const discardChanges = () => {
-    navigate('/');
+    navigate({routeName: 'LoggedIn'});
   };
   return (
     <LoggedInLayout>
+      <View
+        style={{
+          ...styles.banner,
+        }}>
+        <View
+          style={{
+            ...bannerStyles.container,
+          }}>
+          <Headline>Settings</Headline>
+          <Paragraph style={bannerStyles.secondary}>
+            We all cannot be the same. Therefore we thought it would be handy to
+            allow you to adjust the experience to your preferences!
+          </Paragraph>
+          <MaterialIcon name={'settings'} size={60} />
+        </View>
+      </View>
       <View>
-        <View>
-          {/*<TomatoIcon size={{width: 50, height: 50}} />*/}
-          <Text>
-            Work Duration (minutes)
-          </Text>
+        <View style={styles.cardContent}>
+          <View style={{alignItems: 'center'}}>
+            <Avatar.Image
+              size={50}
+              style={{
+                marginTop: 4,
+                backgroundColor: 'rgba(0,0,0,0)',
+              }}
+              source={require('../images/Tomato_big.png')}
+            />
+            <Text style={{fontSize: 18, fontWeight: '500', marginBottom: 10}}>
+              Pomodoro Settings
+            </Text>
+          </View>
+          <Text>Work Duration ( {workTime} minutes)</Text>
           <Slider
             value={workTime}
             aria-labelledby="discrete-slider-always"
             step={0.5}
             onSlidingComplete={saveWorkTime}
+            onValueChange={saveWorkTime}
+            thumbTintColor={theme.colors.primary}
+            maximumTrackTintColor={theme.colors.primary}
+            minimumTrackTintColor={theme.colors.primary}
             minimumValue={5}
             maximumValue={workMarks[workMarks.length - 1].value}
           />
-          <Text>
-            Short Break Duration (minutes)
-          </Text>
+          <Text>Short Break Duration ({recoveryTime} minutes)</Text>
           <Slider
             value={recoveryTime}
             aria-labelledby="discrete-slider-always"
             step={0.5}
             onSlidingComplete={saveRecoveryTime}
+            onValueChange={saveRecoveryTime}
+            thumbTintColor={theme.colors.primary}
+            maximumTrackTintColor={theme.colors.primary}
+            minimumTrackTintColor={theme.colors.primary}
             minimumValue={0.5}
             maximumValue={restMarks[restMarks.length - 1].value}
           />
-          <Text>
-            Long Break Duration (minutes)
-          </Text>
+          <Text>Long Break Duration ({longRecoveryTime} minutes)</Text>
           <Slider
             value={longRecoveryTime}
             aria-labelledby="discrete-slider-always"
             step={0.5}
             onSlidingComplete={saveLongRecoveryTime}
+            onValueChange={saveLongRecoveryTime}
+            thumbTintColor={theme.colors.primary}
+            maximumTrackTintColor={theme.colors.primary}
+            minimumTrackTintColor={theme.colors.primary}
             minimumValue={5}
             maximumValue={recoveryMarks[recoveryMarks.length - 1].value}
           />
@@ -188,6 +237,26 @@ const Settings = () => {
             </Text>
           </View>
         </View>
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          marginRight: 'auto',
+          marginLeft: 'auto',
+          marginTop: 20,
+        }}>
+        <IconButton
+          icon={'content-save'}
+          size={50}
+          color={theme.colors.primary}
+          onPress={saveSettings}
+        />
+        <IconButton
+          icon={'close-circle'}
+          size={50}
+          color={theme.colors.primary}
+          onPress={discardChanges}
+        />
       </View>
     </LoggedInLayout>
   );
