@@ -188,7 +188,7 @@ const ActivityTimeBar = () => {
         backgroundColor: 'rgb(33,150,243)',
       }
     : {
-        backgroundColor: 'rgb(76,175,80)',
+        backgroundColor: '#30ad5a',
       };
 
   const mappedTacticalActivities = mapTacticalActivitiesToID(activities);

@@ -4,10 +4,9 @@ import {PersistGate} from 'redux-persist/lib/integration/react';
 import {fetchApplicationConfiguration} from './config/Configuration';
 import RootView from './RootView';
 import {Provider as PaperProvider} from 'react-native-paper';
-import {theme} from "./Theme";
+import {theme} from './Theme';
 
 const {store, persistor} = fetchApplicationConfiguration();
-export const appStor = store;
 
 const App: FC = () => {
   return (
