@@ -13,7 +13,7 @@ export function* securityRequestSaga() {
     additionalParameters: {
       prompt: 'login',
     },
-    clientId: 'sogos-app',
+    clientId: 'sogos-app', // todo: configure
     dangerouslyAllowInsecureHttpRequests: DANGER_ZONE,
   };
   yield put(createReceivedOAuthConfigurations(authConfigurations));

@@ -1,7 +1,11 @@
 import {SecurityState} from '../../reducers/SecurityReducer';
 import {call, put} from 'redux-saga/effects';
 import {waitForWifi} from '../NetworkSagas';
-import {AuthConfiguration, refresh} from 'react-native-app-auth';
+import {
+  AuthConfiguration,
+  AuthorizeResult,
+  refresh,
+} from 'react-native-app-auth';
 import {
   createExpiredSessionEvent,
   createTokenReceptionEvent,
@@ -16,7 +20,11 @@ export function* refreshTokenSaga(
     const authResult = yield call(refresh, oauthConfig, {
       refreshToken: securityState.refreshToken,
     });
-    yield put(createTokenReceptionEvent(authResult)); //todo: is this right??
+    const withOfflineToken: AuthorizeResult = {
+      ...authResult,
+      refreshToken: securityState.refreshToken,
+    };
+    yield put(createTokenReceptionEvent(withOfflineToken));
   } catch (e) {
     yield put(createExpiredSessionEvent()); // credentials are not good, just ask logon again please
   }
