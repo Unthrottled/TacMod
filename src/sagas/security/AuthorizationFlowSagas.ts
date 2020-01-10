@@ -1,14 +1,13 @@
 import {
-  createCheckedAuthorizationEvent, createLoggedOnAction,
+  createCheckedAuthorizationEvent,
+  createLoggedOnAction,
   createTokenReceptionEvent,
 } from '../../events/SecurityEvents';
-import {call, put, take} from 'redux-saga/effects';
-import {
-  createRequestForInitialConfigurations,
-  FOUND_INITIAL_CONFIGURATION,
-} from '../../events/ConfigurationEvents';
-import {AuthConfiguration, authorize} from 'react-native-app-auth';
-import {oauthConfigurationSaga} from "../configuration/ConfigurationConvienenceSagas";
+import {call, put} from 'redux-saga/effects';
+import {createRequestForInitialConfigurations} from '../../events/ConfigurationEvents';
+import {authorize} from 'react-native-app-auth';
+import {oauthConfigurationSaga} from '../configuration/ConfigurationConvienenceSagas';
+import {createApplicationUnInitializedEvent} from '../../events/ApplicationLifecycleEvents';
 
 export function* authorizationGrantSaga() {
   yield call(performAuthorizationGrantFlowSaga, false);
@@ -26,6 +25,7 @@ export function* performAuthorizationGrantFlowSaga(
     yield put(createRequestForInitialConfigurations());
     const oAuthConfig = yield call(oauthConfigurationSaga);
     try {
+      yield put(createApplicationUnInitializedEvent());
       const authState = yield call(authorize, oAuthConfig);
       yield put(createTokenReceptionEvent(authState));
       yield put(createLoggedOnAction());

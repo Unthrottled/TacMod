@@ -9,7 +9,10 @@ import {
 import {tokenReceptionReducer} from './security/TokenReducer';
 import {RECEIVED_USER} from '../events/UserEvents';
 import {TokenInformation} from '../types/SecurityTypes';
-import {TIME_IS_WACK} from '../events/ApplicationLifecycleEvents';
+import {
+  TIME_IS_WACK,
+  UNINITIALIZED_APPLICATION,
+} from '../events/ApplicationLifecycleEvents';
 
 export type SecurityState = {
   isLoggedIn: boolean;
@@ -66,6 +69,12 @@ const securityReducer = (state = INITIAL_SECURITY_STATE, action: any) => {
         ...state,
         isExpired: false,
         isInitialized: true,
+      };
+    case UNINITIALIZED_APPLICATION:
+      return {
+        ...state,
+        isExpired: false,
+        isInitialized: false,
       };
     case TIME_IS_WACK:
       return {

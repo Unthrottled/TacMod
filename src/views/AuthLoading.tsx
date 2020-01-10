@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {StatusBar, View} from 'react-native';
 import {ActivityIndicator} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
@@ -7,13 +7,15 @@ import {useNavigation} from 'react-navigation-hooks';
 import {createApplicationInitializedEvent} from '../events/ApplicationLifecycleEvents';
 
 const AuthLoading = () => {
-  const {isLoggedIn} = useSelector(selectSecurityState);
+  const {isLoggedIn, isInitialized} = useSelector(selectSecurityState);
   const {navigate} = useNavigation();
   const dispetch = useDispatch();
   useEffect(() => {
-    dispetch(createApplicationInitializedEvent());
+    if (isInitialized) {
+      dispetch(createApplicationInitializedEvent());
+    }
     navigate(isLoggedIn ? 'LoggedIn' : 'Login');
-  }, [dispetch, isLoggedIn, navigate]);
+  }, [dispetch, isInitialized, isLoggedIn, navigate]);
   return (
     <View>
       <ActivityIndicator />

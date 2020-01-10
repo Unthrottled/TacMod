@@ -6,7 +6,7 @@ import LoggedInLayout from '../components/LoggedInLayout';
 import {bannerStyles} from '../components/Banner';
 import {Caption, Card, Headline, Paragraph} from 'react-native-paper';
 import ReachIcon from '../images/ReachIcon';
-import {GlobalState, selectUserState} from '../reducers';
+import {GlobalState, selectSecurityState, selectUserState} from '../reducers';
 import SettingsIcon from '../images/SettingsIcon';
 import ActivityTimeBar from '../components/time/ActivityTimeBar';
 import PausedPomodoro from '../components/time/PausedPomodoro';
@@ -16,9 +16,11 @@ const mapStateToProps = (state: GlobalState) => {
   const {
     information: {fullName, guid},
   } = selectUserState(state);
+  const {isInitialized} = selectSecurityState(state);
   return {
     fullName,
     guid,
+    isInitialized,
   };
 };
 
@@ -45,13 +47,15 @@ const styles = StyleSheet.create({
 });
 
 const LoggedIn: FC = () => {
-  const {fullName} = useSelector(mapStateToProps);
+  const {fullName, isInitialized} = useSelector(mapStateToProps);
   const {navigate} = useNavigation();
 
   const dispetch = useDispatch();
   useEffect(() => {
-    dispetch(createApplicationInitializedEvent());
-  }, [dispetch]);
+    if (isInitialized) {
+      dispetch(createApplicationInitializedEvent());
+    }
+  }, [dispetch, isInitialized]);
 
   return (
     <LoggedInLayout>
