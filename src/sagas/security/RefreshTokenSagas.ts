@@ -1,5 +1,4 @@
-import {SecurityState} from '../../reducers/SecurityReducer';
-import {call, put} from 'redux-saga/effects';
+import {call, put, select} from 'redux-saga/effects';
 import {waitForWifi} from '../NetworkSagas';
 import {
   AuthConfiguration,
@@ -10,29 +9,28 @@ import {
   createExpiredSessionEvent,
   createTokenReceptionEvent,
 } from '../../events/SecurityEvents';
+import {selectSecurityState} from '../../reducers';
 
-export function* refreshTokenSaga(
-  oauthConfig: AuthConfiguration,
-  securityState: SecurityState,
-) {
+export function* refreshTokenSaga(oauthConfig: AuthConfiguration) {
   yield call(waitForWifi);
   try {
+    const realSecurityState = yield select(selectSecurityState);
     const authResult = yield call(refresh, oauthConfig, {
-      refreshToken: securityState.refreshToken,
+      refreshToken: realSecurityState.refreshToken,
     });
     const withOfflineToken: AuthorizeResult = {
       ...authResult,
-      refreshToken: securityState.refreshToken,
+      refreshToken: realSecurityState.refreshToken,
     };
     yield put(createTokenReceptionEvent(withOfflineToken));
   } catch (e) {
+    console.error(JSON.stringify(e));
     yield put(createExpiredSessionEvent()); // credentials are not good, just ask logon again please
   }
 }
 
 export function* refreshTokenWithReplacementSaga(
   oauthConfig: AuthConfiguration,
-  securityState: SecurityState,
 ) {
-  yield call(refreshTokenSaga, oauthConfig, securityState);
+  yield call(refreshTokenSaga, oauthConfig);
 }

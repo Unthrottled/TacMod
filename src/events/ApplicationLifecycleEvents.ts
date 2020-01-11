@@ -2,6 +2,7 @@ export const INITIALIZED_APPLICATION: 'INITIALIZED_APPLICATION' =
   'INITIALIZED_APPLICATION';
 export const UNINITIALIZED_APPLICATION: 'UNINITIALIZED_APPLICATION' =
   'UNINITIALIZED_APPLICATION';
+export const FOCUSED_APPLICATION: 'FOCUSED_APPLICATION' = 'FOCUSED_APPLICATION';
 export const TIME_IS_WACK: 'TIME_IS_WACK' = 'TIME_IS_WACK';
 
 export const createApplicationInitializedEvent = () => ({
@@ -10,6 +11,10 @@ export const createApplicationInitializedEvent = () => ({
 
 export const createApplicationUnInitializedEvent = () => ({
   type: UNINITIALIZED_APPLICATION,
+});
+
+export const createAppGainedFocusEvent = () => ({
+  type: FOCUSED_APPLICATION,
 });
 
 export const createOutOfSyncEvent = () => ({

@@ -11,16 +11,18 @@ import {selectConfigurationState} from '../../reducers';
 import {waitForWifi} from '../NetworkSagas';
 import {createOutOfSyncEvent} from '../../events/ApplicationLifecycleEvents';
 import {UI_URL} from '../../util/Configuration';
+
+export function* getInitialUIConfig() {
+  return yield call(performFullOpenGet, `${UI_URL}/config/initial.json`);
+}
+
 /**
  * Gets the configurations from the backend to know what authorization server to talk to.
  */
 export function* initialConfigurationSaga() {
   try {
     yield call(waitForWifi);
-    const {data: configData} = yield call(
-      performFullOpenGet,
-      `${UI_URL}/config/initial.json`,
-    );
+    const {data: configData} = yield getInitialUIConfig();
     const {
       data: {currentTime},
     } = yield call(performFullOpenGet, `${configData.apiURL}/time`);

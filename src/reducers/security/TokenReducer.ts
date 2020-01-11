@@ -20,10 +20,14 @@ export const tokenReceptionReducer = (
     accessTokenInformation: getRefreshTokenInformation(
       tokenReceptionPayload.accessToken,
     ),
-    refreshTokenInformation: getRefreshTokenInformation(
-      tokenReceptionPayload.refreshToken,
-    ),
-    refreshToken: tokenReceptionPayload.refreshToken || state.refreshToken,
+    ...(tokenReceptionPayload.refreshToken
+      ? {
+          refreshToken: tokenReceptionPayload.refreshToken,
+          refreshTokenInformation: getRefreshTokenInformation(
+            tokenReceptionPayload.refreshToken,
+          ),
+        }
+      : {}),
     idToken: tokenReceptionPayload.idToken,
   };
 };

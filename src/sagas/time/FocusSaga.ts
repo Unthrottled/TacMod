@@ -1,20 +1,15 @@
-import {call, take} from 'redux-saga/effects';
+import {put, call, take} from 'redux-saga/effects';
 import {buffers, eventChannel} from 'redux-saga';
 import {AppState} from 'react-native';
 import {updateCurrentActivity} from '../activity/CurrentActivitySaga';
-
-let previousState = 'background';
+import {createAppGainedFocusEvent} from '../../events/ApplicationLifecycleEvents';
 
 export const createFocusChannel = () => {
   return eventChannel(statusObserver => {
     const listener = (nextState: string) => {
-      if (
-        previousState.match(/inactive|background/) &&
-        nextState === 'active'
-      ) {
+      if (nextState === 'active') {
         statusObserver(true);
       }
-      previousState = nextState;
     };
     AppState.addEventListener('change', listener);
     return () => {
@@ -27,6 +22,7 @@ export function* focusSaga() {
   const focusChannel = createFocusChannel();
   while (true) {
     yield take(focusChannel);
+    yield put(createAppGainedFocusEvent());
     yield call(updateCurrentActivity);
   }
 }

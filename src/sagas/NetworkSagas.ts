@@ -1,4 +1,12 @@
-import {call, all, fork, put, race, select, take} from 'redux-saga/effects';
+import {
+  all,
+  call,
+  fork,
+  put,
+  select,
+  take,
+  takeEvery,
+} from 'redux-saga/effects';
 import {eventChannel} from 'redux-saga';
 import {
   createFoundInternetEvent,
@@ -8,11 +16,9 @@ import {
   FOUND_WIFI,
 } from '../events/NetworkEvents';
 import {selectNetworkState} from '../reducers';
-import {
-  FAILED_RECEPTION_INITIAL_CONFIGURATION,
-  RECEIVED_PARTIAL_INITIAL_CONFIGURATION,
-} from '../events/ConfigurationEvents';
 import NetInfo from '@react-native-community/netinfo';
+import {FOCUSED_APPLICATION} from '../events/ApplicationLifecycleEvents';
+import {getInitialUIConfig} from './configuration/InitialConfigurationSagas';
 
 export const createNetworkChannel = () => {
   return eventChannel(statusObserver => {
@@ -70,18 +76,19 @@ function* initialInternetStateSaga() {
 }
 
 function* checkInternet() {
-  const {worked} = yield race({
-    worked: take(RECEIVED_PARTIAL_INITIAL_CONFIGURATION),
-    didNot: take(FAILED_RECEPTION_INITIAL_CONFIGURATION),
-  });
-
-  return !!worked;
+  try {
+    yield call(getInitialUIConfig);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 function* listenToNetworkEvents() {
   yield fork(initialNetworkStateSaga);
   yield fork(initialInternetStateSaga);
   yield fork(onlineSaga);
+  yield takeEvery(FOCUSED_APPLICATION, initialInternetStateSaga);
 }
 
 export default function* rootSaga() {

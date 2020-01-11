@@ -35,13 +35,13 @@ export function* getOrRefreshAccessTokenWithSessionExtension() {
 }
 
 export function* getOrRefreshAccessToken(
-  refreshTokenSaga: (arg0: any, arg2: any) => any,
+  refreshTokenSaga: (arg0: any) => any,
   shouldTokenRefresh: (arg0: SecurityState) => boolean,
 ) {
   const security: SecurityState = yield select(selectSecurityState);
   if (shouldTokenRefresh(security)) {
     const oauthConfiguration = yield call(oauthConfigurationSaga);
-    yield fork(refreshTokenSaga, oauthConfiguration, security);
+    yield fork(refreshTokenSaga, oauthConfiguration);
     return yield call(awaitToken);
   } else {
     return security.accessToken;
