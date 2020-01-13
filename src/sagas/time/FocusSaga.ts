@@ -1,4 +1,4 @@
-import {call, put, select, take} from 'redux-saga/effects';
+import {flush, call, put, select, take} from 'redux-saga/effects';
 import {buffers, eventChannel} from 'redux-saga';
 import {AppState} from 'react-native';
 import {createAppGainedFocusEvent} from '../../events/ApplicationLifecycleEvents';
@@ -29,6 +29,7 @@ export function* focusSaga() {
   const focusChannel = createFocusChannel();
   while (true) {
     yield take(focusChannel);
+    yield flush(focusChannel);
     yield call(waitForHydration);
     yield put(createAppGainedFocusEvent());
   }
