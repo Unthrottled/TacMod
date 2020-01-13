@@ -1,0 +1,7 @@
+fix this
+    - kill app
+    - bring app up
+    - minimize.
+    - bring back up
+    - kill app
+    - bring back up (becomes borked).
