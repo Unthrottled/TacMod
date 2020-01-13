@@ -6,39 +6,9 @@ import {accessTokenWithSessionExtensionSaga} from './security/AccessTokenSagas';
 import {selectConfigurationState} from '../reducers';
 import {ConfigurationState} from '../reducers/ConfigurationReducer';
 import Stream from '../native/Stream';
-
-const SHITS_BROKE_YO: string = "SHIT'S BROKE YO";
-
-type ChannelParameters = {url: string; method: string; headers: any; body: any};
-export const createStreamChannel = ({
-  url,
-  method,
-  headers,
-  body,
-}: ChannelParameters) => {
-  return eventChannel(statusObserver => {
-    const requestStream = oboe({
-      url,
-      method,
-      headers,
-      body,
-      cached: false,
-      withCredentials: true,
-    })
-      .done((jsonThingo: any) => {
-        statusObserver(jsonThingo);
-      })
-      .fail((error: any) => {
-        console.log('Error streaming', error);
-        statusObserver(SHITS_BROKE_YO);
-        statusObserver(END);
-      })
-      .on('end', () => {
-        statusObserver(END);
-      });
-    return () => requestStream.abort();
-  }, buffers.expanding(100));
-};
+import {PayloadEvent} from '../events/Event';
+import {InitialConfig} from '../types/ConfigurationTypes';
+import {RECEIVED_PARTIAL_INITIAL_CONFIGURATION} from '../events/ConfigurationEvents';
 
 export function* performStreamedGet<T>(url: String, options = {headers: {}}) {
   const headers = yield call(
@@ -69,11 +39,24 @@ export function* createHeaders(
   };
 }
 
-export function* constructURL(url: String) {
+export function* getConfig() {
   const {
     initial: {apiURL},
   }: ConfigurationState = yield select(selectConfigurationState);
-  return `${apiURL || ''}${url}`;
+  if (!apiURL) {
+    const {
+      payload: {apiURL: apiUrl},
+    }: PayloadEvent<InitialConfig> = yield take(
+      RECEIVED_PARTIAL_INITIAL_CONFIGURATION,
+    );
+    return apiUrl;
+  }
+  return apiURL;
+}
+
+export function* constructURL(url: String) {
+  const apiURL = yield call(getConfig);
+  return `${apiURL}${url}`;
 }
 
 export function* performGetWithToken(
