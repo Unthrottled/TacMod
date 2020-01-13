@@ -5,7 +5,8 @@ import {
   createFailedToGetUserEvent,
   createReceivedUserEvent,
 } from '../events/UserEvents';
-import {selectSecurityState} from '../reducers';
+import {GlobalState, selectSecurityState, selectUserState} from '../reducers';
+import {FOCUSED_APPLICATION} from '../events/ApplicationLifecycleEvents';
 
 export function* findUserSaga() {
   const {isLoggedIn} = yield select(selectSecurityState);
@@ -22,8 +23,27 @@ export function* requestUserSaga() {
   }
 }
 
+export function* userContextRefreshSaga() {
+  const globalState: GlobalState = yield select(g => g);
+  const securityState = selectSecurityState(globalState);
+  const userState = selectUserState(globalState);
+  if (userState.information.guid) {
+    yield put(
+      createReceivedUserEvent({
+        information: {
+          ...userState.information,
+        },
+        security: {
+          verificationKey: securityState.verificationKey,
+        },
+      }),
+    );
+  }
+}
+
 function* listenToSecurityEvents() {
   yield takeEvery(INITIALIZED_SECURITY, findUserSaga);
+  yield takeEvery(FOCUSED_APPLICATION, userContextRefreshSaga);
 }
 
 export default function* rootSaga() {

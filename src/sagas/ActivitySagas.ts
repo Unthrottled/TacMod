@@ -11,6 +11,7 @@ import {activitySyncSaga} from './activity/ActivitySyncSaga';
 import {activityNotificationSaga} from './activity/ActivityNotificationSaga';
 import {REQUESTED_SYNC} from '../events/UserEvents';
 import {pomodoroActivityInitializationSaga} from './activity/PomodoroActivitySagas';
+import {FOCUSED_APPLICATION} from '../events/ApplicationLifecycleEvents';
 
 function* listenToActivityEvents() {
   yield takeEvery(STARTED_ACTIVITY, registerActivitySaga);
@@ -20,6 +21,7 @@ function* listenToActivityEvents() {
   yield takeEvery('notify', activityNotificationSaga);
   yield fork(activityLogonSaga);
   yield fork(currentActivitySaga);
+  yield takeEvery(FOCUSED_APPLICATION, currentActivitySaga);
   yield fork(pomodoroActivityInitializationSaga);
 }
 

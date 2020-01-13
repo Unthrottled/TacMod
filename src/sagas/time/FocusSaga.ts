@@ -1,7 +1,6 @@
-import {put, call, take} from 'redux-saga/effects';
+import {put, take} from 'redux-saga/effects';
 import {buffers, eventChannel} from 'redux-saga';
 import {AppState} from 'react-native';
-import {updateCurrentActivity} from '../activity/CurrentActivitySaga';
 import {createAppGainedFocusEvent} from '../../events/ApplicationLifecycleEvents';
 
 export const createFocusChannel = () => {
@@ -23,6 +22,5 @@ export function* focusSaga() {
   while (true) {
     yield take(focusChannel);
     yield put(createAppGainedFocusEvent());
-    yield call(updateCurrentActivity);
   }
 }
