@@ -13,6 +13,7 @@ export interface NotificationState {
 export interface MiscellaneousState {
   notification: NotificationState;
   redirectPath: string;
+  hydrated: boolean;
 }
 
 export const INITIAL_MISC_STATE: MiscellaneousState = {
@@ -22,6 +23,7 @@ export const INITIAL_MISC_STATE: MiscellaneousState = {
     type: 'warning',
   },
   redirectPath: '',
+  hydrated: false,
 };
 
 const MiscellaneousReducer = (
@@ -50,6 +52,11 @@ const MiscellaneousReducer = (
       return {
         ...state,
         redirectPath: action.payload,
+      };
+    case 'persist/REHYDRATE':
+      return {
+        ...state,
+        hydrated: true,
       };
     default:
       return state;
