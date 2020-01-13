@@ -1,5 +1,5 @@
-import {call, all, fork, takeEvery} from 'redux-saga/effects';
-import {INITIALIZED_APPLICATION} from '../events/ApplicationLifecycleEvents';
+import {all, call, fork, takeEvery} from 'redux-saga/effects';
+import {FOCUSED_APPLICATION} from '../events/ApplicationLifecycleEvents';
 import oauthInitializationSaga from './security/SecurityInitializationSaga';
 import {
   REQUESTED_AUTH_CHECK,
@@ -19,7 +19,7 @@ function* securityRequestSaga() {
 }
 
 function* listenToStartupEvent() {
-  yield takeEvery(INITIALIZED_APPLICATION, securityRequestSaga);
+  yield takeEvery(FOCUSED_APPLICATION, securityRequestSaga);
 }
 
 function* listenToAppLifecycleEvents() {

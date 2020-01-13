@@ -1,6 +1,6 @@
 import {InitialConfig, OAuthConfig} from '../types/ConfigurationTypes';
 import {BaseEvent, PayloadEvent} from './Event';
-import {AuthConfiguration} from "react-native-app-auth";
+import {AuthConfiguration} from 'react-native-app-auth';
 
 export const REQUESTED_OAUTH_CONFIGURATION: 'REQUESTED_OAUTH_CONFIGURATION' =
   'REQUESTED_OAUTH_CONFIGURATION';

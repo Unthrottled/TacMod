@@ -20,10 +20,12 @@ import {
   RECEIVED_USER,
   SYNCED_DATA,
 } from '../events/UserEvents';
-import {INITIALIZED_APPLICATION} from '../events/ApplicationLifecycleEvents';
+import {
+  FOCUSED_APPLICATION,
+} from '../events/ApplicationLifecycleEvents';
 
 export function* checkCaches() {
-  yield take(INITIALIZED_APPLICATION);
+  yield take(FOCUSED_APPLICATION);
   yield call(inspectCaches);
 }
 
