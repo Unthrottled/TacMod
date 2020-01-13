@@ -7,10 +7,13 @@ import {
 } from '../events/UserEvents';
 import {GlobalState, selectSecurityState, selectUserState} from '../reducers';
 import {FOCUSED_APPLICATION} from '../events/ApplicationLifecycleEvents';
+import {SecurityState} from '../reducers/SecurityReducer';
 
 export function* findUserSaga() {
-  const {isLoggedIn} = yield select(selectSecurityState);
-  if (isLoggedIn) {
+  const {isLoggedIn, verificationKey}: SecurityState = yield select(
+    selectSecurityState,
+  );
+  if (isLoggedIn && !verificationKey) {
     yield call(requestUserSaga);
   }
 }

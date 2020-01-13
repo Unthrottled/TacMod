@@ -5,9 +5,10 @@ import {
   put,
   select,
   take,
+  flush,
   takeEvery,
 } from 'redux-saga/effects';
-import {eventChannel} from 'redux-saga';
+import {buffers, eventChannel} from 'redux-saga';
 import {
   createFoundInternetEvent,
   createFoundWifiEvent,
@@ -26,7 +27,7 @@ export const createNetworkChannel = () => {
       statusObserver(state.isConnected);
     });
     return () => {};
-  });
+  }, buffers.expanding(100));
 };
 
 function* onlineSaga() {
@@ -34,6 +35,7 @@ function* onlineSaga() {
   try {
     while (true) {
       const hasWifi = yield take(onlineEventChannel);
+      yield flush(onlineEventChannel);
       if (hasWifi) {
         yield put(createFoundWifiEvent());
       } else {
@@ -67,7 +69,7 @@ function* initialNetworkStateSaga() {
 }
 
 function* initialInternetStateSaga() {
-  const hasInternet = yield checkInternet();
+  const hasInternet = yield call(checkInternet);
   if (hasInternet) {
     yield put(createFoundInternetEvent());
   } else {
@@ -85,8 +87,6 @@ function* checkInternet() {
 }
 
 function* listenToNetworkEvents() {
-  yield fork(initialNetworkStateSaga);
-  yield fork(initialInternetStateSaga);
   yield fork(onlineSaga);
   yield takeEvery(FOCUSED_APPLICATION, initialInternetStateSaga);
 }
