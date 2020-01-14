@@ -1,4 +1,4 @@
-import {call, select, take} from 'redux-saga/effects';
+import {delay, race, call, select, take} from 'redux-saga/effects';
 import axios from 'axios';
 import {accessTokenWithSessionExtensionSaga} from './security/AccessTokenSagas';
 import {selectConfigurationState} from '../reducers';
@@ -31,12 +31,24 @@ function* getAuthorizationStuff() {
     return {guid, verificationKey};
   }
 
+  const {userEvent, timeout} = yield race({
+    userEvent: take(RECEIVED_USER),
+    timeout: delay(5000),
+  });
+
+  if (timeout) {
+    return {
+      guid: '',
+      verificationKey: '',
+    };
+  }
+
   const {
     payload: {
       information: {guid: userGuid},
       security: {verificationKey: vK},
     },
-  }: PayloadEvent<UserResponse> = yield take(RECEIVED_USER);
+  }: PayloadEvent<UserResponse> = userEvent;
   return {guid: userGuid, verificationKey: vK};
 }
 
