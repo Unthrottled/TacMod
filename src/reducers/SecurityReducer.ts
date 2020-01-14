@@ -4,7 +4,7 @@ import {
   LOGGED_OFF,
   LOGGED_ON,
   RECEIVED_TOKENS,
-  REQUESTED_LOGOFF,
+  REQUESTED_LOGOFF, REQUESTED_TOKEN,
 } from '../events/SecurityEvents';
 import {tokenReceptionReducer} from './security/TokenReducer';
 import {RECEIVED_USER} from '../events/UserEvents';
@@ -26,6 +26,7 @@ export type SecurityState = {
   isInitialized: boolean;
   isOutOfSync: boolean;
   isLoggingOut: boolean;
+  isRequestingToken: boolean;
 };
 
 const defaultTokenInfo = {
@@ -44,6 +45,7 @@ const INITIAL_SECURITY_STATE: SecurityState = {
   isInitialized: false,
   isOutOfSync: false,
   isLoggingOut: false,
+  isRequestingToken: false,
 };
 
 const securityReducer = (state = INITIAL_SECURITY_STATE, action: any) => {
@@ -57,12 +59,18 @@ const securityReducer = (state = INITIAL_SECURITY_STATE, action: any) => {
       return {
         ...INITIAL_SECURITY_STATE,
       };
+    case REQUESTED_TOKEN:
+      return {
+        ...state,
+        isRequestingToken: true,
+      };
     case EXPIRED_SESSION:
       delete state.refreshToken;
       delete state.refreshTokenInformation;
       return {
         ...state,
         isExpired: true,
+        isRequestingToken: false,
       };
     case INITIALIZED_SECURITY:
       return {

@@ -5,6 +5,7 @@ export const LOGGED_ON: 'LOGGED_ON' = 'LOGGED_ON';
 export const LOGGED_OFF: 'LOGGED_OFF' = 'LOGGED_OFF';
 export const REQUESTED_LOGOFF: 'REQUESTED_LOGOFF' = 'REQUESTED_LOGOFF';
 export const REQUESTED_LOGON: 'REQUESTED_LOGON' = 'REQUESTED_LOGON';
+export const REQUESTED_TOKEN: 'REQUESTED_TOKEN' = 'REQUESTED_TOKEN';
 export const REQUESTED_AUTH_CHECK: 'REQUESTED_AUTH_CHECK' =
   'REQUESTED_AUTH_CHECK';
 export const CHECKED_AUTH: 'CHECKED_AUTH' = 'CHECKED_AUTH';
@@ -51,6 +52,10 @@ export const createTokenFailureEvent = (
 
 export const createSecurityInitializedEvent = () => ({
   type: INITIALIZED_SECURITY,
+});
+
+export const createRequestingTokenEvent = () => ({
+  type: REQUESTED_TOKEN,
 });
 
 export const createCheckedAuthorizationEvent = () => ({
