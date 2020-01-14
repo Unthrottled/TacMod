@@ -1,4 +1,4 @@
-import {flush, call, put, select, take} from 'redux-saga/effects';
+import {debounce, flush, call, put, select, take} from 'redux-saga/effects';
 import {buffers, eventChannel} from 'redux-saga';
 import {AppState} from 'react-native';
 import {createAppGainedFocusEvent} from '../../events/ApplicationLifecycleEvents';
@@ -8,6 +8,7 @@ export const createFocusChannel = () => {
   return eventChannel(statusObserver => {
     const listener = (nextState: string) => {
       if (nextState === 'active') {
+        console.log('yeet!')
         statusObserver(true);
       }
     };
@@ -25,12 +26,15 @@ export function* waitForHydration() {
   }
 }
 
+export function* performFocusEvents(focusChannel: any){
+  yield flush(focusChannel);
+  yield call(waitForHydration);
+  yield put(createAppGainedFocusEvent());
+  console.warn('focused!')
+}
+
 export function* focusSaga() {
-  const focusChannel = createFocusChannel();
-  while (true) {
-    yield take(focusChannel);
-    yield flush(focusChannel);
-    yield call(waitForHydration);
-    yield put(createAppGainedFocusEvent());
-  }
+  console.warn('setting up focus!')
+  const focusChannel: any = createFocusChannel();
+  yield debounce(300, focusChannel, performFocusEvents, focusChannel);
 }
