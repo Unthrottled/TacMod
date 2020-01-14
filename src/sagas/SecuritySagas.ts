@@ -1,21 +1,12 @@
 import {all, call, fork, takeEvery} from 'redux-saga/effects';
 import {FOCUSED_APPLICATION} from '../events/ApplicationLifecycleEvents';
 import oauthInitializationSaga from './security/SecurityInitializationSaga';
-import {
-  REQUESTED_AUTH_CHECK,
-  REQUESTED_LOGOFF,
-  REQUESTED_LOGON,
-} from '../events/SecurityEvents';
-import {
-  authorizationGrantSaga,
-  loginSaga,
-} from './security/AuthorizationFlowSagas';
+import {REQUESTED_LOGOFF, REQUESTED_LOGON,} from '../events/SecurityEvents';
+import {loginSaga,} from './security/AuthorizationFlowSagas';
 import logoutSaga from './security/LogoutSaga';
-import {oauthConfigurationSaga} from './configuration/ConfigurationConvienenceSagas';
 
 function* securityRequestSaga() {
-  const oauthConfig = yield oauthConfigurationSaga();
-  yield call(oauthInitializationSaga, oauthConfig);
+  yield call(oauthInitializationSaga);
 }
 
 function* listenToStartupEvent() {
@@ -32,7 +23,6 @@ function* listenToLoginEvents() {
 }
 
 function* listenToSecurityEvents() {
-  yield takeEvery(REQUESTED_AUTH_CHECK, authorizationGrantSaga);
 }
 
 export default function* rootSaga() {

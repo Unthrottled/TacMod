@@ -24,7 +24,6 @@ export function* refreshTokenSaga(oauthConfig: AuthConfiguration) {
     };
     yield put(createTokenReceptionEvent(withOfflineToken));
   } catch (e) {
-    console.error(JSON.stringify(e));
     yield put(createExpiredSessionEvent()); // credentials are not good, just ask logon again please
   }
 }

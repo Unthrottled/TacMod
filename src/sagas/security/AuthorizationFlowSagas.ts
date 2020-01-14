@@ -9,13 +9,10 @@ import {authorize} from 'react-native-app-auth';
 import {oauthConfigurationSaga} from '../configuration/ConfigurationConvienenceSagas';
 import {createApplicationUnInitializedEvent} from '../../events/ApplicationLifecycleEvents';
 
-export function* authorizationGrantSaga() {
-  yield call(performAuthorizationGrantFlowSaga, false);
-  yield put(createCheckedAuthorizationEvent());
-}
 
 export function* loginSaga() {
   yield call(performAuthorizationGrantFlowSaga, true);
+  yield put(createCheckedAuthorizationEvent());
 }
 
 export function* performAuthorizationGrantFlowSaga(
