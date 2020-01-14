@@ -12,12 +12,12 @@ export type UserState = {
 };
 const INITIAL_USER_STATE: UserState = {
   information: {
-    firstName: 'Smitty',
-    lastName: 'Werbenjagermangensen',
+    firstName: '',
+    lastName: '',
     email: '',
-    fullName: 'Smitty Werbenjagermangensen',
+    fullName: '',
     guid: '',
-    userName: 'L337_69',
+    userName: '',
   },
   miscellaneous: {
     hasItemsCached: false,

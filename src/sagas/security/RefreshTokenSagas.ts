@@ -12,12 +12,16 @@ import {
 } from '../../events/SecurityEvents';
 import {selectSecurityState} from '../../reducers';
 import {SecurityState} from '../../reducers/SecurityReducer';
+import {isAccessTokenValid} from '../../security/OAuth';
 
 export function* refreshTokenSaga(oauthConfig: AuthConfiguration) {
   yield call(waitForWifi);
   try {
     const realSecurityState: SecurityState = yield select(selectSecurityState);
-    if (!realSecurityState.isRequestingToken) {
+    if (
+      !realSecurityState.isRequestingToken &&
+      !isAccessTokenValid(realSecurityState)
+    ) {
       yield put(createRequestingTokenEvent());
       const authResult = yield call(refresh, oauthConfig, {
         refreshToken: realSecurityState.refreshToken,
