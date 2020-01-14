@@ -40,17 +40,33 @@ function* getAuthorizationStuff() {
   return {guid: userGuid, verificationKey: vK};
 }
 
+export function* getVerificationStuff(include: boolean = true) {
+  if (include) {
+    const {guid, verificationKey} = yield call(getAuthorizationStuff);
+    return {
+      ...(guid ? {'User-Identifier': guid} : {}),
+      ...(verificationKey ? {Verification: verificationKey} : {}),
+    };
+  }
+
+  return {};
+}
+
 export function* createHeaders(
   accessTokenSaga: () => any,
   options = {headers: {}},
+  includeVerification = true,
 ) {
   const accessToken = yield call(accessTokenSaga);
-  const {guid, verificationKey} = yield call(getAuthorizationStuff);
+  const verificationStuff = yield call(
+    getVerificationStuff,
+    includeVerification,
+  );
+
   return {
     ...options.headers,
     Authorization: `Bearer ${accessToken}`,
-    ...(guid ? {'User-Identifier': guid} : {}),
-    ...(verificationKey ? {Verification: verificationKey} : {}),
+    ...verificationStuff,
   };
 }
 
@@ -71,17 +87,21 @@ export function* getConfig() {
 
 export function* constructURL(url: String) {
   const apiURL = yield call(getConfig);
-  let s = `${apiURL}${url}`;
-  console.warn(s)
-  return s;
+  return `${apiURL}${url}`;
 }
 
 export function* performGetWithToken(
   url: string,
   options: any,
   accessTokenSaga: () => any,
+  includeVerification: boolean = true,
 ) {
-  const headers = yield call(createHeaders, accessTokenSaga, options);
+  const headers = yield call(
+    createHeaders,
+    accessTokenSaga,
+    options,
+    includeVerification,
+  );
   const fullURL = yield call(constructURL, url);
   return yield call(axios.get, fullURL, {
     ...options,
@@ -95,6 +115,18 @@ export function* performGet(url: string, options = {headers: {}}) {
     url,
     options,
     accessTokenWithSessionExtensionSaga,
+  );
+}
+export function* performGetWithoutVerification(
+  url: string,
+  options = {headers: {}},
+) {
+  return yield call(
+    performGetWithToken,
+    url,
+    options,
+    accessTokenWithSessionExtensionSaga,
+    false,
   );
 }
 

@@ -9,25 +9,20 @@ import {authorize} from 'react-native-app-auth';
 import {oauthConfigurationSaga} from '../configuration/ConfigurationConvienenceSagas';
 import {createApplicationUnInitializedEvent} from '../../events/ApplicationLifecycleEvents';
 
-
 export function* loginSaga() {
-  yield call(performAuthorizationGrantFlowSaga, true);
+  yield call(performAuthorizationGrantFlowSaga);
   yield put(createCheckedAuthorizationEvent());
 }
 
-export function* performAuthorizationGrantFlowSaga(
-  shouldRequestLogon: boolean,
-) {
-  if (shouldRequestLogon) {
-    yield put(createRequestForInitialConfigurations());
-    const oAuthConfig = yield call(oauthConfigurationSaga);
-    try {
-      yield put(createApplicationUnInitializedEvent());
-      const authState = yield call(authorize, oAuthConfig);
-      yield put(createTokenReceptionEvent(authState));
-      yield put(createLoggedOnAction());
-    } catch (e) {
-      // todo: handle login failure
-    }
+export function* performAuthorizationGrantFlowSaga() {
+  yield put(createRequestForInitialConfigurations());
+  const oAuthConfig = yield call(oauthConfigurationSaga);
+  try {
+    yield put(createApplicationUnInitializedEvent());
+    const authState = yield call(authorize, oAuthConfig);
+    yield put(createTokenReceptionEvent(authState));
+    yield put(createLoggedOnAction());
+  } catch (e) {
+    // todo: handle login failure
   }
 }

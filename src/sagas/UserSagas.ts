@@ -1,6 +1,6 @@
 import {all, call, put, select, takeEvery} from 'redux-saga/effects';
-import {INITIALIZED_SECURITY} from '../events/SecurityEvents';
-import {performGet} from './APISagas';
+import {LOGGED_ON} from '../events/SecurityEvents';
+import {performGet, performGetWithoutVerification} from './APISagas';
 import {
   createFailedToGetUserEvent,
   createReceivedUserEvent,
@@ -17,9 +17,10 @@ export function* findUserSaga() {
     yield call(requestUserSaga);
   }
 }
+
 export function* requestUserSaga() {
   try {
-    const {data: user} = yield call(performGet, '/user');
+    const {data: user} = yield call(performGetWithoutVerification, '/user');
     yield put(createReceivedUserEvent(user)); // found waldo.
   } catch (e) {
     yield put(createFailedToGetUserEvent(e));
@@ -45,7 +46,7 @@ export function* userContextRefreshSaga() {
 }
 
 function* listenToSecurityEvents() {
-  yield takeEvery(INITIALIZED_SECURITY, findUserSaga);
+  yield takeEvery(LOGGED_ON, findUserSaga);
   yield takeEvery(FOCUSED_APPLICATION, userContextRefreshSaga);
 }
 
