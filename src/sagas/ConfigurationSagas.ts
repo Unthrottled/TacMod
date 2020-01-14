@@ -3,7 +3,7 @@ import {
   REQUESTED_INITIAL_CONFIGURATION,
   REQUESTED_OAUTH_CONFIGURATION,
 } from '../events/ConfigurationEvents';
-import {FOCUSED_APPLICATION, INITIALIZED_APPLICATION} from '../events/ApplicationLifecycleEvents';
+import {FOCUSED_APPLICATION} from '../events/ApplicationLifecycleEvents';
 import {securityRequestSaga} from './configuration/OAuthConfigurationSagas';
 import {authorizationServiceConfigurationSaga} from './configuration/ConfigurationSetupSagas';
 import {
@@ -11,9 +11,7 @@ import {
   initialConfigurationSaga,
 } from './configuration/InitialConfigurationSagas';
 
-// todo: cache or not cache configs?
 function* listenToApplicationEvents() {
-  // yield takeEvery(INITIALIZED_APPLICATION, initialConfigurationSaga);
   yield takeEvery(FOCUSED_APPLICATION, initialConfigurationSaga);
 }
 
