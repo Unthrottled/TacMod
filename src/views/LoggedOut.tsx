@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#eaeaf0',
   },
   button: {
-    backgroundColor: '#e49d2c',
+    backgroundColor: '#8ab72d',
     color: '#585858',
     textDecorationColor: '#585858',
     paddingTop: 5,
@@ -50,7 +50,7 @@ const LoggedOut: FC = () => {
     <View style={styles.container}>
       <Banner>
         <Button color={'#585858'} style={styles.button} onPress={login}>
-          Start Using TacMod!
+          Get Tactical!
         </Button>
       </Banner>
     </View>

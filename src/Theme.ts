@@ -5,7 +5,7 @@ export const theme = {
   roundness: 2,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#ffb300',
+    primary: '#6b8e23',
     accent: '#2196f3',
   },
 };
