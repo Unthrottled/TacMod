@@ -12,7 +12,7 @@ export function* securityRequestSaga() {
   const authConfigurations: AuthConfiguration = {
     issuer: initialConfig.issuer,
     scopes: ['openid', 'profile', 'email', 'offline_access'],
-    redirectUrl: 'io.acari.sogos:/engage',
+    redirectUrl: 'io.acari.sogos.tacmod:/engage',
     additionalParameters: {
       prompt: 'login',
     },

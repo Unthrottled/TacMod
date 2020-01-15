@@ -1,4 +1,4 @@
-package io.acari.sogos
+package io.acari.sogos.tacmod
 
 import com.facebook.react.ReactActivity
 

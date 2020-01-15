@@ -1,4 +1,4 @@
-package io.acari.sogos.stream
+package io.acari.sogos.tacmod.stream
 
 import android.view.View
 import com.facebook.react.ReactPackage

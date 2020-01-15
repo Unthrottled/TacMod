@@ -49,13 +49,13 @@ android {
     }
 
     defaultConfig {
-        applicationId "io.acari.sogos"
+        applicationId "io.acari.sogos.tacmod"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         manifestPlaceholders = [
-                'appAuthRedirectScheme': 'io.acari.sogos'
+                'appAuthRedirectScheme': 'io.acari.sogos.tacmod'
         ]
     }
     splits {
