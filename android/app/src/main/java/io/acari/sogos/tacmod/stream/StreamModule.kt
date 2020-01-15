@@ -1,4 +1,4 @@
-package io.acari.sogos.stream
+package io.acari.sogos.tacmod.stream
 
 import com.facebook.react.bridge.*
 import okhttp3.*
