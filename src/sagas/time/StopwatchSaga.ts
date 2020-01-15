@@ -36,7 +36,7 @@ export function* stopWatchSaga(activityThatStartedThis: Activity) {
         const waitFor = 1000 - (after - before);
         BackgroundTimer.setTimeout(resolve, waitFor < 0 ? 0 : waitFor);
       });
-      const {newCurrentActivity} = yield race({
+      const {currentActivity: newCurrentActivity} = yield race({
         currentActivity: call(waitForCurrentActivity),
         timeElapsed: call(() => waiter),
       });

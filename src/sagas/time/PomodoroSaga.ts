@@ -70,16 +70,16 @@ export function* pomodoroSaga(activityThatStartedThis: Activity) {
       numberOfCompletedPomodoro,
     } = yield select((globalState: GlobalState) => {
       const {
-        currentActivity,
-        previousActivity,
+        currentActivity: ca,
+        previousActivity: pa,
         completedPomodoro: {count},
       } = selectActivityState(globalState);
       const {
         pomodoro: {settings},
       } = selectTacticalState(globalState);
       return {
-        currentActivity,
-        previousActivity,
+        currentActivity: ca,
+        previousActivity: pa,
         timeElapsed: selectTimeState(globalState).timeElapsed,
         pomodoroSettings: settings,
         numberOfCompletedPomodoro: count,
@@ -100,7 +100,7 @@ export function* pomodoroSaga(activityThatStartedThis: Activity) {
             1000 - (after - before) - Math.floor(Math.random() * 25);
           return BackgroundTimer.setTimeout(resolve, waitFor < 0 ? 0 : waitFor);
         });
-        const {newCurrentActivity} = yield race({
+        const {currentActivity: newCurrentActivity} = yield race({
           currentActivity: call(waitForCurrentActivity),
           timeElapsed: call(() => waiter),
         });
