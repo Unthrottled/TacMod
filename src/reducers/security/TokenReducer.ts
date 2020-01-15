@@ -16,7 +16,6 @@ export const tokenReceptionReducer = (
 ): SecurityState => {
   return {
     ...state,
-    isRequestingToken: false, // prevents multiple authorization requests
     accessToken: tokenReceptionPayload.accessToken,
     accessTokenInformation: getRefreshTokenInformation(
       tokenReceptionPayload.accessToken,

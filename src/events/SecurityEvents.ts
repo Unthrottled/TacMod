@@ -28,11 +28,6 @@ export const createExpiredSessionEvent = () => ({
   type: EXPIRED_SESSION,
 });
 
-export const requestAuthorizationGrantCheck = (oauthConfig: OAuthConfig) => ({
-  type: REQUESTED_AUTH_CHECK,
-  payload: oauthConfig,
-});
-
 export const createTokenReceptionEvent = (tokenResponse: AuthorizeResult) => ({
   type: RECEIVED_TOKENS,
   payload: tokenResponse,

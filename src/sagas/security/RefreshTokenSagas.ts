@@ -7,22 +7,20 @@ import {
 } from 'react-native-app-auth';
 import {
   createExpiredSessionEvent,
-  createRequestingTokenEvent,
   createTokenReceptionEvent,
 } from '../../events/SecurityEvents';
 import {selectSecurityState} from '../../reducers';
 import {SecurityState} from '../../reducers/SecurityReducer';
 import {isAccessTokenValid} from '../../security/OAuth';
 
+let tokenSemaphore = false;
+
 export function* refreshTokenSaga(oauthConfig: AuthConfiguration) {
   yield call(waitForWifi);
   try {
     const realSecurityState: SecurityState = yield select(selectSecurityState);
-    if (
-      !realSecurityState.isRequestingToken &&
-      !isAccessTokenValid(realSecurityState)
-    ) {
-      yield put(createRequestingTokenEvent());
+    if (!tokenSemaphore && !isAccessTokenValid(realSecurityState)) {
+      tokenSemaphore = true;
       const authResult = yield call(refresh, oauthConfig, {
         refreshToken: realSecurityState.refreshToken,
       });
@@ -31,6 +29,7 @@ export function* refreshTokenSaga(oauthConfig: AuthConfiguration) {
         refreshToken: realSecurityState.refreshToken,
       };
       yield put(createTokenReceptionEvent(withOfflineToken));
+      tokenSemaphore = false;
     }
   } catch (e) {
     yield put(createExpiredSessionEvent()); // credentials are not good, just ask logon again please
