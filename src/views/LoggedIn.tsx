@@ -68,7 +68,7 @@ const LoggedIn: FC = () => {
           style={{
             ...bannerStyles.container,
           }}>
-          <Headline>SOGoS</Headline>
+          <Headline>TacMod</Headline>
           <Caption style={bannerStyles.secondary}>
             Strategic Orchestration and Governance System
           </Caption>

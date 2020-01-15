@@ -50,7 +50,7 @@ const LoggedOut: FC = () => {
     <View style={styles.container}>
       <Banner>
         <Button color={'#585858'} style={styles.button} onPress={login}>
-          Start Using SOGoS!
+          Start Using TacMod!
         </Button>
       </Banner>
     </View>

@@ -147,7 +147,7 @@ export function* checkCurrentActivity() {
     const {currentActivity} = yield select(selectActivityState);
     const areSame = activitiesEqual(activity, currentActivity);
     if (!areSame) {
-      // There is more than one device controlling SOGoS now
+      // There is more than one device using SOGoS now
       yield call(handleNewActivity, activity);
     }
     return areSame;

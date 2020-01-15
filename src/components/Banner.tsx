@@ -34,7 +34,7 @@ export const bannerStyles = StyleSheet.create({
 const Banner: FC = ({children}) => (
   <View style={bannerStyles.banner}>
     <View style={bannerStyles.container}>
-      <Text style={{fontSize: 35}}>SOGoS</Text>
+      <Text style={{fontSize: 35}}>TacMod</Text>
       <Caption style={bannerStyles.secondary}>
         Strategic Orchestration and Governance System
       </Caption>

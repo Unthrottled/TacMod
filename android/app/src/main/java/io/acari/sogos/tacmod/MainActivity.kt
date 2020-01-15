@@ -8,6 +8,6 @@ class MainActivity : ReactActivity() {
    * rendering of the component.
    */
   override fun getMainComponentName(): String? {
-    return "SOGoS"
+    return "TacMod"
   }
 }
