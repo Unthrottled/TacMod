@@ -1,7 +1,7 @@
 import React, {FC, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {createApplicationInitializedEvent} from '../events/ApplicationLifecycleEvents';
-import {StyleSheet, View} from 'react-native';
+import {Linking, StyleSheet, Text, View} from 'react-native';
 import LoggedInLayout from '../components/LoggedInLayout';
 import {bannerStyles} from '../components/Banner';
 import {Caption, Card, Headline, Paragraph} from 'react-native-paper';
@@ -70,12 +70,21 @@ const LoggedIn: FC = () => {
           }}>
           <Headline>TacMod</Headline>
           <Caption style={bannerStyles.secondary}>
-            Strategic Orchestration and Governance System
+            SOGoS's Tactical Module
           </Caption>
           <Paragraph style={bannerStyles.secondary}>
-            Welcome{fullName ? ` ${fullName}` : ''}! Figure out where you want
-            to excel. Then push yourself to your limits. Knowing you can find
-            your optimal recovery window, for maximum periodization.
+            Welcome{fullName ? ` ${fullName}` : ''}! You know what needs to be
+            done thanks to SOGoS. This will help in the execution and
+            achievement of your objectives.
+          </Paragraph>
+          <Paragraph style={[bannerStyles.secondary, bannerStyles.sogosLink]}>
+            Use{' '}
+            <Text
+              onPress={() => Linking.openURL('https://sogos.acari.io')}
+              style={bannerStyles.link}>
+              sogos.acari.io
+            </Text>{' '}
+            for strategic management
           </Paragraph>
           <ReachIcon />
         </View>
