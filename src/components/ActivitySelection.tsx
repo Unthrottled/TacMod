@@ -38,8 +38,6 @@ const styles = StyleSheet.create({
   },
   activityIcons: {
     flexDirection: 'column',
-    marginRight: 'auto',
-    marginLeft: 'auto',
     width: '100%',
     marginBottom: 100,
   },
@@ -64,7 +62,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   item: {
-    marginLeft: 50,
+    marginLeft: 'auto',
+    marginRight: 'auto',
     marginBottom: 16,
   },
 });
