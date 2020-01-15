@@ -1,8 +1,8 @@
 platform :ios, '9.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-target 'SOGoS' do
-  # Pods for SOGoS
+target 'TacMod' do
+  # Pods for TacMod
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -36,7 +36,7 @@ target 'SOGoS' do
 
 
 
-  target 'SOGoSTests' do
+  target 'TacModTests' do
     inherit! :search_paths
     # Pods for testing
   end
@@ -44,10 +44,10 @@ target 'SOGoS' do
   use_native_modules!
 end
 
-target 'SOGoS-tvOS' do
-  # Pods for SOGoS-tvOS
+target 'TacMod-tvOS' do
+  # Pods for TacMod-tvOS
 
-  target 'SOGoS-tvOSTests' do
+  target 'TacMod-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end
