@@ -6,6 +6,7 @@ import SnackBoi from "./SnackBoi";
 const styles = StyleSheet.create({
   container: {
     height: '100%',
+    backgroundColor: '#f5fcff',
   },
 });
 const LoggedInLayout: FC = ({children, ...otherProperties}) => (

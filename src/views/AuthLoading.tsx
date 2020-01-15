@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {StatusBar, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {ActivityIndicator} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectSecurityState} from '../reducers';
@@ -25,7 +25,7 @@ const AuthLoading = () => {
   }, [dispetch, isInitialized, isLoggedIn, navigate]);
   return (
     <View style={styles.container}>
-      <ActivityIndicator size={'large'} />
+      <ActivityIndicator size={'large'}/>
     </View>
   );
 };
