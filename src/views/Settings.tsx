@@ -173,7 +173,7 @@ const Settings = () => {
             We all cannot be the same. Therefore we thought it would be handy to
             allow you to adjust the experience to your preferences!
           </Paragraph>
-          <MaterialIcon name={'settings'} size={60} />
+          <MaterialIcon name={'settings'}  color='#333831' size={60} />
         </View>
       </View>
       <View>
