@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import {Linking, StyleSheet, Text, View} from 'react-native';
-import ReachIcon from '../images/ReachIcon';
 import {Caption, Paragraph} from 'react-native-paper';
+import TacModIcon from '../images/TacModIcon';
 
 export const bannerStyles = StyleSheet.create({
   parent: {
@@ -42,7 +42,7 @@ export const bannerStyles = StyleSheet.create({
 const Banner: FC = ({children}) => (
   <View style={bannerStyles.banner}>
     <View style={bannerStyles.container}>
-      <Text style={{fontSize: 35}}>TacMod</Text>
+      <TacModIcon />
       <Caption style={bannerStyles.secondary}>SOGoS's Tactical Module</Caption>
       <Paragraph style={bannerStyles.secondary}>
         You know what needs to be done thanks to SOGoS. This will help in the
@@ -57,7 +57,6 @@ const Banner: FC = ({children}) => (
         </Text>{' '}
         for strategic management
       </Paragraph>
-      <ReachIcon />
       {children}
     </View>
   </View>

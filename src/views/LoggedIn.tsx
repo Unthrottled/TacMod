@@ -5,12 +5,12 @@ import {Linking, StyleSheet, Text, View} from 'react-native';
 import LoggedInLayout from '../components/LoggedInLayout';
 import {bannerStyles} from '../components/Banner';
 import {Caption, Card, Headline, Paragraph} from 'react-native-paper';
-import ReachIcon from '../images/ReachIcon';
 import {GlobalState, selectSecurityState, selectUserState} from '../reducers';
 import SettingsIcon from '../images/SettingsIcon';
 import ActivityTimeBar from '../components/time/ActivityTimeBar';
 import PausedPomodoro from '../components/time/PausedPomodoro';
 import {useNavigation} from 'react-navigation-hooks';
+import TacModIcon from "../images/TacModIcon";
 
 const mapStateToProps = (state: GlobalState) => {
   const {
@@ -68,7 +68,7 @@ const LoggedIn: FC = () => {
           style={{
             ...bannerStyles.container,
           }}>
-          <Headline>TacMod</Headline>
+          <TacModIcon />
           <Caption style={bannerStyles.secondary}>
             SOGoS's Tactical Module
           </Caption>
@@ -86,7 +86,6 @@ const LoggedIn: FC = () => {
             </Text>{' '}
             for strategic management
           </Paragraph>
-          <ReachIcon />
         </View>
       </View>
       <Card

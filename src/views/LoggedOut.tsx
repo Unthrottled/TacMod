@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#8ab72d',
     color: '#585858',
     textDecorationColor: '#585858',
+    marginTop: 30,
     paddingTop: 5,
     paddingBottom: 5,
   },
