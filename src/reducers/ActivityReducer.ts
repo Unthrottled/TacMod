@@ -18,6 +18,7 @@ import {
 } from '../types/ActivityTypes';
 import {StringDictionary} from '../types/BaseTypes';
 import reduceRight from 'lodash/reduceRight';
+import {LOGGED_OFF} from "../events/SecurityEvents";
 
 export type RememberedPomodoro = {
   dateCounted: number;
@@ -59,6 +60,11 @@ const activityReducer = (
   action: any,
 ): ActivityState => {
   switch (action.type) {
+    case LOGGED_OFF:
+      return {
+        ...INITIAL_ACTIVITY_STATE,
+        cache: state.cache,
+      };
     case INITIALIZED_POMODORO:
       return {
         ...state,

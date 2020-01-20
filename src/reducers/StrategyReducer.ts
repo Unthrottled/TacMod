@@ -10,6 +10,7 @@ import {
 import {objectToArray, objectToKeyValueArray} from '../miscellanous/Tools';
 import {CachedObjective, KeyResult, Objective} from '../types/StrategyTypes';
 import {HasId, StringDictionary} from '../types/BaseTypes';
+import {LOGGED_OFF} from "../events/SecurityEvents";
 
 export interface StrategyState {
   objectives: StringDictionary<Objective>;
@@ -17,7 +18,7 @@ export interface StrategyState {
   cache: StringDictionary<CachedObjective[]>;
 }
 
-const INITIAL_USER_STATE: StrategyState = {
+const INITIAL_STRATEGY_STATE: StrategyState = {
   objectives: {},
   keyResults: {},
   cache: {},
@@ -52,10 +53,16 @@ const updateStateWithObjectives = (
 };
 
 const StrategyReducer = (
-  state: StrategyState = INITIAL_USER_STATE,
+  state: StrategyState = INITIAL_STRATEGY_STATE,
   action: any,
 ) => {
   switch (action.type) {
+    case LOGGED_OFF:
+      return {
+        ...INITIAL_STRATEGY_STATE,
+        cache: state.cache,
+      };
+
     case CREATED_OBJECTIVE:
     case UPDATED_OBJECTIVE:
       const newObjective = [action.payload];

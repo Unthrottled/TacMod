@@ -15,6 +15,7 @@ import {
 import {objectToKeyValueArray} from '../miscellanous/Tools';
 import TacticalActivityReducer from './TacticalActivityReducer';
 import {NumberDictionary, StringDictionary} from '../types/BaseTypes';
+import {LOGGED_OFF} from "../events/SecurityEvents";
 
 export interface PomodoroState {
   settings: PomodoroSettings;
@@ -49,6 +50,17 @@ const TacticalReducer = (
 ) => {
   const updatedState = TacticalActivityReducer(state, action);
   switch (action.type) {
+    case LOGGED_OFF:
+      return {
+        pomodoro: {
+          ...INITIAL_TACTICAL_STATE.pomodoro,
+          cache: state.pomodoro.cache,
+        },
+        activity: {
+          ...INITIAL_TACTICAL_STATE.activity,
+          cache: state.activity.cache,
+        },
+      };
     case UPDATED_POMODORO_SETTINGS:
     case FOUND_POMODORO_SETTINGS:
     case REGISTERED_POMODORO_SETTINGS:
