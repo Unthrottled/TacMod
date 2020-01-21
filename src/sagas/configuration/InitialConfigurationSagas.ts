@@ -25,7 +25,7 @@ export function* initialConfigurationSaga() {
     const {data: configData} = yield getInitialUIConfig();
     const {
       data: {currentTime},
-    } = yield call(performFullOpenGet, `${configData.apiURL}/time`);
+    } = yield call(performFullOpenGet, `${configData.stagingURL}/time`); // todo: migrate
     const meow = new Date().valueOf();
     if (meow - currentTime > 10000) {
       yield put(createOutOfSyncEvent());
