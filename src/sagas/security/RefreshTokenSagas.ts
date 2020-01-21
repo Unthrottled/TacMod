@@ -7,6 +7,7 @@ import {
 } from 'react-native-app-auth';
 import {
   createExpiredSessionEvent,
+  createTokenFailureEvent,
   createTokenReceptionEvent,
 } from '../../events/SecurityEvents';
 import {selectSecurityState} from '../../reducers';
@@ -33,6 +34,14 @@ export function* refreshTokenSaga(oauthConfig: AuthConfiguration) {
     }
   } catch (e) {
     yield put(createExpiredSessionEvent()); // credentials are not good, just ask logon again please
+
+    // Should probably remove this, but lets others know that
+    // token reception failed.
+    yield put(
+      createTokenFailureEvent({
+        error: e,
+      }),
+    );
   }
 }
 

@@ -1,6 +1,6 @@
 import {all, call, put, select, takeEvery} from 'redux-saga/effects';
 import {LOGGED_ON} from '../events/SecurityEvents';
-import {performGet, performGetWithoutVerification} from './APISagas';
+import {performGetWithoutVerification} from './APISagas';
 import {
   createFailedToGetUserEvent,
   createReceivedUserEvent,

@@ -34,7 +34,7 @@ export const createTokenReceptionEvent = (tokenResponse: AuthorizeResult) => ({
 });
 
 export type TokenFailurePayload = {
-  tokenRequest: AuthorizeResult;
+  tokenRequest?: AuthorizeResult;
   error: any;
 };
 
