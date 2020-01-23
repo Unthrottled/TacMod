@@ -16,6 +16,11 @@ export function* securityRequestSaga() {
     additionalParameters: {
       prompt: 'login',
     },
+    serviceConfiguration: {
+      authorizationEndpoint: initialConfig.authorizationEndpoint,
+      tokenEndpoint: initialConfig.tokenEndpoint,
+    },
+    usePKCE: true,
     clientId: initialConfig.appClientID,
     dangerouslyAllowInsecureHttpRequests: DANGER_ZONE,
   };
