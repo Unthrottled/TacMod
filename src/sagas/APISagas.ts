@@ -84,17 +84,17 @@ export function* createHeaders(
 
 export function* getConfig() {
   const {
-    initial: {stagingURL},
+    initial: {apiURL},
   }: ConfigurationState = yield select(selectConfigurationState);
-  if (!stagingURL) {
+  if (!apiURL) {
     const {
-      payload: {stagingURL: apiUrl},
+      payload: {apiURL: apiUrl},
     }: PayloadEvent<InitialConfig> = yield take(
       RECEIVED_PARTIAL_INITIAL_CONFIGURATION,
     );
     return apiUrl;
   }
-  return stagingURL;
+  return apiURL;
 }
 
 export function* constructURL(url: String) {
