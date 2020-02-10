@@ -49,13 +49,13 @@ android {
     }
 
     defaultConfig {
-        applicationId "io.acari.sogos.tacmod"
+        applicationId "io.unthrottled.sogos.tacmod"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         manifestPlaceholders = [
-                'appAuthRedirectScheme': 'io.acari.sogos.tacmod'
+                'appAuthRedirectScheme': 'io.unthrottled.sogos.tacmod'
         ]
     }
     splits {
@@ -106,8 +106,6 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-//    implementation 'io.projectreactor.ipc:reactor-netty:0.7.15.RELEASE'
-
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";

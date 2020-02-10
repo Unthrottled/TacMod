@@ -1,4 +1,4 @@
-package io.acari.sogos.tacmod
+package io.unthrottled.sogos.tacmod
 
 import android.app.Application
 import android.content.Context
@@ -7,7 +7,7 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
 import com.facebook.soloader.SoLoader
-import io.acari.sogos.tacmod.stream.StreamPackage
+import io.unthrottled.sogos.tacmod.stream.StreamPackage
 import java.lang.reflect.InvocationTargetException
 
 

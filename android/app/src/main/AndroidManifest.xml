@@ -1,18 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="io.acari.sogos.tacmod">
+  package="io.unthrottled.sogos.tacmod">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
-      android:name="io.acari.sogos.tacmod.MainApplication"
+      android:name="io.unthrottled.sogos.tacmod.MainApplication"
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       <activity
-        android:name="io.acari.sogos.tacmod.MainActivity"
+        android:name="io.unthrottled.sogos.tacmod.MainActivity"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
         android:windowSoftInputMode="adjustResize">

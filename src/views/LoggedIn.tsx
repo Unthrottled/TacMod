@@ -80,9 +80,9 @@ const LoggedIn: FC = () => {
           <Paragraph style={[bannerStyles.secondary, bannerStyles.sogosLink]}>
             Use{' '}
             <Text
-              onPress={() => Linking.openURL('https://sogos.acari.io')}
+              onPress={() => Linking.openURL('https://sogos.unthrottled.io')}
               style={bannerStyles.link}>
-              sogos.acari.io
+              sogos.unthrottled.io
             </Text>{' '}
             for strategic management
           </Paragraph>
