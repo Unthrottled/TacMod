@@ -176,6 +176,8 @@ export function* pomodoroSaga(activityThatStartedThis: Activity) {
             yield call(commenceTimedActivity, activityContent);
             yield put(createCompletedPomodoroEvent());
           }
+        } else {
+          yield call(stopAllAlarms);
         }
         shouldKeepTiming = false;
       }
