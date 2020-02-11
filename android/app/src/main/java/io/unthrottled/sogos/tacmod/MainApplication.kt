@@ -54,8 +54,9 @@ class MainApplication : Application(), ReactApplication {
         "TacMod",
         NotificationManager.IMPORTANCE_DEFAULT
     )
+
     notificationChannel.enableVibration(true)
-    notificationChannel.vibrationPattern = longArrayOf(100L,200L,300L);
+    notificationChannel.vibrationPattern = longArrayOf(100L,200L,300L,100L,200L,300L, 100L,200L,300L);
 
     this.getSystemService(NotificationManager::class.java)
         ?.createNotificationChannel(notificationChannel)
