@@ -6,7 +6,6 @@ import {
   createTimeIncrementEvent,
   createTimeSetEvent,
 } from '../../events/TimeEvents';
-import BackgroundTimer from 'react-native-background-timer';
 
 export const getTime = (antecedenceTime: number) =>
   Math.floor((new Date().getTime() - antecedenceTime || 0) / 1000);
@@ -31,14 +30,11 @@ export function* stopWatchSaga(activityThatStartedThis: Activity) {
     );
     if (areActivitiesSame) {
       yield put(createTimeIncrementEvent());
-      const waiter = new Promise(resolve => {
         const after = new Date().valueOf();
         const waitFor = 1000 - (after - before);
-        BackgroundTimer.setTimeout(resolve, waitFor < 0 ? 0 : waitFor);
-      });
       const {currentActivity: newCurrentActivity} = yield race({
         currentActivity: call(waitForCurrentActivity),
-        timeElapsed: call(() => waiter),
+        timeElapsed: delay(waitFor < 0 ? 0 : waitFor),
       });
       shouldKeepTiming = !newCurrentActivity;
     } else {

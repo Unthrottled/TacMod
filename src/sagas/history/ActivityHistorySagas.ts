@@ -190,7 +190,8 @@ export function* updateSelection(
         from,
         to,
       },
-      activities: fullFeed.slice(newTo, safeFrom),
+      activities: fullFeed.slice(newTo, safeFrom)
+        .filter(shouldTime),
     }),
   );
 }

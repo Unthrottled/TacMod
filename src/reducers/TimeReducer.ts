@@ -1,4 +1,9 @@
-import {TIME_DECREMENTED, TIME_INCREMENTED, TIME_RESET, TIME_SET} from "../events/TimeEvents";
+import {
+  TIME_DECREMENTED,
+  TIME_INCREMENTED,
+  TIME_RESET,
+  TIME_SET,
+} from '../events/TimeEvents';
 
 export interface TimeState {
   timeElapsed: number;
@@ -23,11 +28,11 @@ export default (state: TimeState = INITIAL_TIME_STATE, action: any) => {
     case TIME_SET:
       return {
         ...state,
-        timeElapsed: action.payload
+        timeElapsed: action.payload,
       };
     case TIME_RESET:
       return INITIAL_TIME_STATE;
     default:
       return state;
   }
-}
+};

@@ -18,7 +18,7 @@ import {
 } from '../types/ActivityTypes';
 import {StringDictionary} from '../types/BaseTypes';
 import reduceRight from 'lodash/reduceRight';
-import {LOGGED_OFF} from "../events/SecurityEvents";
+import {LOGGED_OFF} from '../events/SecurityEvents';
 
 export type RememberedPomodoro = {
   dateCounted: number;

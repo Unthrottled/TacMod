@@ -15,7 +15,7 @@ import {
 import {objectToKeyValueArray} from '../miscellanous/Tools';
 import TacticalActivityReducer from './TacticalActivityReducer';
 import {NumberDictionary, StringDictionary} from '../types/BaseTypes';
-import {LOGGED_OFF} from "../events/SecurityEvents";
+import {LOGGED_OFF} from '../events/SecurityEvents';
 
 export interface PomodoroState {
   settings: PomodoroSettings;

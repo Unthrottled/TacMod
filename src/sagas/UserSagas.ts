@@ -40,6 +40,9 @@ export function* userContextRefreshSaga() {
         security: {
           verificationKey: securityState.verificationKey,
         },
+        misc: {
+          ...userState.miscellaneous,
+        },
       }),
     );
   }

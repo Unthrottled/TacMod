@@ -1,5 +1,4 @@
-import {call, put, race, select} from 'redux-saga/effects';
-import BackgroundTimer from 'react-native-background-timer';
+import {call, delay, put, race, select} from 'redux-saga/effects';
 import uuid from 'uuid/v4';
 import {
   GlobalState,
@@ -138,15 +137,11 @@ export function* pomodoroSaga(activityThatStartedThis: Activity) {
     if (areActivitiesSame) {
       if (timeElapsed > 0) {
         yield put(createTimeDecrementEvent());
-        const waiter = new Promise(resolve => {
-          const after = new Date().valueOf();
-          const waitFor =
-            1000 - (after - before) - Math.floor(Math.random() * 25);
-          return BackgroundTimer.setTimeout(resolve, waitFor < 0 ? 0 : waitFor);
-        });
+        const after = new Date().valueOf();
+        const waitFor = 1000 - (after - before);
         const {currentActivity: newCurrentActivity} = yield race({
           currentActivity: call(waitForCurrentActivity),
-          timeElapsed: call(() => waiter),
+          timeElapsed: delay(waitFor < 0 ? 0 : waitFor),
         });
         shouldKeepTiming = !newCurrentActivity;
       } else {

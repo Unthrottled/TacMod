@@ -9,6 +9,7 @@ import StrategySagas from './StrategySagas';
 import TacticalSagas from './TacticalSagas';
 import CacheSagas from './CacheSagas';
 import TimeSagas from './TimeSagas';
+import OnboardingSagas from './OnboardingSagas';
 
 export default function* rootSaga() {
   yield all([
@@ -22,5 +23,6 @@ export default function* rootSaga() {
     StrategySagas(),
     TacticalSagas(),
     CacheSagas(),
+    OnboardingSagas(),
   ]);
 }

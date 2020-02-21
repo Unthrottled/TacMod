@@ -48,13 +48,13 @@ function* onlineSaga() {
 }
 
 export function* isOnline() {
-  const {isOnline} = yield select(selectNetworkState);
-  return isOnline;
+  const {isOnline: iO} = yield select(selectNetworkState);
+  return iO;
 }
 
 export function* waitForWifi() {
-  const {isOnline} = yield select(selectNetworkState);
-  if (!isOnline) {
+  const {isOnline: iO} = yield select(selectNetworkState);
+  if (!iO) {
     yield take(FOUND_WIFI);
   }
 }

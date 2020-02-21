@@ -10,7 +10,7 @@ import {
 import {objectToArray, objectToKeyValueArray} from '../miscellanous/Tools';
 import {CachedObjective, KeyResult, Objective} from '../types/StrategyTypes';
 import {HasId, StringDictionary} from '../types/BaseTypes';
-import {LOGGED_OFF} from "../events/SecurityEvents";
+import {LOGGED_OFF} from '../events/SecurityEvents';
 
 export interface StrategyState {
   objectives: StringDictionary<Objective>;
@@ -76,9 +76,10 @@ const StrategyReducer = (
         suspiciousObjective => suspiciousObjective.id !== deletedObjective.id,
       );
       const newKeyResults = objectToArray(state.keyResults).filter(
-        keyResult =>
+        possibleRemovableKeyResult =>
           deletedObjective.keyResults.filter(
-            keyResultToRemove => keyResultToRemove.id === keyResult.id,
+            keyResultToRemove =>
+              keyResultToRemove.id === possibleRemovableKeyResult.id,
           ).length === 0,
       );
       return {

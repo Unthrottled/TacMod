@@ -5,9 +5,15 @@ export const FAILED_REQUESTED_USER: 'FAILED_REQUESTED_USER' =
   'FAILED_REQUESTED_USER';
 export const RECEIVED_USER: 'RECEIVED_USER' = 'RECEIVED_USER';
 export const CHECKED_CACHES: 'CHECKED_CACHES' = 'CHECKED_CACHES';
+export const SYNCED_TACMOD_DOWNLOADED: 'SYNCED_TACMOD_DOWNLOADED' =
+  'SYNCED_TACMOD_DOWNLOADED';
 export const CACHED_DATA: 'CACHED_DATA' = 'CACHED_DATA';
 export const SYNCED_DATA: 'SYNCED_DATA' = 'SYNCED_DATA';
 export const REQUESTED_SYNC: 'REQUESTED_SYNC' = 'REQUESTED_SYNC';
+
+export const createSyncedTacModDownloadedEvent = (): BaseEvent => ({
+  type: SYNCED_TACMOD_DOWNLOADED,
+});
 
 export const createReceivedUserEvent = (
   user: UserResponse,

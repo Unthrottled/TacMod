@@ -29,6 +29,7 @@ export const INITIAL_CONFIGURATION_STATE: ConfigurationState = {
     clientID: '',
     issuer: '',
     authorizationEndpoint: '',
+    appClientID: '',
     logoutEndpoint: '',
     userInfoEndpoint: '',
     tokenEndpoint: '',

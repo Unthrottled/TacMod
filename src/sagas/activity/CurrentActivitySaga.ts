@@ -86,11 +86,11 @@ export const CURRENT_ACTIVITY_POLL_RATE = 1000;
 
 export function* delayWork() {
   const globalState = yield select();
-  const {isOnline} = selectNetworkState(globalState);
+  const {isOnline: onlineStatus} = selectNetworkState(globalState);
   const {isExpired} = selectSecurityState(globalState);
   if (isExpired) {
     yield take(INITIALIZED_SECURITY); // only going to happen after login, effective permablock
-  } else if (isOnline) {
+  } else if (onlineStatus) {
     yield delay(CURRENT_ACTIVITY_POLL_RATE);
   } else {
     yield take(FOUND_WIFI);

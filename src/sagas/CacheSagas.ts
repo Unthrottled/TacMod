@@ -16,7 +16,7 @@ import {
 } from '../reducers';
 import {
   CACHED_DATA,
-  createCheckedCachesEvent,
+  createCheckedCachesEvent, createRequestedSyncEvent,
   RECEIVED_USER,
   SYNCED_DATA,
 } from '../events/UserEvents';
@@ -42,6 +42,9 @@ export function* inspectCaches() {
     .map(state => state.cache[userGUID])
     .reduce((accum, cache) => accum || !!cache, false);
   yield call(cachedItemsSaga, hasCachedItems);
+  if (hasCachedItems) {
+    yield put(createRequestedSyncEvent());
+  }
 }
 
 export function* cachedItemsSaga(hasCachedItems: any = true) {
