@@ -147,9 +147,6 @@ const ActivityHub = () => {
           },
         ]}
         onStateChange={({open}) => {
-          if(open){
-            dispetch(createViewedTacticalActivitesEvent());
-          }
           setOpen(open);
         }}
       />
