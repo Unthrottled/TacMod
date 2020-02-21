@@ -25,14 +25,7 @@ import omit from 'lodash/omit';
 import {dictionaryReducer} from '../../reducers/StrategyReducer';
 import {numberObjectToArray} from '../../miscellanous/Tools';
 import {HasId, NumberDictionary, StringDictionary} from '../../types/BaseTypes';
-import {
-  FAB,
-  Headline,
-  IconButton,
-  Menu,
-  Portal,
-  Text,
-} from 'react-native-paper';
+import {FAB, Headline, IconButton, Menu, Portal} from 'react-native-paper';
 import {PomodoroTimer} from './PomodoroTimer';
 import Stopwatch from './Stopwatch';
 import ActivityIcon from '../../images/ActivityIcon';
@@ -163,6 +156,12 @@ const ActivityTimeBar = () => {
     );
   };
 
+  const swapToActivity = (name: string, supplements: any) => {
+    return dispetch(
+      startTimedActivity(buildCommenceActivityContents(supplements, name)),
+    );
+  };
+
   const startPausedRecovery = () => {
     dispetch(
       startTimedActivity({
@@ -279,10 +278,7 @@ const ActivityTimeBar = () => {
                   onPress={openMenu}
                 />
               }>
-              <Menu.Item
-                onPress={logUserOut}
-                title={'Logout'}
-              />
+              <Menu.Item onPress={logUserOut} title={'Logout'} />
             </Menu>
           </View>
           <View
@@ -329,6 +325,7 @@ const ActivityTimeBar = () => {
               <Stopwatch
                 fontSize={timeFontSize}
                 onPause={startPausedRecovery}
+                startActivity={swapToActivity}
               />
             )}
           </View>
