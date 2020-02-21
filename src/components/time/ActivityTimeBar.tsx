@@ -25,11 +25,20 @@ import omit from 'lodash/omit';
 import {dictionaryReducer} from '../../reducers/StrategyReducer';
 import {numberObjectToArray} from '../../miscellanous/Tools';
 import {HasId, NumberDictionary, StringDictionary} from '../../types/BaseTypes';
-import {FAB, Headline, Portal} from 'react-native-paper';
+import {
+  FAB,
+  Headline,
+  IconButton,
+  Menu,
+  Portal,
+  Text,
+} from 'react-native-paper';
 import {PomodoroTimer} from './PomodoroTimer';
 import Stopwatch from './Stopwatch';
 import ActivityIcon from '../../images/ActivityIcon';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {useNavigation} from 'react-navigation-hooks';
+import {requestLogoff} from '../../events/SecurityEvents';
 
 export const timeFontSize = 40;
 
@@ -225,6 +234,22 @@ const ActivityTimeBar = () => {
       })
     : backdrop;
 
+  const [menuVisible, setMenuVisible] = useState(false);
+  const hideMenu = () => {
+    setMenuVisible(false);
+  };
+
+  const openMenu = () => {
+    setMenuVisible(true);
+  };
+
+  const {navigate} = useNavigation();
+  const logUserOut = (): void => {
+    hideMenu();
+    dispetch(requestLogoff());
+    navigate({routeName: 'Login'});
+  };
+
   return isTimeBarActivity ? (
     <Portal>
       <View pointerEvents={'box-none'} style={classes.container}>
@@ -237,6 +262,29 @@ const ActivityTimeBar = () => {
               ...backgroundStyle,
             },
           ]}>
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+            }}>
+            <Menu
+              visible={menuVisible}
+              onDismiss={hideMenu}
+              anchor={
+                <IconButton
+                  icon={'dots-vertical'}
+                  size={40}
+                  color={'white'}
+                  onPress={openMenu}
+                />
+              }>
+              <Menu.Item
+                onPress={logUserOut}
+                title={'Logout'}
+              />
+            </Menu>
+          </View>
           <View
             style={{
               marginTop: 'auto',
