@@ -13,7 +13,9 @@ export function* securityRequestSaga() {
     issuer: initialConfig.issuer,
     scopes: ['openid', 'profile', 'email', 'offline_access'],
     redirectUrl: 'io.unthrottled.sogos.tacmod:/engage',
-    additionalParameters: {},
+    additionalParameters: {
+      prompt: 'login',
+    },
     serviceConfiguration: {
       authorizationEndpoint: initialConfig.authorizationEndpoint,
       tokenEndpoint: initialConfig.tokenEndpoint,

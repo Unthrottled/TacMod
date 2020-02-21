@@ -24,6 +24,6 @@ export function* performAuthorizationGrantFlowSaga() {
     yield put(createLoggedOnAction());
   } catch (e) {
     // todo: handle login failure
-    console.error(e)
+    console.error(e);
   }
 }
