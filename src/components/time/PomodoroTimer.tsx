@@ -22,11 +22,17 @@ const classes = StyleSheet.create({
   bigIcon: {},
 });
 
+type ChangeActivityCallback = (
+  name: string,
+  stuff: {activityID?: string},
+) => void;
+
 interface Props {
   onPause?: () => void;
   onResume?: () => void;
   fontSize?: number;
-  pivotActivity?: (name: string, stuff: {activityID?: string}) => void;
+  pivotActivity?: ChangeActivityCallback;
+  swapActivity?: ChangeActivityCallback;
   hidePause?: boolean;
 }
 
@@ -34,6 +40,7 @@ export const PomodoroTimer: FC<Props> = ({
   onPause,
   fontSize,
   pivotActivity,
+  swapActivity,
   onResume,
   hidePause,
 }) => {
@@ -51,9 +58,21 @@ export const PomodoroTimer: FC<Props> = ({
   });
 
   const [selectionOpen, setSelectionOpen] = useState(false);
-
+  const [changeActivityFunction, setChangeActivityFunction] = useState<{
+    changeActivity: ChangeActivityCallback | undefined;
+  }>({
+    changeActivity: pivotActivity || swapActivity,
+  });
   const closeSelection = () => setSelectionOpen(false);
-  const openSelection = () => setSelectionOpen(true);
+  const openPivotSelection = () => {
+    setChangeActivityFunction({changeActivity: pivotActivity});
+    setSelectionOpen(true);
+  };
+  const openSwappoSelection = () => {
+    setChangeActivityFunction({changeActivity: swapActivity});
+    setSelectionOpen(true);
+  };
+
   return (
     <View style={classes.stopwatchContainer}>
       <View style={{margin: 'auto'}}>
@@ -63,12 +82,19 @@ export const PomodoroTimer: FC<Props> = ({
         {!hidePause && (
           <View style={{alignItems: 'center'}}>
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-              <TouchableOpacity style={{flexGrow: 1}} onPress={openSelection}>
+              style={{
+                flexDirection: 'row',
+                minWidth: 250,
+                justifyContent: 'space-evenly',
+              }}>
+              <TouchableOpacity onPress={openPivotSelection}>
                 <MaterialIcon color={'white'} name={'swap-vert'} size={50} />
               </TouchableOpacity>
               <TouchableOpacity onPress={pauseTimer}>
                 <MaterialIcon color={'white'} name={'pause'} size={50} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={openSwappoSelection}>
+                <MaterialIcon color={'white'} name={'swap-horiz'} size={50} />
               </TouchableOpacity>
             </View>
             <View style={{flexDirection: 'row'}}>
@@ -90,11 +116,14 @@ export const PomodoroTimer: FC<Props> = ({
         onClose={closeSelection}
         onActivitySelection={activity => {
           closeSelection();
-          pivotActivity &&
-            pivotActivity(activity.name, {activityID: activity.id});
+          changeActivityFunction.changeActivity &&
+            changeActivityFunction.changeActivity(activity.name, {
+              activityID: activity.id,
+            });
         }}
         onGenericActivitySelection={() =>
-          pivotActivity && pivotActivity(GENERIC_ACTIVITY_NAME, {})
+          changeActivityFunction.changeActivity &&
+          changeActivityFunction.changeActivity(GENERIC_ACTIVITY_NAME, {})
         }
         genericIcon={OpenedSelection.STOPWATCH}
       />

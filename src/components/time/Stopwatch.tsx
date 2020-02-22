@@ -18,7 +18,7 @@ interface Props {
   onPause?: () => void;
   onResume?: () => void;
   fontSize?: number;
-  startActivity: (name: string, stuff: {activityID?: string}) => void;
+  startActivity?: (name: string, stuff: {activityID?: string}) => void;
 }
 
 const Stopwatch: FC<Props> = ({startActivity, onPause, fontSize}) => {
@@ -27,7 +27,7 @@ const Stopwatch: FC<Props> = ({startActivity, onPause, fontSize}) => {
   };
   const getPauseButton = () => (
     <TouchableOpacity onPress={pauseTimer}>
-      <MaterialIcon color={'white'} name={'pause'} size={50}/>
+      <MaterialIcon color={'white'} name={'pause'} size={50} />
     </TouchableOpacity>
   );
 
@@ -38,7 +38,7 @@ const Stopwatch: FC<Props> = ({startActivity, onPause, fontSize}) => {
 
   const getSwappoButton = () => (
     <TouchableOpacity onPress={openSelection}>
-      <MaterialIcon color={'white'} name={'swap-horiz'} size={50}/>
+      <MaterialIcon color={'white'} name={'swap-horiz'} size={50} />
     </TouchableOpacity>
   );
 
@@ -47,7 +47,7 @@ const Stopwatch: FC<Props> = ({startActivity, onPause, fontSize}) => {
   return (
     <View style={classes.stopwatchContainer}>
       <View>
-        <TimeDisplay timeElapsed={timeElapsed} fontSize={fontSize}/>
+        <TimeDisplay timeElapsed={timeElapsed} fontSize={fontSize} />
       </View>
       <View
         style={{
@@ -56,7 +56,9 @@ const Stopwatch: FC<Props> = ({startActivity, onPause, fontSize}) => {
           justifyContent: 'space-evenly',
         }}>
         <View style={classes.actionButton}>{onPause && getPauseButton()}</View>
-        <View style={classes.actionButton}>{onPause && getSwappoButton()}</View>
+        <View style={classes.actionButton}>
+          {startActivity && getSwappoButton()}
+        </View>
       </View>
       <ActivitySelection
         open={selectionOpen}
@@ -64,7 +66,7 @@ const Stopwatch: FC<Props> = ({startActivity, onPause, fontSize}) => {
         onActivitySelection={activity => {
           closeSelection();
           startActivity &&
-          startActivity(activity.name, {activityID: activity.id});
+            startActivity(activity.name, {activityID: activity.id});
         }}
         onGenericActivitySelection={() =>
           startActivity && startActivity(GENERIC_ACTIVITY_NAME, {})

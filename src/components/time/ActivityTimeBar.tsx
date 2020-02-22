@@ -32,6 +32,7 @@ import ActivityIcon from '../../images/ActivityIcon';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from 'react-navigation-hooks';
 import {requestLogoff} from '../../events/SecurityEvents';
+import {act} from 'react-test-renderer';
 
 export const timeFontSize = 40;
 
@@ -169,6 +170,22 @@ const ActivityTimeBar = () => {
         type: ActivityType.ACTIVE,
         timedType: ActivityTimedType.STOP_WATCH,
         paused: true,
+        uuid: uuid(),
+      }),
+    );
+  };
+
+  const swapActivity = (activityName: string, supplements: any) => {
+    const meow = new Date().valueOf();
+    const duration =
+      currentActivity.content.duration || pomodoroSettings.loadDuration;
+    dispetch(
+      startTimedActivity({
+        ...supplements,
+        name: activityName,
+        type: ActivityType.ACTIVE,
+        timedType: ActivityTimedType.TIMER,
+        duration: duration - (meow - currentActivity.antecedenceTime),
         uuid: uuid(),
       }),
     );
@@ -318,6 +335,7 @@ const ActivityTimeBar = () => {
                 onPause={startPausedRecovery}
                 onResume={resumePreviousActivity}
                 pivotActivity={pivotActivity}
+                swapActivity={swapActivity}
                 hidePause={isRecovery}
                 fontSize={40}
               />

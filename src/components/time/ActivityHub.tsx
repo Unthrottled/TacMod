@@ -12,8 +12,7 @@ import {TacticalActivity} from '../../types/TacticalTypes';
 import {useDispatch, useSelector} from 'react-redux';
 import {startTimedActivity} from '../../actions/ActivityActions';
 import ActivitySelection from '../ActivitySelection';
-import {theme} from "../../Theme";
-import {createViewedTacticalActivitesEvent} from "../../events/TacticalEvents";
+import {theme} from '../../Theme';
 
 export const GENERIC_ACTIVITY_NAME = 'GENERIC_ACTIVITY';
 
