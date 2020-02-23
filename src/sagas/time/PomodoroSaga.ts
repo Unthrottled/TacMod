@@ -83,7 +83,7 @@ function* getNotificationMessage(activityThatStartedThis: Activity) {
   }
 }
 
-function stopAllAlarms() {
+export function stopAllAlarms() {
   Alarm.stopAllAlarms();
 }
 

@@ -23,6 +23,7 @@ export const INITIALIZED_CURRENT_ACTIVITY = 'INITIALIZED_CURRENT_ACTIVITY';
 
 export const INITIALIZED_POMODORO = 'INITIALIZED_POMODORO';
 export const COMPLETED_POMODORO = 'COMPLETED_POMODORO';
+export const CANCELED_POMODORO = 'CANCELED_POMODORO';
 
 export const CAPSTONED_ACTIVITIES: 'CAPSTONED_ACTIVITIES' =
   'CAPSTONED_ACTIVITIES';
@@ -40,6 +41,10 @@ export const createCapstoneActivitesEvent = (
 
 export const createCompletedPomodoroEvent = (): BaseEvent => ({
   type: COMPLETED_POMODORO,
+});
+
+export const createCanceledPomodoroEvent = (): BaseEvent => ({
+  type: CANCELED_POMODORO,
 });
 
 export const createInitializedPomodoroEvent = (

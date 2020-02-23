@@ -33,6 +33,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from 'react-navigation-hooks';
 import {requestLogoff} from '../../events/SecurityEvents';
 import {act} from 'react-test-renderer';
+import {createCanceledPomodoroEvent} from '../../events/ActivityEvents';
 
 export const timeFontSize = 40;
 
@@ -136,7 +137,11 @@ const ActivityTimeBar = () => {
   } = currentActivity;
 
   const dispetch: Dispatch<any> = useDispatch();
+  const isTimer = timedType === ActivityTimedType.TIMER;
   const stopActivity = () => {
+    if (isTimer) {
+      dispetch(createCanceledPomodoroEvent());
+    }
     dispetch(
       startNonTimedActivity({
         name: RECOVERY,
@@ -204,8 +209,6 @@ const ActivityTimeBar = () => {
       }),
     );
   };
-
-  const isTimer = timedType === ActivityTimedType.TIMER;
 
   const isRecovery = isActivityRecovery(currentActivity);
   const backgroundStyle = isRecovery
