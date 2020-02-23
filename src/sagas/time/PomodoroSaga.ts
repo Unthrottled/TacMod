@@ -33,6 +33,7 @@ import {
   handleNewActivity,
 } from '../activity/CurrentActivitySaga';
 import {ActivityState} from '../../reducers/ActivityReducer';
+import Alarm from '../../native/Alarm';
 
 const getTimerTime = (stopTime: number) =>
   Math.floor((stopTime - new Date().getTime()) / 1000);
@@ -54,27 +55,17 @@ function* setTimer(activityThatStartedThis: Activity, addThis: number = 0) {
   yield put(createTimeSetEvent(pomodoroDuration));
 
   yield call(stopAllAlarms);
-  // const fireDate = ReactNativeAN.parseDate(
-  //   new Date(new Date().valueOf() + pomodoroDuration * 1000),
-  // );
 
   const notificationMessage = yield call(
     getNotificationMessage,
     activityThatStartedThis,
   );
 
-  // ReactNativeAN.scheduleAlarm({
-  //   id: new Date().valueOf().toString(16),
-  //   title: notificationMessage.title,
-  //   message: notificationMessage.message,
-  //   channel: 'TacModNotifications',
-  //   vibrate: true,
-  //   small_icon: 'ic_launcher',
-  //   large_icon: 'ic_launcher',
-  //   play_sound: true,
-  //   schedule_once: true,
-  //   fire_date: fireDate,
-  // });
+  const fireDate = new Date(new Date().valueOf() + pomodoroDuration * 1000);
+  Alarm.setAlarm({
+    timeToAlert: fireDate.valueOf(),
+    message: notificationMessage,
+  });
 }
 
 function* getNotificationMessage(activityThatStartedThis: Activity) {
@@ -93,7 +84,7 @@ function* getNotificationMessage(activityThatStartedThis: Activity) {
 }
 
 function stopAllAlarms() {
-  // AlarmService.cancelAllNotifications();
+  Alarm.stopAllAlarms();
 }
 
 export function* pomodoroSaga(activityThatStartedThis: Activity) {
