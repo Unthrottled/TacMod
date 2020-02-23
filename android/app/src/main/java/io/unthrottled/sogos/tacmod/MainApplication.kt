@@ -15,7 +15,7 @@ import io.unthrottled.sogos.tacmod.stream.AlarmPackage
 import io.unthrottled.sogos.tacmod.stream.StreamPackage
 import java.lang.reflect.InvocationTargetException
 
-
+const val NOTIFICATION_CHANNEL_ID = "TacModNotifications"
 @Suppress("UNUSED")
 class MainApplication : Application(), ReactApplication {
   private val mReactNativeHost: ReactNativeHost = object : ReactNativeHost(this) {
@@ -52,7 +52,7 @@ class MainApplication : Application(), ReactApplication {
   @RequiresApi(Build.VERSION_CODES.O)
   fun initializeAlarm() {
     val notificationChannel = NotificationChannel(
-        "TacModNotifications",
+            NOTIFICATION_CHANNEL_ID,
         "TacMod",
         NotificationManager.IMPORTANCE_DEFAULT
     )
