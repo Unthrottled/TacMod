@@ -154,6 +154,7 @@ const ActivityTimeBar = () => {
 
   const pivotActivity = (name: string, supplements: any) => {
     const activityContent = buildCommenceActivityContents(supplements, name);
+    dispetch(createCanceledPomodoroEvent());
     return dispetch(
       startTimedActivity({
         ...activityContent,
@@ -184,6 +185,7 @@ const ActivityTimeBar = () => {
     const meow = new Date().valueOf();
     const duration =
       currentActivity.content.duration || pomodoroSettings.loadDuration;
+    dispetch(createCanceledPomodoroEvent());
     dispetch(
       startTimedActivity({
         ...supplements,
