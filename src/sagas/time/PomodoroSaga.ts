@@ -87,6 +87,10 @@ export function stopAllAlarms() {
   Alarm.stopAllAlarms();
 }
 
+export function* newPomodoroSaga() {
+  console.tron('oyfum');
+}
+
 export function* pomodoroSaga(activityThatStartedThis: Activity) {
   yield call(setTimer, activityThatStartedThis, 1);
 

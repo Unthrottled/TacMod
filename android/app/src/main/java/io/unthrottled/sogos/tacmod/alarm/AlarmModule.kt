@@ -6,6 +6,11 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 
 class AlarmModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+
+  init {
+    AlarmService.setReactContext(reactContext)
+  }
+
   override fun getName(): String = "Alarm"
 
   @ReactMethod

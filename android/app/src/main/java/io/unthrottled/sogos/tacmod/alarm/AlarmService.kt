@@ -10,14 +10,17 @@ import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.os.SystemClock
 import androidx.core.app.NotificationCompat
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import io.unthrottled.sogos.tacmod.R
 import java.time.Instant
 import java.util.*
 import kotlin.collections.HashSet
 
 object AlarmService {
+  private lateinit var reactContext: ReactApplicationContext
   private const val ID = "tacmod_alarm_id"
   private const val NOTIFICATION = "tacmod_notification"
   const val NOTIFICATION_CHANNEL_ID = "TacModNotifications"
@@ -123,5 +126,18 @@ object AlarmService {
     )
 
     scheduledNotifications.remove(notificationId)
+
+    if(this::reactContext.isInitialized){
+      reactContext.getJSModule(
+          DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+      ).emit(
+          "AlarmTriggered",
+          Arguments.createMap()
+      )
+    }
+  }
+
+  fun setReactContext(reactContext: ReactApplicationContext) {
+    this.reactContext = reactContext
   }
 }

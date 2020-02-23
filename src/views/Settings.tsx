@@ -201,7 +201,7 @@ const Settings = () => {
             thumbTintColor={theme.colors.primary}
             maximumTrackTintColor={theme.colors.primary}
             minimumTrackTintColor={theme.colors.primary}
-            minimumValue={5}
+            minimumValue={1}
             maximumValue={workMarks[workMarks.length - 1].value}
           />
           <Text>Short Break Duration ({recoveryTime} minutes)</Text>
