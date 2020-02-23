@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
 import io.unthrottled.sogos.tacmod.R
+import java.time.Instant
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -25,7 +26,6 @@ object AlarmService {
   private val scheduledNotifications = HashSet<Int>()
 
   fun scheduleAlarm(reactContext: ReactApplicationContext, alarmParameters: ReadableMap) {
-    println("finna set an alarm to this $alarmParameters")
     val notification = NotificationCompat.Builder(
         reactContext.applicationContext,
         NOTIFICATION_CHANNEL_ID
@@ -43,7 +43,7 @@ object AlarmService {
                 RingtoneManager.TYPE_NOTIFICATION
             )
         )
-        .setVibrate(longArrayOf(100, 200, 300, 200, 100, 200, 300))
+        .setVibrate(longArrayOf(0, 100, 120, 500))
         .build()
 
     val notificationId = generateNotificationId()
@@ -63,9 +63,11 @@ object AlarmService {
         Context.ALARM_SERVICE
     ) as AlarmManager
 
-    alarmManager.set(
+    val setTime = alarmParameters.getDouble("timeToAlert").toLong()
+    val currentTime = Instant.now().toEpochMilli()
+    alarmManager.setAndAllowWhileIdle(
         AlarmManager.ELAPSED_REALTIME_WAKEUP,
-        SystemClock.elapsedRealtime() + 5000,
+        SystemClock.elapsedRealtime() + (setTime - currentTime),
         pendingAlarmIntent
     )
   }
@@ -89,7 +91,6 @@ object AlarmService {
   }
 
   fun stopAllAlarms(reactContext: ReactApplicationContext) {
-    println("finna stop all the alarms")
     scheduledNotifications
         .map {
           buildPendingIntent(
@@ -109,7 +110,6 @@ object AlarmService {
   }
 
   fun dispatchNotification(context: Context, intent: Intent) {
-    println("Ahh shit, here we go.")
     val notificationManager = context.getSystemService(
         Context.NOTIFICATION_SERVICE
     ) as NotificationManager
