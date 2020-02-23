@@ -32,8 +32,6 @@ import {
   CURRENT_ACTIVITY_URL,
   handleNewActivity,
 } from '../activity/CurrentActivitySaga';
-import AlarmService from 'react-native-alarm-notification';
-import ReactNativeAN from 'react-native-alarm-notification';
 import {ActivityState} from '../../reducers/ActivityReducer';
 
 const getTimerTime = (stopTime: number) =>
@@ -56,46 +54,46 @@ function* setTimer(activityThatStartedThis: Activity, addThis: number = 0) {
   yield put(createTimeSetEvent(pomodoroDuration));
 
   yield call(stopAllAlarms);
-  const fireDate = ReactNativeAN.parseDate(
-    new Date(new Date().valueOf() + pomodoroDuration * 1000),
-  );
+  // const fireDate = ReactNativeAN.parseDate(
+  //   new Date(new Date().valueOf() + pomodoroDuration * 1000),
+  // );
 
   const notificationMessage = yield call(
     getNotificationMessage,
     activityThatStartedThis,
   );
 
-  ReactNativeAN.scheduleAlarm({
-    id: new Date().valueOf().toString(16),
-    title: notificationMessage.title,
-    message: notificationMessage.message,
-    channel: 'TacModNotifications',
-    vibrate: true,
-    small_icon: 'ic_launcher',
-    large_icon: 'ic_launcher',
-    play_sound: true,
-    schedule_once: true,
-    fire_date: fireDate,
-  });
+  // ReactNativeAN.scheduleAlarm({
+  //   id: new Date().valueOf().toString(16),
+  //   title: notificationMessage.title,
+  //   message: notificationMessage.message,
+  //   channel: 'TacModNotifications',
+  //   vibrate: true,
+  //   small_icon: 'ic_launcher',
+  //   large_icon: 'ic_launcher',
+  //   play_sound: true,
+  //   schedule_once: true,
+  //   fire_date: fireDate,
+  // });
 }
 
 function* getNotificationMessage(activityThatStartedThis: Activity) {
   if (isActivityRecovery(activityThatStartedThis)) {
     const {previousActivity}: ActivityState = yield select(selectActivityState);
     return {
-      title: `Get back to ${getActivityName(previousActivity)}`,
-      message: 'Dismiss to stop alarm.',
+      title: 'Break is over!',
+      message: `Get back to ${getActivityName(previousActivity)}`,
     };
   } else {
     return {
       title: `${getActivityName(activityThatStartedThis)} pomodoro complete.`,
-      message: 'Dismiss to stop alarm.',
+      message: 'Take a break!',
     };
   }
 }
 
 function stopAllAlarms() {
-  AlarmService.cancelAllNotifications();
+  // AlarmService.cancelAllNotifications();
 }
 
 export function* pomodoroSaga(activityThatStartedThis: Activity) {
