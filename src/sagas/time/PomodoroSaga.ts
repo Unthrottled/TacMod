@@ -34,6 +34,7 @@ import {
 } from '../activity/CurrentActivitySaga';
 import {ActivityState} from '../../reducers/ActivityReducer';
 import Alarm from '../../native/Alarm';
+import {PomodoroSettings} from '../../types/TacticalTypes';
 
 const getTimerTime = (stopTime: number) =>
   Math.floor((stopTime - new Date().getTime()) / 1000);
@@ -88,7 +89,76 @@ export function stopAllAlarms() {
 }
 
 export function* newPomodoroSaga() {
-  console.tron('oyfum');
+  const {
+    currentActivity,
+    previousActivity,
+    pomodoroSettings,
+    numberOfCompletedPomodoro,
+  } = yield selectAllTheThings();
+  yield swappoActivities(
+    currentActivity,
+    previousActivity,
+    pomodoroSettings,
+    numberOfCompletedPomodoro,
+  );
+}
+
+function* selectAllTheThings() {
+  return yield select((globalState: GlobalState) => {
+    const {
+      currentActivity: ca,
+      previousActivity: pa,
+      completedPomodoro: {count},
+    } = selectActivityState(globalState);
+    const {
+      pomodoro: {settings},
+    } = selectTacticalState(globalState);
+    return {
+      currentActivity: ca,
+      previousActivity: pa,
+      timeElapsed: selectTimeState(globalState).timeElapsed,
+      pomodoroSettings: settings,
+      numberOfCompletedPomodoro: count,
+    };
+  });
+}
+
+function* swappoActivities(
+  activityThatStartedThis: Activity,
+  previousActivity: Activity,
+  pomodoroSettings: PomodoroSettings,
+  numberOfCompletedPomodoro: number,
+) {
+  const currentActivitySame = yield call(checkCurrentActivity);
+  if (currentActivitySame) {
+    if (isActivityRecovery(activityThatStartedThis)) {
+      // @ts-ignore real
+      const activityContent: ActivityContent = {
+        ...omit(previousActivity.content, ['autoStart']),
+        duration: pomodoroSettings.loadDuration,
+        autoStart: true,
+        uuid: uuid(),
+      };
+      yield call(commenceTimedActivity, activityContent);
+    } else {
+      const activityContent = {
+        name: RECOVERY,
+        type: ActivityType.ACTIVE,
+        timedType: ActivityTimedType.TIMER,
+        duration:
+          (numberOfCompletedPomodoro + 1) % 4 === 0
+            ? pomodoroSettings.longRecoveryDuration
+            : pomodoroSettings.shortRecoveryDuration,
+        uuid: uuid(),
+        autoStart: true,
+      };
+      yield call(commenceTimedActivity, activityContent);
+      yield put(createCompletedPomodoroEvent());
+    }
+  } else {
+    yield call(stopAllAlarms);
+  }
+  return false;
 }
 
 export function* pomodoroSaga(activityThatStartedThis: Activity) {
@@ -104,23 +174,7 @@ export function* pomodoroSaga(activityThatStartedThis: Activity) {
       timeElapsed,
       pomodoroSettings,
       numberOfCompletedPomodoro,
-    } = yield select((globalState: GlobalState) => {
-      const {
-        currentActivity: ca,
-        previousActivity: pa,
-        completedPomodoro: {count},
-      } = selectActivityState(globalState);
-      const {
-        pomodoro: {settings},
-      } = selectTacticalState(globalState);
-      return {
-        currentActivity: ca,
-        previousActivity: pa,
-        timeElapsed: selectTimeState(globalState).timeElapsed,
-        pomodoroSettings: settings,
-        numberOfCompletedPomodoro: count,
-      };
-    });
+    } = yield selectAllTheThings();
 
     // check to see if current activity is same because could have changed while moving to this next iteration
     const areActivitiesSame = activitiesEqual(
@@ -138,36 +192,12 @@ export function* pomodoroSaga(activityThatStartedThis: Activity) {
         });
         shouldKeepTiming = !newCurrentActivity;
       } else {
-        const currentActivitySame = yield call(checkCurrentActivity);
-        if (currentActivitySame) {
-          if (isActivityRecovery(activityThatStartedThis)) {
-            // @ts-ignore real
-            const activityContent: ActivityContent = {
-              ...omit(previousActivity.content, ['autoStart']),
-              duration: pomodoroSettings.loadDuration,
-              autoStart: true,
-              uuid: uuid(),
-            };
-            yield call(commenceTimedActivity, activityContent);
-          } else {
-            const activityContent = {
-              name: RECOVERY,
-              type: ActivityType.ACTIVE,
-              timedType: ActivityTimedType.TIMER,
-              duration:
-                (numberOfCompletedPomodoro + 1) % 4 === 0
-                  ? pomodoroSettings.longRecoveryDuration
-                  : pomodoroSettings.shortRecoveryDuration,
-              uuid: uuid(),
-              autoStart: true,
-            };
-            yield call(commenceTimedActivity, activityContent);
-            yield put(createCompletedPomodoroEvent());
-          }
-        } else {
-          yield call(stopAllAlarms);
-        }
-        shouldKeepTiming = false;
+        shouldKeepTiming = yield swappoActivities(
+          activityThatStartedThis,
+          previousActivity,
+          pomodoroSettings,
+          numberOfCompletedPomodoro,
+        );
       }
     } else {
       shouldKeepTiming = false;
