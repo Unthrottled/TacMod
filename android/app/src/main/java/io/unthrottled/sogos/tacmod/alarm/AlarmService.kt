@@ -36,7 +36,7 @@ object AlarmService {
         .setContentTitle(alarmParameters.getMap("message")?.getString("title"))
         .setContentText(alarmParameters.getMap("message")?.getString("message"))
         .setAutoCancel(true)
-        .setSmallIcon(R.mipmap.ic_launcher)
+        .setSmallIcon(R.mipmap.status_icon)
         .setLargeIcon(BitmapFactory.decodeResource(
             reactContext.resources,
             R.mipmap.ic_launcher

@@ -88,6 +88,7 @@ export function stopAllAlarms() {
   Alarm.stopAllAlarms();
 }
 
+// todo: does it matter if the app is in the foreground?
 export function* newPomodoroSaga() {
   const {
     currentActivity,
