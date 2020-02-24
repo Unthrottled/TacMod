@@ -20,10 +20,12 @@ import java.util.*
 import kotlin.collections.HashSet
 
 object AlarmService {
+  private var previousNotificationId: Int = 69
   private lateinit var reactContext: ReactApplicationContext
   private const val ID = "tacmod_alarm_id"
   private const val NOTIFICATION = "tacmod_notification"
   const val NOTIFICATION_CHANNEL_ID = "TacModNotifications"
+
 
   private val ranbo = Random(SystemClock.elapsedRealtime())
   private val scheduledNotifications = HashSet<Int>()
@@ -124,6 +126,8 @@ object AlarmService {
         notificationId,
         notification
     )
+    notificationManager.cancel(previousNotificationId)
+    previousNotificationId = notificationId
 
     scheduledNotifications.remove(notificationId)
 
