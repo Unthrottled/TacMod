@@ -21,6 +21,8 @@ export const RANKED_ACTIVITIES: 'RANKED_ACTIVITIES' = 'RANKED_ACTIVITIES';
 export const CACHED_TACTICAL_ACTIVITY: 'CACHED_TACTICAL_ACTIVITY' =
   'CACHED_TACTICAL_ACTIVITY';
 export const VIEWED_ACTIVITIES: 'VIEWED_ACTIVITIES' = 'VIEWED_ACTIVITIES';
+export const VIEWED_ACTIVITY_SELECTION: 'VIEWED_ACTIVITY_SELECTION' =
+  'VIEWED_ACTIVITY_SELECTION';
 export const SYNCED_TACTICAL_ACTIVITIES: 'SYNCED_TACTICAL_ACTIVITIES' =
   'SYNCED_TACTICAL_ACTIVITIES';
 export const SYNCED_TACTICAL_ACTIVITY: 'SYNCED_TACTICAL_ACTIVITY' =
@@ -91,6 +93,10 @@ export const createFailureToRegisterPomodoroSettingsEvent = (
 
 export const createViewedTacticalActivitesEvent = (): BaseEvent => ({
   type: VIEWED_ACTIVITIES,
+});
+
+export const createViewedActivitySelectionEvent = (): BaseEvent => ({
+  type: VIEWED_ACTIVITY_SELECTION,
 });
 
 export const createCachedTacticalActivityEvent = (

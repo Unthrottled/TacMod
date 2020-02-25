@@ -16,7 +16,9 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {OpenedSelection} from './time/ActivityHub';
 import OtherIcon from 'react-native-vector-icons/Fontisto';
 import ActivityIcon from '../images/ActivityIcon';
-import {createViewedTacticalActivitesEvent} from '../events/TacticalEvents';
+import {
+  createViewedActivitySelectionEvent,
+} from '../events/TacticalEvents';
 
 const generic69 = 'GENERIC69';
 const mapStateToProps = (state: GlobalState) => {
@@ -93,7 +95,7 @@ const ActivitySelection = (props: Props) => {
   const dispetch = useDispatch();
   useEffect(() => {
     if (open) {
-      dispetch(createViewedTacticalActivitesEvent());
+      dispetch(createViewedActivitySelectionEvent());
     }
   }, [dispetch, open]);
 

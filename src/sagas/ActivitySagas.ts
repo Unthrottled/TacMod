@@ -8,6 +8,7 @@ import {activitySyncSaga} from './activity/ActivitySyncSaga';
 import {REQUESTED_SYNC} from '../events/UserEvents';
 import {pomodoroActivityInitializationSaga} from './activity/PomodoroActivitySagas';
 import {FOCUSED_APPLICATION} from '../events/ApplicationLifecycleEvents';
+import {VIEWED_ACTIVITY_SELECTION} from '../events/TacticalEvents';
 
 function* listenToActivityEvents() {
   yield takeEvery(STARTED_ACTIVITY, registerActivitySaga);
@@ -17,6 +18,10 @@ function* listenToActivityEvents() {
   yield fork(currentActivitySaga);
   yield takeEvery(FOCUSED_APPLICATION, currentActivitySaga);
   yield fork(pomodoroActivityInitializationSaga);
+  yield takeEvery(
+    VIEWED_ACTIVITY_SELECTION,
+    pomodoroActivityInitializationSaga,
+  );
 }
 
 export default function* rootSaga() {
