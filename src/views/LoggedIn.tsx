@@ -99,7 +99,7 @@ const LoggedIn: FC = () => {
             Settings
           </Headline>
           <Paragraph style={{textAlign: 'center', ...bannerStyles.secondary}}>
-            Everybody is different. Tailor the experience to your abilities.
+            Tailor the experience to your abilities.
           </Paragraph>
         </View>
       </Card>
