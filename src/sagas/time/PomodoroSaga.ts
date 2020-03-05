@@ -1,11 +1,6 @@
 import {call, delay, put, race, select} from 'redux-saga/effects';
 import uuid from 'uuid/v4';
-import {
-  GlobalState,
-  selectActivityState,
-  selectTacticalState,
-  selectTimeState,
-} from '../../reducers';
+import {GlobalState, selectActivityState, selectTacticalState, selectTimeState} from '../../reducers';
 import {
   activitiesEqual,
   Activity,
@@ -16,10 +11,7 @@ import {
   isActivityRecovery,
   RECOVERY,
 } from '../../types/ActivityTypes';
-import {
-  createTimeDecrementEvent,
-  createTimeSetEvent,
-} from '../../events/TimeEvents';
+import {createTimeDecrementEvent, createTimeSetEvent} from '../../events/TimeEvents';
 import {waitForCurrentActivity} from './SandsOfTimeSaga';
 import {
   createCompletedPomodoroEvent,
@@ -28,10 +20,7 @@ import {
 } from '../../events/ActivityEvents';
 import omit from 'lodash/omit';
 import {performGet} from '../APISagas';
-import {
-  CURRENT_ACTIVITY_URL,
-  handleNewActivity,
-} from '../activity/CurrentActivitySaga';
+import {CURRENT_ACTIVITY_URL, handleNewActivity} from '../activity/CurrentActivitySaga';
 import {ActivityState} from '../../reducers/ActivityReducer';
 import Alarm from '../../native/Alarm';
 import {PomodoroSettings} from '../../types/TacticalTypes';
@@ -57,29 +46,40 @@ function* setTimer(activityThatStartedThis: Activity, addThis: number = 0) {
 
   yield call(stopAllAlarms);
 
-  const notificationMessage = yield call(
-    getNotificationMessage,
+  const alarmParameters = yield call(
+    getAlarmParameters,
     activityThatStartedThis,
   );
 
   const fireDate = new Date(new Date().valueOf() + pomodoroDuration * 1000);
   Alarm.setAlarm({
     timeToAlert: fireDate.valueOf(),
-    message: notificationMessage,
+    message: alarmParameters.notificationMessage,
+    vibrationPattern: alarmParameters.alarmType,
   });
 }
 
-function* getNotificationMessage(activityThatStartedThis: Activity) {
+function* getAlarmParameters(activityThatStartedThis: Activity) {
+  const {
+    previousActivity,
+    completedPomodoro: {count},
+  }: ActivityState = yield select(selectActivityState);
+
   if (isActivityRecovery(activityThatStartedThis)) {
-    const {previousActivity}: ActivityState = yield select(selectActivityState);
     return {
-      title: 'Break is over!',
-      message: `Get back to ${getActivityName(previousActivity)}`,
+      notificationMessage: {
+        title: 'Break is over!',
+        message: `Get back to ${getActivityName(previousActivity)}`,
+      },
+      alarmType: 'resume',
     };
   } else {
     return {
-      title: `${getActivityName(activityThatStartedThis)} pomodoro complete.`,
-      message: 'Take a break!',
+      notificationMessage: {
+        title: `${getActivityName(activityThatStartedThis)} pomodoro complete.`,
+        message: 'Take a break!',
+      },
+      alarmType: count % 4 === 0 ? 'longBreak' : 'shortBreak',
     };
   }
 }

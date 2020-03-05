@@ -48,7 +48,7 @@ object AlarmService {
                 RingtoneManager.TYPE_NOTIFICATION
             )
         )
-        .setVibrate(longArrayOf(0, 100, 120, 500))
+        .setVibrate(buildVibrationPattern(alarmParameters))
         .build()
 
     val notificationId = generateNotificationId()
@@ -76,6 +76,20 @@ object AlarmService {
         pendingAlarmIntent
     )
   }
+
+  private fun buildVibrationPattern(alarmParameters: ReadableMap) =
+      when(getVibrationPattern(alarmParameters)){
+        "shortBreak" -> longArrayOf(0, 100, 120, 500)
+        "longBreak"-> longArrayOf(500, 500, 500, 500, 500)
+        else -> longArrayOf(200, 100, 300, 150, 500)
+      }
+
+  private fun getVibrationPattern(alarmParameters: ReadableMap) =
+      if(alarmParameters.hasKey("vibrationPattern")){
+        alarmParameters.getString("vibrationPattern")
+      } else {
+        "all your base"
+      }
 
   private fun buildPendingIntent(reactContext: ReactApplicationContext, notificationId: Int, alarmIntent: Intent): PendingIntent? {
     return PendingIntent.getBroadcast(

@@ -3,6 +3,7 @@ import {NativeModules} from 'react-native';
 interface AlarmParameters {
   timeToAlert: number;
   message: string;
+  vibrationPattern: 'shortBreak' | 'longBreak' | 'resume';
 }
 
 interface Alarm {

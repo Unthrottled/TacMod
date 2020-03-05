@@ -195,39 +195,39 @@ const Settings = () => {
           <Slider
             value={workTime}
             aria-labelledby="discrete-slider-always"
-            step={0.5}
+            step={0.1}
             onSlidingComplete={saveWorkTime}
             onValueChange={saveWorkTime}
             thumbTintColor={theme.colors.primary}
             maximumTrackTintColor={theme.colors.primary}
             minimumTrackTintColor={theme.colors.primary}
-            minimumValue={1}
+            minimumValue={0.2}
             maximumValue={workMarks[workMarks.length - 1].value}
           />
           <Text>Short Break Duration ({recoveryTime} minutes)</Text>
           <Slider
             value={recoveryTime}
             aria-labelledby="discrete-slider-always"
-            step={0.5}
+            step={0.1}
             onSlidingComplete={saveRecoveryTime}
             onValueChange={saveRecoveryTime}
             thumbTintColor={theme.colors.primary}
             maximumTrackTintColor={theme.colors.primary}
             minimumTrackTintColor={theme.colors.primary}
-            minimumValue={0.5}
+            minimumValue={0.2}
             maximumValue={restMarks[restMarks.length - 1].value}
           />
           <Text>Long Break Duration ({longRecoveryTime} minutes)</Text>
           <Slider
             value={longRecoveryTime}
             aria-labelledby="discrete-slider-always"
-            step={0.5}
+            step={0.1}
             onSlidingComplete={saveLongRecoveryTime}
             onValueChange={saveLongRecoveryTime}
             thumbTintColor={theme.colors.primary}
             maximumTrackTintColor={theme.colors.primary}
             minimumTrackTintColor={theme.colors.primary}
-            minimumValue={5}
+            minimumValue={0.2}
             maximumValue={recoveryMarks[recoveryMarks.length - 1].value}
           />
           <View>
