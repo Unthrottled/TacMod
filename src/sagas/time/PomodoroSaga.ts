@@ -1,6 +1,11 @@
 import {call, delay, put, race, select} from 'redux-saga/effects';
 import uuid from 'uuid/v4';
-import {GlobalState, selectActivityState, selectTacticalState, selectTimeState} from '../../reducers';
+import {
+  GlobalState,
+  selectActivityState,
+  selectTacticalState,
+  selectTimeState,
+} from '../../reducers';
 import {
   activitiesEqual,
   Activity,
@@ -11,7 +16,10 @@ import {
   isActivityRecovery,
   RECOVERY,
 } from '../../types/ActivityTypes';
-import {createTimeDecrementEvent, createTimeSetEvent} from '../../events/TimeEvents';
+import {
+  createTimeDecrementEvent,
+  createTimeSetEvent,
+} from '../../events/TimeEvents';
 import {waitForCurrentActivity} from './SandsOfTimeSaga';
 import {
   createCompletedPomodoroEvent,
@@ -20,9 +28,13 @@ import {
 } from '../../events/ActivityEvents';
 import omit from 'lodash/omit';
 import {performGet} from '../APISagas';
-import {CURRENT_ACTIVITY_URL, handleNewActivity} from '../activity/CurrentActivitySaga';
+import {
+  CURRENT_ACTIVITY_URL,
+  handleNewActivity,
+} from '../activity/CurrentActivitySaga';
 import {ActivityState} from '../../reducers/ActivityReducer';
 import Alarm from '../../native/Alarm';
+import BackgroundTimer from 'react-native-background-timer';
 import {PomodoroSettings} from '../../types/TacticalTypes';
 
 const getTimerTime = (stopTime: number) =>
@@ -96,6 +108,12 @@ export function* newPomodoroSaga() {
     pomodoroSettings,
     numberOfCompletedPomodoro,
   } = yield selectAllTheThings();
+  yield call(
+    () =>
+      new Promise(res => {
+        BackgroundTimer.setTimeout(() => res(), 0);
+      }),
+  );
   yield swappoActivities(
     currentActivity,
     previousActivity,

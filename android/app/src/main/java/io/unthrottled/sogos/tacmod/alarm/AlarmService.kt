@@ -80,7 +80,7 @@ object AlarmService {
   private fun buildVibrationPattern(alarmParameters: ReadableMap) =
       when(getVibrationPattern(alarmParameters)){
         "shortBreak" -> longArrayOf(0, 100, 120, 500)
-        "longBreak"-> longArrayOf(500, 500, 500, 500, 500)
+        "longBreak"-> longArrayOf(5000)
         else -> longArrayOf(200, 100, 300, 150, 500)
       }
 
