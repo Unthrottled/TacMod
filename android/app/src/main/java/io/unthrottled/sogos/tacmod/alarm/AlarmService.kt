@@ -31,6 +31,7 @@ object AlarmService {
   private val scheduledNotifications = HashSet<Int>()
 
   fun scheduleAlarm(reactContext: ReactApplicationContext, alarmParameters: ReadableMap) {
+    stopAllAlarms(reactContext)
     val notification = NotificationCompat.Builder(
         reactContext.applicationContext,
         NOTIFICATION_CHANNEL_ID
@@ -120,6 +121,7 @@ object AlarmService {
         }.forEach {
           alarmManager(reactContext).cancel(it)
         }
+    scheduledNotifications.clear()
   }
 
   private fun alarmManager(reactContext: ReactApplicationContext): AlarmManager {

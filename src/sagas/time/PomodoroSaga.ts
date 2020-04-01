@@ -56,8 +56,6 @@ function* setTimer(activityThatStartedThis: Activity, addThis: number = 0) {
     getTimerTime(antecedenceTime + (duration || 0)) + addThis;
   yield put(createTimeSetEvent(pomodoroDuration));
 
-  yield call(stopAllAlarms);
-
   const alarmParameters = yield call(
     getAlarmParameters,
     activityThatStartedThis,
