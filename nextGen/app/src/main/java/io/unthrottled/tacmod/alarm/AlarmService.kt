@@ -82,7 +82,7 @@ object AlarmService {
         ) as AlarmManager
 
         val setTime = alarmParameters.timeToAlert
-        val currentTime = Date().time
+        val currentTime = Instant.now().toEpochMilli()
         alarmManager.setAndAllowWhileIdle(
             AlarmManager.ELAPSED_REALTIME_WAKEUP,
             SystemClock.elapsedRealtime() + (setTime - currentTime),
@@ -156,7 +156,6 @@ object AlarmService {
         previousNotificationId = notificationId
 
         scheduledNotifications.remove(notificationId)
-
     }
 
 }
