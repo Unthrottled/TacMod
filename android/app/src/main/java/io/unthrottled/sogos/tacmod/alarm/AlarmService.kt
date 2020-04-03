@@ -21,7 +21,9 @@ import kotlin.collections.HashSet
 
 object AlarmService {
   private var previousNotificationId: Int = 69
-  private lateinit var reactContext: ReactApplicationContext
+  private lateinit var reactContextSupplier: () -> ReactApplicationContext
+  private var listener: () -> Unit = {}
+
   private const val ID = "tacmod_alarm_id"
   private const val NOTIFICATION = "tacmod_notification"
   const val NOTIFICATION_CHANNEL_ID = "TacModNotifications"
@@ -31,7 +33,7 @@ object AlarmService {
   private val scheduledNotifications = HashSet<Int>()
 
   fun scheduleAlarm(reactContext: ReactApplicationContext, alarmParameters: ReadableMap) {
-    stopAllAlarms(reactContext)
+    stopItGetSomeHelp(reactContext)
     val notification = NotificationCompat.Builder(
         reactContext.applicationContext,
         NOTIFICATION_CHANNEL_ID
@@ -110,7 +112,7 @@ object AlarmService {
     }
   }
 
-  fun stopAllAlarms(reactContext: ReactApplicationContext) {
+  fun stopItGetSomeHelp(reactContext: ReactApplicationContext) {
     scheduledNotifications
         .map {
           buildPendingIntent(
@@ -122,6 +124,7 @@ object AlarmService {
           alarmManager(reactContext).cancel(it)
         }
     scheduledNotifications.clear()
+    listener = {}
   }
 
   private fun alarmManager(reactContext: ReactApplicationContext): AlarmManager {
@@ -147,17 +150,24 @@ object AlarmService {
 
     scheduledNotifications.remove(notificationId)
 
-    if(this::reactContext.isInitialized){
-      reactContext.getJSModule(
+    listener()
+    if(this::reactContextSupplier.isInitialized){
+      reactContextSupplier().getJSModule(
           DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
       ).emit(
-          "AlarmTriggered",
+          "CompletedPomodoro",
           Arguments.createMap()
       )
     }
   }
 
-  fun setReactContext(reactContext: ReactApplicationContext) {
-    this.reactContext = reactContext
+  fun setCompletionListener(completionListener: () -> Unit){
+    this.listener = completionListener
+  }
+
+  fun setReactContextSupplier(
+      reactContextSupplier: () -> ReactApplicationContext
+  ) {
+    this.reactContextSupplier = reactContextSupplier
   }
 }

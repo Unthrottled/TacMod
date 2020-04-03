@@ -13,7 +13,6 @@ import com.facebook.react.ReactPackage
 import com.facebook.soloader.SoLoader
 import io.unthrottled.sogos.tacmod.alarm.AlarmService.NOTIFICATION_CHANNEL_ID
 import io.unthrottled.sogos.tacmod.pomodoro.PomodoroPackage
-import io.unthrottled.sogos.tacmod.stream.AlarmPackage
 import io.unthrottled.sogos.tacmod.stream.StreamPackage
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.Executors
@@ -30,7 +29,6 @@ class MainApplication : Application(), ReactApplication {
       val packages: MutableList<ReactPackage> = PackageList(this).packages
       packages.add(StreamPackage())
       packages.add(PomodoroPackage(Executors.newSingleThreadExecutor()))
-      packages.add(AlarmPackage())
       return packages
     }
 

@@ -5,7 +5,6 @@ interface PomodoroParameters {
 }
 
 interface Pomodoro {
-  initializeSecuriy: (params: any) => void;
   commencePomodoroForActivity: (params: PomodoroParameters) => void;
   stopItGetSomeHelp(): void;
 }

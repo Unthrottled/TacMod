@@ -4,6 +4,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
+import io.unthrottled.sogos.tacmod.alarm.AlarmService
 import java.util.concurrent.Executor
 
 class PomodoroModule(
@@ -11,15 +12,20 @@ class PomodoroModule(
     private val executor: Executor
 ) : ReactContextBaseJavaModule(reactContext) {
 
+  init {
+    AlarmService.setReactContextSupplier {
+      reactContext
+    }
+  }
   override fun getName(): String = "Pomodoro"
 
   @ReactMethod
-  fun initializeSecurity() {
+  fun commencePomodoroForActivity(pomodoroThings: ReadableMap) {
 
   }
 
   @ReactMethod
-  fun setAlarm(alarmParameters: ReadableMap) {
-
+  fun stopItGetSomeHelp(){
+    AlarmService.stopItGetSomeHelp(reactContext)
   }
 }
