@@ -8,13 +8,16 @@ import com.facebook.react.uimanager.ReactShadowNode
 import com.facebook.react.uimanager.ViewManager
 import io.unthrottled.sogos.tacmod.alarm.AlarmModule
 import java.util.*
+import java.util.concurrent.Executor
 
-class PomodoroPackage : ReactPackage {
+class PomodoroPackage(
+    private val executor: Executor
+): ReactPackage {
 
     override fun createNativeModules(
             reactContext: ReactApplicationContext
     ): MutableList<NativeModule> =
-            mutableListOf(AlarmModule(reactContext))
+            mutableListOf(PomodoroModule(reactContext, executor))
 
     override fun createViewManagers(
             reactContext: ReactApplicationContext

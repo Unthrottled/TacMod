@@ -16,6 +16,7 @@ import io.unthrottled.sogos.tacmod.pomodoro.PomodoroPackage
 import io.unthrottled.sogos.tacmod.stream.AlarmPackage
 import io.unthrottled.sogos.tacmod.stream.StreamPackage
 import java.lang.reflect.InvocationTargetException
+import java.util.concurrent.Executors
 
 
 @Suppress("UNUSED")
@@ -28,7 +29,7 @@ class MainApplication : Application(), ReactApplication {
     override fun getPackages(): List<ReactPackage> {
       val packages: MutableList<ReactPackage> = PackageList(this).packages
       packages.add(StreamPackage())
-      packages.add(PomodoroPackage())
+      packages.add(PomodoroPackage(Executors.newSingleThreadExecutor()))
       packages.add(AlarmPackage())
       return packages
     }

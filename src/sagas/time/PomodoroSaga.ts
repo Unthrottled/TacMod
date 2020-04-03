@@ -1,4 +1,4 @@
-import {call, delay, put, race, select} from 'redux-saga/effects';
+import {call, delay, put, race, select, take} from 'redux-saga/effects';
 import uuid from 'uuid/v4';
 import {
   GlobalState,
@@ -12,7 +12,6 @@ import {
   ActivityContent,
   ActivityTimedType,
   ActivityType,
-  getActivityName,
   isActivityRecovery,
   RECOVERY,
 } from '../../types/ActivityTypes';
@@ -33,21 +32,71 @@ import {
   handleNewActivity,
 } from '../activity/CurrentActivitySaga';
 import {ActivityState} from '../../reducers/ActivityReducer';
-import Alarm from '../../native/Alarm';
-import BackgroundTimer from 'react-native-background-timer';
 import {PomodoroSettings} from '../../types/TacticalTypes';
+import Pomodoro from '../../native/Pomodoro';
+import {buffers, eventChannel} from 'redux-saga';
+import {NativeEventEmitter, NativeModules} from 'react-native';
+
+export function* pomodoroSaga(activityThatStartedThis: Activity) {
+  yield call(startPomodoroForActivity, activityThatStartedThis, 1);
+
+  let shouldKeepTiming: boolean = false;
+  do {
+    const before = new Date().valueOf();
+
+    const {currentActivity, timeElapsed} = yield selectAllTheThings();
+
+    // check to see if current activity is same because could have changed while moving to this next iteration
+    const areActivitiesSame = activitiesEqual(
+      currentActivity,
+      activityThatStartedThis,
+    );
+    if (areActivitiesSame) {
+      if (timeElapsed > 0) {
+        yield put(createTimeDecrementEvent());
+        const after = new Date().valueOf();
+        const waitFor = 1000 - (after - before);
+        const {currentActivity: newCurrentActivity} = yield race({
+          currentActivity: call(waitForCurrentActivity),
+          timeElapsed: delay(waitFor < 0 ? 0 : waitFor),
+        });
+        shouldKeepTiming = !newCurrentActivity;
+      } else {
+        shouldKeepTiming = false;
+        yield take(pomodoroChannel);
+      }
+    } else {
+      shouldKeepTiming = false;
+    }
+  } while (shouldKeepTiming);
+}
+
+const pomodoroChannel = createPomodoroChannel();
+
+function createPomodoroChannel() {
+  return eventChannel(statusObserver => {
+    const eventEmitter = new NativeEventEmitter(NativeModules.Pomodoro);
+    const listener = () => {
+      statusObserver('next!');
+    };
+    eventEmitter.addListener('CompletedPomodoro', listener);
+    return () => eventEmitter.removeListener('CompletedPomodoro', listener);
+  }, buffers.expanding(100));
+}
 
 const getTimerTime = (stopTime: number) =>
   Math.floor((stopTime - new Date().getTime()) / 1000);
 
-function* commenceTimedActivity(activityContent: ActivityContent) {
-  const action = createStartedActivityEvent(activityContent);
-  yield put(action);
-  yield call(setTimer, action.payload);
-  yield put(createStartedTimedActivityEvent(activityContent));
-}
-
-function* setTimer(activityThatStartedThis: Activity, addThis: number = 0) {
+/**
+ * Initializes the pomodoro native module to do stuff.
+ * @param activityThatStartedThis
+ * @param addThis
+ */
+function* startPomodoroForActivity(
+  activityThatStartedThis: Activity,
+  addThis: number = 0,
+) {
+  // needed for the ui to show something to count down by
   const {
     antecedenceTime,
     content: {duration},
@@ -56,68 +105,25 @@ function* setTimer(activityThatStartedThis: Activity, addThis: number = 0) {
     getTimerTime(antecedenceTime + (duration || 0)) + addThis;
   yield put(createTimeSetEvent(pomodoroDuration));
 
-  const alarmParameters = yield call(
-    getAlarmParameters,
-    activityThatStartedThis,
-  );
-
-  const fireDate = new Date(new Date().valueOf() + pomodoroDuration * 1000);
-  Alarm.setAlarm({
-    timeToAlert: fireDate.valueOf(),
-    message: alarmParameters.notificationMessage,
-    vibrationPattern: alarmParameters.alarmType,
-  });
-}
-
-function* getAlarmParameters(activityThatStartedThis: Activity) {
-  const {
-    previousActivity,
-    completedPomodoro: {count},
-  }: ActivityState = yield select(selectActivityState);
-
-  if (isActivityRecovery(activityThatStartedThis)) {
-    return {
-      notificationMessage: {
-        title: 'Break is over!',
-        message: `Get back to ${getActivityName(previousActivity)}`,
-      },
-      alarmType: 'resume',
-    };
-  } else {
-    return {
-      notificationMessage: {
-        title: `${getActivityName(activityThatStartedThis)} pomodoro complete.`,
-        message: 'Take a break!',
-      },
-      alarmType: count % 4 === 0 ? 'longBreak' : 'shortBreak',
-    };
-  }
-}
-
-export function stopAllAlarms() {
-  Alarm.stopAllAlarms();
-}
-
-// todo: does it matter if the app is in the foreground?
-export function* newPomodoroSaga() {
+  // todo: this
   const {
     currentActivity,
     previousActivity,
+    timeElapsed,
     pomodoroSettings,
     numberOfCompletedPomodoro,
   } = yield selectAllTheThings();
-  yield call(
-    () =>
-      new Promise(res => {
-        BackgroundTimer.setTimeout(() => res(), 0);
-      }),
-  );
-  yield swappoActivities(
-    currentActivity,
-    previousActivity,
-    pomodoroSettings,
-    numberOfCompletedPomodoro,
-  );
+  const {
+    completedPomodoro: {count},
+  }: ActivityState = yield select(selectActivityState);
+  const fireDate = new Date(new Date().valueOf() + pomodoroDuration * 1000);
+  Pomodoro.commencePomodoroForActivity({
+    timeToAlert: fireDate.valueOf(),
+  });
+}
+
+export function stopPomodoro() {
+  Pomodoro.stopItGetSomeHelp();
 }
 
 function* selectAllTheThings() {
@@ -140,6 +146,21 @@ function* selectAllTheThings() {
   });
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////
+/////////// Things new native module has to do /////////////
+///////////////////////////////////////////////////////////
 function* swappoActivities(
   activityThatStartedThis: Activity,
   previousActivity: Activity,
@@ -173,53 +194,16 @@ function* swappoActivities(
       yield put(createCompletedPomodoroEvent());
     }
   } else {
-    yield call(stopAllAlarms);
+    yield call(stopPomodoro);
   }
   return false;
 }
 
-export function* pomodoroSaga(activityThatStartedThis: Activity) {
-  yield call(setTimer, activityThatStartedThis, 1);
-
-  let shouldKeepTiming: boolean = false;
-  do {
-    const before = new Date().valueOf();
-
-    const {
-      currentActivity,
-      previousActivity,
-      timeElapsed,
-      pomodoroSettings,
-      numberOfCompletedPomodoro,
-    } = yield selectAllTheThings();
-
-    // check to see if current activity is same because could have changed while moving to this next iteration
-    const areActivitiesSame = activitiesEqual(
-      currentActivity,
-      activityThatStartedThis,
-    );
-    if (areActivitiesSame) {
-      if (timeElapsed > 0) {
-        yield put(createTimeDecrementEvent());
-        const after = new Date().valueOf();
-        const waitFor = 1000 - (after - before);
-        const {currentActivity: newCurrentActivity} = yield race({
-          currentActivity: call(waitForCurrentActivity),
-          timeElapsed: delay(waitFor < 0 ? 0 : waitFor),
-        });
-        shouldKeepTiming = !newCurrentActivity;
-      } else {
-        shouldKeepTiming = yield swappoActivities(
-          activityThatStartedThis,
-          previousActivity,
-          pomodoroSettings,
-          numberOfCompletedPomodoro,
-        );
-      }
-    } else {
-      shouldKeepTiming = false;
-    }
-  } while (shouldKeepTiming);
+function* commenceTimedActivity(activityContent: ActivityContent) {
+  const action = createStartedActivityEvent(activityContent);
+  yield put(action);
+  yield call(startPomodoroForActivity, action.payload);
+  yield put(createStartedTimedActivityEvent(activityContent));
 }
 
 export function* checkCurrentActivity() {
