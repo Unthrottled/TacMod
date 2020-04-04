@@ -104,6 +104,10 @@ function* startPomodoroForActivity(
     getTimerTime(antecedenceTime + (duration || 0)) + addThis;
   yield put(createTimeSetEvent(pomodoroDuration));
 
+  if (activityThatStartedThis.content.nativeManaged) {
+    return;
+  }
+
   const {
     currentActivity,
     previousActivity,

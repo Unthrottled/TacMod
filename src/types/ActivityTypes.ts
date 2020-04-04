@@ -33,6 +33,7 @@ export interface ActivityContent {
   activityID?: string;
   duration?: number;
   workStartedWomboCombo?: number;
+  nativeManaged?: boolean;
 }
 
 export interface Activity {

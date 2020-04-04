@@ -102,8 +102,8 @@ export function* delayWork() {
 export function createStartedPomodoroChannel() {
   return eventChannel(statusObserver => {
     const eventEmitter = new NativeEventEmitter(NativeModules.Pomodoro);
-    const listener = () => {
-      statusObserver('next!');
+    const listener = (activity: any) => {
+      statusObserver(activity);
     };
     eventEmitter.addListener('StartedPomodoroActivity', listener);
     return () =>

@@ -7,8 +7,8 @@ import io.unthrottled.sogos.tacmod.alarm.AlarmService
 import io.unthrottled.sogos.tacmod.alarm.NotificationMessage
 import io.unthrottled.sogos.tacmod.alarm.VibrationPattern
 import java.time.Instant
+import java.util.*
 import java.util.concurrent.Executor
-import kotlin.math.floor
 
 data class PomodoroSettings(
     val loadDuration: Int, //milliseconds
@@ -98,6 +98,7 @@ class PomodoroModule(
       // set current activity to be break
 
 
+      val breakDuration = calculateRestTime(updatedPomodoroSettings)
       AlarmService.scheduleAlarm(
           reactContext.applicationContext,
           AlarmParameters(
@@ -105,28 +106,47 @@ class PomodoroModule(
                   "Break is over!",
                   "Get back to ${updatedPomodoroSettings.currentActivity.content.name}"
               ),
-              calculateRestTime(updatedPomodoroSettings),
+              breakDuration + Instant.now().toEpochMilli(),
               calculateVibrationPattern(updatedPomodoroSettings)
           )
       )
 
       val breakActivity = Arguments.createMap()
-//      reactContext.getJSModule(
-//          DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
-//      ).emit(
-//          "StartedPomodoroActivity",
-//          breakActivity
-//      )
+      breakActivity.putDouble("antecedenceTime", Instant.now().toEpochMilli().toDouble())
+      val breakContent = Arguments.createMap()
+      breakContent.putString("uuid", UUID.randomUUID().toString())
+      breakContent.putString("name", "RECOVERY")
+      breakContent.putString("type", "ACTIVE")
+      breakContent.putString("timedType", "TIMER")
+      breakContent.putBoolean("nativeManaged", true)
+      breakContent.putInt("duration", breakDuration)
+      breakActivity.putMap("content", breakContent)
+      val jsModule = reactContext.getJSModule(
+          DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+      )
+      jsModule.emit(
+          "StartedPomodoroActivity",
+          breakActivity
+      )
 
       AlarmService.setCompletionListener {
         // set current activity to working activity
 
-//        reactContext.getJSModule(
-//            DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
-//        ).emit(
-//            "StartedPomodoroActivity",
-//            pomodoroThings.json.getMap("currentActivity")
-//        )
+        val loadActivity = Arguments.createMap()
+        loadActivity.putDouble("antecedenceTime", Instant.now().toEpochMilli().toDouble())
+        val loadContent = Arguments.createMap()
+        loadContent.putString("uuid", UUID.randomUUID().toString())
+        loadContent.putString("name", pomodoroThings.currentActivity.content.name)
+        loadContent.putString("type", "ACTIVE")
+        loadContent.putString("timedType", "TIMER")
+        loadContent.putBoolean("nativeManaged", true)
+        loadContent.putString("activityID", pomodoroThings.json.getMap("currentActivity")?.getMap("content")?.getString("activityID"))
+        loadContent.putInt("duration", pomodoroThings.pomodoroSettings.loadDuration)
+        loadActivity.putMap("content", loadContent)
+        jsModule.emit(
+            "StartedPomodoroActivity",
+            loadActivity
+        )
 
         startPomodoro(
             updatedPomodoroSettings
@@ -147,13 +167,9 @@ class PomodoroModule(
     return loadDuration + antecedenceTime
   }
 
-  private fun calculateRestTime(pomodoroThings: PomodoroParameters): Long {
-    val loadDuration =
-        if (pomodoroThings.numberOfCompletedPomodoro % 4 == 0) pomodoroThings.pomodoroSettings.longRecoveryDuration
-        else pomodoroThings.pomodoroSettings.shortRecoveryDuration
-
-    val antecedenceTime = Instant.now().toEpochMilli()
-    return loadDuration + antecedenceTime
+  private fun calculateRestTime(pomodoroThings: PomodoroParameters): Int {
+    return if (pomodoroThings.numberOfCompletedPomodoro % 4 == 0) pomodoroThings.pomodoroSettings.longRecoveryDuration
+    else pomodoroThings.pomodoroSettings.shortRecoveryDuration
   }
 
   @ReactMethod
