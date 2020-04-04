@@ -111,16 +111,8 @@ class PomodoroModule(
   private fun calculateTimeToAlert(pomodoroThings: PomodoroParameters): Long {
     val loadDuration = pomodoroThings.pomodoroSettings.loadDuration
     val antecedenceTime = pomodoroThings.currentActivity.antecedenceTime
-    val meow = Instant.now().toEpochMilli()
-    return floor(
-        ((loadDuration + antecedenceTime) - meow).toDouble() / 1000
-    ).toLong()
+    return loadDuration + antecedenceTime
   }
-
-  private fun getActivityName(pomodoroThings: ReadableMap): String =
-      pomodoroThings.getMap("currentActivity")
-          ?.getMap("content")
-          ?.getString("name") ?: "Activity"
 
   @ReactMethod
   fun stopItGetSomeHelp() {

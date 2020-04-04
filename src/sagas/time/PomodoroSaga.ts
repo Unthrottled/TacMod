@@ -31,7 +31,6 @@ import {
   CURRENT_ACTIVITY_URL,
   handleNewActivity,
 } from '../activity/CurrentActivitySaga';
-import {ActivityState} from '../../reducers/ActivityReducer';
 import {PomodoroSettings} from '../../types/TacticalTypes';
 import Pomodoro from '../../native/Pomodoro';
 import {buffers, eventChannel} from 'redux-saga';
@@ -63,7 +62,9 @@ export function* pomodoroSaga(activityThatStartedThis: Activity) {
         shouldKeepTiming = !newCurrentActivity;
       } else {
         shouldKeepTiming = false;
+        console.tron('Finna wait for the event to emit');
         yield take(pomodoroChannel);
+        console.tron('k I waited is done :D');
       }
     } else {
       shouldKeepTiming = false;
@@ -108,7 +109,6 @@ function* startPomodoroForActivity(
   const {
     currentActivity,
     previousActivity,
-    timeElapsed,
     pomodoroSettings,
     numberOfCompletedPomodoro,
   } = yield selectAllTheThings();
@@ -116,7 +116,7 @@ function* startPomodoroForActivity(
     pomodoroSettings,
     currentActivity,
     previousActivity,
-    numberOfCompletedPomodoro
+    numberOfCompletedPomodoro,
   });
 }
 
@@ -143,18 +143,6 @@ function* selectAllTheThings() {
     };
   });
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /////////////////////////////////////////////////////////////
 /////////// Things new native module has to do /////////////
