@@ -111,22 +111,22 @@ class PomodoroModule(
       )
 
       val breakActivity = Arguments.createMap()
-      reactContext.getJSModule(
-          DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
-      ).emit(
-          "StartedPomodoroActivity",
-          breakActivity
-      )
+//      reactContext.getJSModule(
+//          DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+//      ).emit(
+//          "StartedPomodoroActivity",
+//          breakActivity
+//      )
 
       AlarmService.setCompletionListener {
         // set current activity to working activity
 
-        reactContext.getJSModule(
-            DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
-        ).emit(
-            "StartedPomodoroActivity",
-            pomodoroThings.json.getMap("currentActivity")
-        )
+//        reactContext.getJSModule(
+//            DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+//        ).emit(
+//            "StartedPomodoroActivity",
+//            pomodoroThings.json.getMap("currentActivity")
+//        )
 
         startPomodoro(
             updatedPomodoroSettings
@@ -143,7 +143,7 @@ class PomodoroModule(
 
   private fun calculateTimeToAlert(pomodoroThings: PomodoroParameters): Long {
     val loadDuration = pomodoroThings.pomodoroSettings.loadDuration
-    val antecedenceTime = pomodoroThings.currentActivity.antecedenceTime
+    val antecedenceTime = Instant.now().toEpochMilli()
     return loadDuration + antecedenceTime
   }
 
