@@ -5,6 +5,7 @@ import {
   createResumedStartedNonTimedActivityEvent,
   createResumedStartedTimedActivityEvent,
   createCompletedPomodoroEvent,
+  createCanceledPomodoroEvent,
 } from '../../events/ActivityEvents';
 import {call, delay, put, select, take} from 'redux-saga/effects';
 import {RECEIVED_USER} from '../../events/UserEvents';
@@ -103,6 +104,15 @@ export function* delayWork() {
 export function* pomoBreakSaga(activity: Activity) {
   yield put(createCompletedPomodoroEvent());
   yield call(handleNewActivity, activity);
+}
+
+export function* pomoErroSaga() {
+  yield put(createCanceledPomodoroEvent());
+}
+
+export function createPomodoroErrorChannel() {
+  const channelName = 'StartedPomodoroBreak';
+  return createPomodoChannel(channelName);
 }
 
 export function createBreakPomodoroChannel() {

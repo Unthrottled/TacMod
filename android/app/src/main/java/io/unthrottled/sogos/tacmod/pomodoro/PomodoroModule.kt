@@ -14,8 +14,7 @@ data class SecurityStuff(
     var accessToken: String,
     val refreshToken: String,
     val tokenEndpoint: String,
-    val clientId: String,
-    val clientSecret: String?
+    val clientId: String
 )
 
 data class PomodoroSettings(
@@ -75,7 +74,12 @@ class PomodoroModule(
   }
 
   private fun buildSecurityStuff(pomodoroParam: ReadableMap): SecurityStuff {
-    TODO("Not yet implemented")
+    return SecurityStuff(
+        pomodoroParam.getMap("securityStuff")?.getString("accessToken") ?: "nada",
+        pomodoroParam.getMap("securityStuff")?.getString("refreshToken") ?: "nada",
+        pomodoroParam.getMap("securityStuff")?.getString("tokenEndpoint") ?: "nada",
+        pomodoroParam.getMap("securityStuff")?.getString("clientId") ?: "nada"
+    )
   }
 
   private fun buildActivity(map: ReadableMap?): Activity {
@@ -110,54 +114,75 @@ class PomodoroModule(
       val updatedPomodoroSettings = pomodoroThings.apply {
         this.numberOfCompletedPomodoro += 1
       }
+      checkCurrentActivity(updatedPomodoroSettings)
+          .ifPresent {
+            // attempt to register new activity.
+            val breakDuration = calculateRestTime(updatedPomodoroSettings)
+            runSafely {
+              val moreUpToDatePomoSettings = setCurrentActivity(buildBreak(breakDuration), updatedPomodoroSettings)
+              AlarmService.scheduleAlarm(
+                  reactContext.applicationContext,
+                  AlarmParameters(
+                      NotificationMessage(
+                          "Break is over!",
+                          "Get back to ${moreUpToDatePomoSettings.currentActivity.content.name}"
+                      ),
+                      breakDuration + Instant.now().toEpochMilli(),
+                      calculateVibrationPattern(moreUpToDatePomoSettings)
+                  )
+              )
 
-      val breakDuration = calculateRestTime(updatedPomodoroSettings)
-      AlarmService.scheduleAlarm(
-          reactContext.applicationContext,
-          AlarmParameters(
-              NotificationMessage(
-                  "Break is over!",
-                  "Get back to ${updatedPomodoroSettings.currentActivity.content.name}"
-              ),
-              breakDuration + Instant.now().toEpochMilli(),
-              calculateVibrationPattern(updatedPomodoroSettings)
-          )
-      )
+              val breakActivity = buildBreak(breakDuration)
+              val jsModule = reactContext.getJSModule(
+                  DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+              )
+              jsModule.emit(
+                  "StartedPomodoroBreak",
+                  breakActivity
+              )
 
-      val breakActivity = buildBreak(breakDuration)
-      val jsModule = reactContext.getJSModule(
-          DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
-      )
-      jsModule.emit(
-          "StartedPomodoroBreak",
-          breakActivity
-      )
+              AlarmService.setCompletionListener {
+                // set current activity to working activity
+                val mostUpToDatePomoSettings =
+                    setCurrentActivity(buildActivity(moreUpToDatePomoSettings), moreUpToDatePomoSettings)
 
-      setCurrentActivity(buildBreak(breakDuration), pomodoroThings)
+                jsModule.emit(
+                    "StartedPomodoroActivity",
+                    buildActivity(mostUpToDatePomoSettings)
+                )
 
-      AlarmService.setCompletionListener {
-        // set current activity to working activity
-
-        jsModule.emit(
-            "StartedPomodoroActivity",
-            buildActivity(pomodoroThings)
-        )
-
-        setCurrentActivity(buildActivity(pomodoroThings), pomodoroThings)
-
-        startPomodoro(
-            updatedPomodoroSettings.apply {
-              updatedPomodoroSettings.currentActivity.json = buildActivity(pomodoroThings)
+                startPomodoro(
+                    mostUpToDatePomoSettings.apply {
+                      this.currentActivity.json = buildActivity(pomodoroThings)
+                    }
+                )
+              }
             }
-        )
-      }
+          }
+
     }
+  }
+
+  private fun runSafely(runMeSafePls: () -> Unit) {
+    val jsModule = reactContext.getJSModule(
+        DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+    )
+    try {
+      runMeSafePls()
+    } catch (t: Throwable) {
+      // oh noessss!!!11
+      jsModule.emit("PomodoroError", Arguments.createMap())
+    }
+  }
+
+  private fun checkCurrentActivity(updatedPomodoroSettings: PomodoroParameters): Optional<PomodoroParameters> {
+    TODO("Not yet implemented")
   }
 
   private fun setCurrentActivity(
       buildBreak: WritableMap?,
       pomodoroThings: PomodoroParameters
-  ) {
+  ): PomodoroParameters {
     TODO("Not yet implemented")
   }
 

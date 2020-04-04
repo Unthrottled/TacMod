@@ -6,6 +6,7 @@ import {
   selectTacticalState,
   selectTimeState,
   selectSecurityState,
+  selectConfigurationState,
 } from '../../reducers';
 import {
   activitiesEqual,
@@ -33,7 +34,7 @@ import {
   handleNewActivity,
 } from '../activity/CurrentActivitySaga';
 import {PomodoroSettings} from '../../types/TacticalTypes';
-import Pomodoro from '../../native/Pomodoro';
+import Pomodoro, { SecurityStuff } from '../../native/Pomodoro';
 import {buffers, eventChannel} from 'redux-saga';
 import {NativeEventEmitter, NativeModules} from 'react-native';
 
@@ -114,12 +115,14 @@ function* startPomodoroForActivity(
     previousActivity,
     pomodoroSettings,
     numberOfCompletedPomodoro,
+    securityStuff,
   } = yield selectAllTheThings();
   Pomodoro.commencePomodoroForActivity({
     pomodoroSettings,
     currentActivity,
     previousActivity,
     numberOfCompletedPomodoro,
+    securityStuff,
   });
 }
 
@@ -138,11 +141,14 @@ function* selectAllTheThings() {
       pomodoro: {settings},
     } = selectTacticalState(globalState);
     const {accessToken, refreshToken} = selectSecurityState(globalState);
-
+    const {
+      initial: {tokenEndpoint, appClientID},
+    } = selectConfigurationState(globalState);
     const securityStuff: SecurityStuff = {
       accessToken,
       refreshToken,
-      
+      tokenEndpoint,
+      clientId: appClientID,
     };
     return {
       currentActivity: ca,
@@ -150,6 +156,7 @@ function* selectAllTheThings() {
       timeElapsed: selectTimeState(globalState).timeElapsed,
       pomodoroSettings: settings,
       numberOfCompletedPomodoro: count,
+      securityStuff,
     };
   });
 }

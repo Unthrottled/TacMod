@@ -2,12 +2,11 @@ import {NativeModules} from 'react-native';
 import {PomodoroSettings} from '../types/TacticalTypes';
 import {Activity} from '../types/ActivityTypes';
 
-interface SecurityStuff {
+export interface SecurityStuff {
   accessToken: string;
   refreshToken: string;
   tokenEndpoint: string;
   clientId: string;
-  clientSecret?: string;
 }
 
 interface PomodoroParameters {
