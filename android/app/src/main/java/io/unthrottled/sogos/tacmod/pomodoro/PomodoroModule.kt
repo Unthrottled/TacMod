@@ -49,54 +49,75 @@ class PomodoroModule(
   private fun startPomodoro(pomodoroThings: PomodoroParameters) {
     scheduleLoadAlarm(pomodoroThings)
 
+    val jsModule = reactContext.getJSModule(
+        DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+    )
     AlarmService.setCompletionListener {
       val pomoWithUpdatedCount = pomodoroThings.apply {
         this.numberOfCompletedPomodoro += 1
       }
 
-      checkCurrentActivity(pomoWithUpdatedCount) { pomoSettingsAfterFirstCheck ->
+      checkCurrentActivity(pomoWithUpdatedCount, { pomoSettingsAfterFirstCheck ->
 
         val breakDuration = calculateRestTime(pomoSettingsAfterFirstCheck)
         setCurrentActivity(
             buildBreak(breakDuration),
-            pomoSettingsAfterFirstCheck
-        ) { pomoSettingsAfterSettingBreak ->
+            pomoSettingsAfterFirstCheck,
+            { pomoSettingsAfterSettingBreak ->
 
-          scheduleBreakAlarm(pomoSettingsAfterSettingBreak, breakDuration)
+              scheduleBreakAlarm(pomoSettingsAfterSettingBreak, breakDuration)
 
-          val jsModule = reactContext.getJSModule(
-              DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
-          )
+              notifyJavascriptOfBreak(breakDuration, jsModule)
 
-          notifyJavascriptOfBreak(breakDuration, jsModule)
+              AlarmService.setCompletionListener {
+                checkRecoveryActivity(
+                    pomoSettingsAfterSettingBreak,
+                    { pomoSettingsAfterCheckingIfRecovery ->
 
-          AlarmService.setCompletionListener {
-            checkRecoveryActivity(
-                pomoSettingsAfterSettingBreak
-            ) { pomoSettingsAfterCheckingIfRecovery ->
+                      setCurrentActivity(
+                          buildActivityMap(pomoSettingsAfterCheckingIfRecovery),
+                          pomoSettingsAfterCheckingIfRecovery,
+                          { pomoSettingsAfterSettingLoadAgain ->
 
-              setCurrentActivity(
-                  buildActivityMap(pomoSettingsAfterCheckingIfRecovery),
-                  pomoSettingsAfterCheckingIfRecovery
-              ) { pomoSettingsAfterSettingLoadAgain ->
+                            jsModule.emit(
+                                "StartedPomodoroActivity",
+                                buildActivityMap(pomoSettingsAfterSettingLoadAgain)
+                            )
 
-                jsModule.emit(
-                    "StartedPomodoroActivity",
-                    buildActivityMap(pomoSettingsAfterSettingLoadAgain)
-                )
-
-                // recursion!!
-                startPomodoro(
-                    pomoSettingsAfterSettingLoadAgain.apply {
-                      this.currentActivity.json = buildActivityMap(pomodoroThings)
-                    }
-                )
+                            // recursion!!
+                            startPomodoro(
+                                pomoSettingsAfterSettingLoadAgain.apply {
+                                  this.currentActivity.json = buildActivityMap(pomodoroThings)
+                                }
+                            )
+                          }) {
+                        notifyJavascriptOfError("Unable to set load activity as current, the second time", it, jsModule)
+                      }
+                    }) {
+                  notifyJavascriptOfError("Unable to check to see if the current activity is recovery", it, jsModule)
+                }
               }
-            }
-          }
+            }) {
+          notifyJavascriptOfError("Unable to set current activity to recovery", it, jsModule)
         }
+      }) {
+        notifyJavascriptOfError("Unable to check if current activity is the first load activity", it, jsModule)
       }
     }
+  }
+
+  private fun notifyJavascriptOfError(
+      message: String,
+      error: Throwable,
+      jsModule: DeviceEventManagerModule.RCTDeviceEventEmitter
+  ) {
+    val errorPayload = Arguments.createMap()
+    errorPayload.putString("message", message)
+    errorPayload.putString("error", error.message)
+    jsModule.emit(
+        "PomodoroError",
+        errorPayload
+    )
   }
 
   private fun scheduleLoadAlarm(pomodoroThings: PomodoroParameters) {
@@ -137,36 +158,41 @@ class PomodoroModule(
 
   private fun checkCurrentActivity(
       updatedPomodoroSettings: PomodoroParameters,
-      callback: (p: PomodoroParameters) -> Unit
-      // todo: error callback
+      callback: (p: PomodoroParameters) -> Unit,
+      error: (e: Throwable) -> Unit
   ) {
-    performCurrentActivityFetch(updatedPomodoroSettings) { activity, pomoStuffToSend ->
+    performCurrentActivityFetch(updatedPomodoroSettings, { activity, pomoStuffToSend ->
       if (activity.content.activityID == pomoStuffToSend.currentActivity.content.activityID) {
         callback(pomoStuffToSend)
       } else {
         System.err.println("Activities not same, do not start!!!!")
       }
+    }) {
+      error(it)
     }
   }
 
   private fun checkRecoveryActivity(
       updatedPomodoroSettings: PomodoroParameters,
-      callback: (p: PomodoroParameters) -> Unit
-      // todo: error callback
+      callback: (p: PomodoroParameters) -> Unit,
+      error: (e: Throwable) -> Unit
   ) {
-    performCurrentActivityFetch(updatedPomodoroSettings) { activity, pomoStuffToSend ->
+    performCurrentActivityFetch(updatedPomodoroSettings, { activity, pomoStuffToSend ->
       if (activity.content.activityID == null &&
           activity.content.name == "RECOVERY") {
         callback(pomoStuffToSend)
       } else {
         System.err.println("Activities not same, do not start!!!!")
       }
+    }) {
+      error(it)
     }
   }
 
   private fun performCurrentActivityFetch(
       updatedPomodoroSettings: PomodoroParameters,
-      doStuff: (activity: Activity, pomoStuff: PomodoroParameters) -> Unit
+      doStuff: (activity: Activity, pomoStuff: PomodoroParameters) -> Unit,
+      error: (e: Throwable) -> Unit
   ) {
     getHeaders(updatedPomodoroSettings) { headers, pomoStuffToSend ->
       performRequest(
@@ -181,7 +207,7 @@ class PomodoroModule(
             doStuff(activity, pomoStuffToSend)
           }
       ) {
-        // todo: meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+        error(it)
       }
     }
   }
@@ -189,8 +215,8 @@ class PomodoroModule(
   private fun setCurrentActivity(
       buildBreak: WritableMap?,
       pomodoroThings: PomodoroParameters,
-      callBack: (upDate: PomodoroParameters) -> Unit
-      // todo: error
+      callBack: (upDate: PomodoroParameters) -> Unit,
+      error: (e: Throwable) -> Unit
   ) {
     getHeaders(pomodoroThings) { headers, pomoStuffToSend ->
       performRequest(
@@ -208,7 +234,7 @@ class PomodoroModule(
             callBack(pomoStuffToSend)
           }
       ) {
-        // todo: meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+        error(it)
       }
     }
   }

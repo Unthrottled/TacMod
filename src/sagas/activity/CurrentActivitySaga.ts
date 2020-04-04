@@ -111,7 +111,7 @@ export function* pomoErroSaga() {
 }
 
 export function createPomodoroErrorChannel() {
-  const channelName = 'StartedPomodoroBreak';
+  const channelName = 'PomodoroError';
   return createPomodoChannel(channelName);
 }
 
