@@ -19,6 +19,7 @@ import {
 import {StringDictionary} from '../types/BaseTypes';
 import reduceRight from 'lodash/reduceRight';
 import {LOGGED_OFF} from '../events/SecurityEvents';
+import omit from 'lodash/omit';
 
 export type RememberedPomodoro = {
   dateCounted: number;
@@ -83,32 +84,40 @@ const activityReducer = (
       return {
         ...state,
         shouldTime: true,
-        previousActivity: state.currentActivity.antecedenceTime
-          ? state.currentActivity
-          : state.previousActivity,
-        currentActivity: action.payload,
+        previousActivity: santitizeActivity(
+          state.currentActivity.antecedenceTime
+            ? state.currentActivity
+            : state.previousActivity,
+        ),
+        currentActivity: santitizeActivity(action.payload),
       };
     case STARTED_NON_TIMED_ACTIVITY:
     case RESUMED_NON_TIMED_ACTIVITY:
       return {
         ...state,
         shouldTime: false,
-        previousActivity: state.currentActivity.antecedenceTime
-          ? state.currentActivity
-          : state.previousActivity,
-        currentActivity: action.payload,
+        previousActivity: santitizeActivity(
+          state.currentActivity.antecedenceTime
+            ? state.currentActivity
+            : state.previousActivity,
+        ),
+        currentActivity: santitizeActivity(action.payload),
       };
     case FOUND_PREVIOUS_ACTIVITY:
       return {
         ...state,
-        previousActivity: action.payload,
+        previousActivity: santitizeActivity(action.payload),
       };
     case CACHED_ACTIVITY: {
       const {userGUID, cachedActivity} = action.payload;
+      const cleanCachedActivity: CachedActivity = {
+        activity: santitizeActivity(cachedActivity.activity),
+        uploadType: cachedActivity.uploadType,
+      };
       if (state.cache[userGUID]) {
-        state.cache[userGUID].push(cachedActivity);
+        state.cache[userGUID].push(cleanCachedActivity);
       } else {
-        state.cache[userGUID] = [cachedActivity];
+        state.cache[userGUID] = [cleanCachedActivity];
       }
       return {
         ...state,
@@ -138,5 +147,14 @@ const activityReducer = (
       return state;
   }
 };
+
+function santitizeActivity(activity: Activity): Activity {
+  return {
+    ...activity,
+    content: {
+      ...omit(activity.content, ['nativeManaged']),
+    },
+  };
+}
 
 export default activityReducer;

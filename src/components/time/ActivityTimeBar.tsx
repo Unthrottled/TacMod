@@ -203,7 +203,7 @@ const ActivityTimeBar = () => {
   const resumePreviousActivity = () => {
     dispetch(
       startTimedActivity({
-        ...omit(previousActivity.content, ['autoStart']),
+        ...omit(previousActivity.content, ['autoStart', 'nativeManaged']),
         ...(previousActivity.content.duration
           ? {
               duration: pomodoroSettings.loadDuration,
