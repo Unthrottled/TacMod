@@ -22,7 +22,7 @@ data class PomodoroSettings(
 data class ActivityContent(
     val name: String,
     val uuid: String,
-    val activityID: String
+    val activityID: String?
 )
 
 data class Activity(

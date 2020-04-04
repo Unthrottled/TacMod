@@ -47,6 +47,47 @@ class PomodoroModule(
   }
 
   private fun startPomodoro(pomodoroThings: PomodoroParameters) {
+    scheduleLoadAlarm(pomodoroThings)
+
+    AlarmService.setCompletionListener {
+      val updatedPomodoroSettings = pomodoroThings.apply {
+        this.numberOfCompletedPomodoro += 1
+      }
+
+      checkCurrentActivity(updatedPomodoroSettings) { newestPomoSettings ->
+
+        val breakDuration = calculateRestTime(newestPomoSettings)
+        setCurrentActivity(buildBreak(breakDuration), newestPomoSettings) { moreUpToDatePomoSettings ->
+          scheduleBreakAlarm(moreUpToDatePomoSettings, breakDuration)
+          val jsModule = reactContext.getJSModule(
+              DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+          )
+          notifyJavascriptOfBreak(breakDuration, jsModule)
+
+          AlarmService.setCompletionListener {
+            checkRecoveryActivity(moreUpToDatePomoSettings) { evenMoreUptoDatePomoSettings ->
+              setCurrentActivity(
+                  buildActivityMap(evenMoreUptoDatePomoSettings),
+                  evenMoreUptoDatePomoSettings
+              ) { mostUpToDatePomoSettings ->
+                jsModule.emit(
+                    "StartedPomodoroActivity",
+                    buildActivityMap(mostUpToDatePomoSettings)
+                )
+                startPomodoro(
+                    mostUpToDatePomoSettings.apply {
+                      this.currentActivity.json = buildActivityMap(pomodoroThings)
+                    }
+                )
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  private fun scheduleLoadAlarm(pomodoroThings: PomodoroParameters) {
     AlarmService.scheduleAlarm(
         reactContext.applicationContext,
         AlarmParameters(
@@ -58,61 +99,62 @@ class PomodoroModule(
             calculateVibrationPattern(pomodoroThings)
         )
     )
+  }
 
-    AlarmService.setCompletionListener {
-      val updatedPomodoroSettings = pomodoroThings.apply {
-        this.numberOfCompletedPomodoro += 1
-      }
+  private fun notifyJavascriptOfBreak(breakDuration: Int, jsModule: DeviceEventManagerModule.RCTDeviceEventEmitter) {
+    val breakActivity = buildBreak(breakDuration)
+    jsModule.emit(
+        "StartedPomodoroBreak",
+        breakActivity
+    )
+  }
 
-      checkCurrentActivity(updatedPomodoroSettings) { newestPomoSettings ->
-        // attempt to register new activity.
-        val breakDuration = calculateRestTime(newestPomoSettings)
-        setCurrentActivity(buildBreak(breakDuration), newestPomoSettings) { moreUpToDatePomoSettings ->
-          AlarmService.scheduleAlarm(
-              reactContext.applicationContext,
-              AlarmParameters(
-                  NotificationMessage(
-                      "Break is over!",
-                      "Get back to ${moreUpToDatePomoSettings.currentActivity.content.name}"
-                  ),
-                  breakDuration + Instant.now().toEpochMilli(),
-                  calculateVibrationPattern(moreUpToDatePomoSettings)
-              )
-          )
-
-          val breakActivity = buildBreak(breakDuration)
-          val jsModule = reactContext.getJSModule(
-              DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
-          )
-          jsModule.emit(
-              "StartedPomodoroBreak",
-              breakActivity
-          )
-
-          AlarmService.setCompletionListener {
-            // set current activity to working activity
-            setCurrentActivity(buildActivityMap(moreUpToDatePomoSettings), moreUpToDatePomoSettings) { mostUpToDatePomoSettings ->
-              jsModule.emit(
-                  "StartedPomodoroActivity",
-                  buildActivityMap(mostUpToDatePomoSettings)
-              )
-
-              startPomodoro(
-                  mostUpToDatePomoSettings.apply {
-                    this.currentActivity.json = buildActivityMap(pomodoroThings)
-                  }
-              )
-            }
-          }
-        }
-      }
-    }
+  private fun scheduleBreakAlarm(moreUpToDatePomoSettings: PomodoroParameters, breakDuration: Int) {
+    AlarmService.scheduleAlarm(
+        reactContext.applicationContext,
+        AlarmParameters(
+            NotificationMessage(
+                "Break is over!",
+                "Get back to ${moreUpToDatePomoSettings.currentActivity.content.name}"
+            ),
+            breakDuration + Instant.now().toEpochMilli(),
+            calculateVibrationPattern(moreUpToDatePomoSettings)
+        )
+    )
   }
 
   private fun checkCurrentActivity(
       updatedPomodoroSettings: PomodoroParameters,
       callback: (p: PomodoroParameters) -> Unit
       // todo: error callback
+  ) {
+    performCurrentActivityFetch(updatedPomodoroSettings) { activity, pomoStuffToSend ->
+      if (activity.content.activityID == pomoStuffToSend.currentActivity.content.activityID) {
+        callback(pomoStuffToSend)
+      } else {
+        System.err.println("Activities not same, do not start!!!!")
+      }
+    }
+  }
+
+  private fun checkRecoveryActivity(
+      updatedPomodoroSettings: PomodoroParameters,
+      callback: (p: PomodoroParameters) -> Unit
+      // todo: error callback
+  ) {
+    performCurrentActivityFetch(updatedPomodoroSettings) { activity, pomoStuffToSend ->
+      if (activity.content.activityID == null &&
+          activity.content.name == "RECOVERY") {
+        callback(pomoStuffToSend)
+      } else {
+        System.err.println("Activities not same, do not start!!!!")
+      }
+    }
+  }
+
+  private fun performCurrentActivityFetch(
+      updatedPomodoroSettings: PomodoroParameters,
+      doStuff: (activity: Activity, pomoStuff: PomodoroParameters) -> Unit
   ) {
     getHeaders(updatedPomodoroSettings) { headers, pomoStuffToSend ->
       performRequest(
@@ -124,15 +166,7 @@ class PomodoroModule(
               .build(),
           {
             val activity = gson.fromJson(it, Activity::class.java)
-            if (
-                activity.content.activityID == pomoStuffToSend.currentActivity.content.activityID
-            // todo: recovery same?????
-            ) {
-              callback(pomoStuffToSend)
-            } else {
-              System.err.println("Activities not same, do not start!!!!")
-            }
-
+            doStuff(activity, pomoStuffToSend)
           }
       ) {
         // todo: meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
