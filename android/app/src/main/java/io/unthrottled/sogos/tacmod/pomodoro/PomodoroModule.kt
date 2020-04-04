@@ -22,7 +22,8 @@ data class ActivityContent(
 
 data class Activity(
     val antecedenceTime: Long,
-    val content: ActivityContent
+    val content: ActivityContent,
+    var json: ReadableMap
 )
 
 data class PomodoroParameters(
@@ -68,7 +69,8 @@ class PomodoroModule(
         map?.getDouble("antecedenceTime")?.toLong() ?: Instant.now().toEpochMilli(),
         ActivityContent(
             map?.getMap("content")?.getString("name") ?: "Lul Dunno"
-        )
+        ),
+        map ?: Arguments.createMap()
     )
   }
 
@@ -132,27 +134,33 @@ class PomodoroModule(
       AlarmService.setCompletionListener {
         // set current activity to working activity
 
-        val loadActivity = Arguments.createMap()
-        loadActivity.putDouble("antecedenceTime", Instant.now().toEpochMilli().toDouble())
-        val loadContent = Arguments.createMap()
-        loadContent.putString("uuid", UUID.randomUUID().toString())
-        loadContent.putString("name", pomodoroThings.currentActivity.content.name)
-        loadContent.putString("type", "ACTIVE")
-        loadContent.putString("timedType", "TIMER")
-        loadContent.putBoolean("nativeManaged", true)
-        loadContent.putString("activityID", pomodoroThings.json.getMap("currentActivity")?.getMap("content")?.getString("activityID"))
-        loadContent.putInt("duration", pomodoroThings.pomodoroSettings.loadDuration)
-        loadActivity.putMap("content", loadContent)
         jsModule.emit(
             "StartedPomodoroActivity",
-            loadActivity
+            buildActivity(pomodoroThings)
         )
 
         startPomodoro(
-            updatedPomodoroSettings
+            updatedPomodoroSettings.apply {
+              updatedPomodoroSettings.currentActivity.json = buildActivity(pomodoroThings)
+            }
         )
       }
     }
+  }
+
+  private fun buildActivity(pomodoroThings: PomodoroParameters): WritableMap {
+    val loadActivity = Arguments.createMap()
+    loadActivity.putDouble("antecedenceTime", Instant.now().toEpochMilli().toDouble())
+    val loadContent = Arguments.createMap()
+    loadContent.putString("uuid", UUID.randomUUID().toString())
+    loadContent.putString("name", pomodoroThings.currentActivity.content.name)
+    loadContent.putString("type", "ACTIVE")
+    loadContent.putString("timedType", "TIMER")
+    loadContent.putBoolean("nativeManaged", true)
+    loadContent.putString("activityID", pomodoroThings.json.getMap("currentActivity")?.getMap("content")?.getString("activityID"))
+    loadContent.putInt("duration", pomodoroThings.pomodoroSettings.loadDuration)
+    loadActivity.putMap("content", loadContent)
+    return loadActivity
   }
 
   private fun calculateVibrationPattern(pomodoroThings: PomodoroParameters): VibrationPattern =
@@ -162,7 +170,9 @@ class PomodoroModule(
       }
 
   private fun calculateTimeToAlert(pomodoroThings: PomodoroParameters): Long {
-    val loadDuration = pomodoroThings.pomodoroSettings.loadDuration
+    val loadDuration = pomodoroThings.currentActivity.json
+        .getMap("content")
+        ?.getInt("duration") ?: pomodoroThings.pomodoroSettings.loadDuration
     val antecedenceTime = Instant.now().toEpochMilli()
     return loadDuration + antecedenceTime
   }

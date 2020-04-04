@@ -34,6 +34,7 @@ import {useNavigation} from 'react-navigation-hooks';
 import {requestLogoff} from '../../events/SecurityEvents';
 import {act} from 'react-test-renderer';
 import {createCanceledPomodoroEvent} from '../../events/ActivityEvents';
+import Pomodoro from '../../native/Pomodoro';
 
 export const timeFontSize = 40;
 
@@ -170,6 +171,7 @@ const ActivityTimeBar = () => {
   };
 
   const startPausedRecovery = () => {
+    Pomodoro.stopItGetSomeHelp();
     dispetch(
       startTimedActivity({
         name: RECOVERY,
