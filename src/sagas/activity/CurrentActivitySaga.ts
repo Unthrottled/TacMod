@@ -4,6 +4,7 @@ import {
   createInitializedCurrentActivityEvent,
   createResumedStartedNonTimedActivityEvent,
   createResumedStartedTimedActivityEvent,
+  createCompletedPomodoroEvent,
 } from '../../events/ActivityEvents';
 import {call, delay, put, select, take} from 'redux-saga/effects';
 import {RECEIVED_USER} from '../../events/UserEvents';
@@ -99,15 +100,29 @@ export function* delayWork() {
   }
 }
 
+export function* pomoBreakSaga(activity: Activity) {
+  yield put(createCompletedPomodoroEvent());
+  yield call(handleNewActivity, activity);
+}
+
+export function createBreakPomodoroChannel() {
+  const channelName = 'StartedPomodoroBreak';
+  return createPomodoChannel(channelName);
+}
+
 export function createStartedPomodoroChannel() {
+  const channelName = 'StartedPomodoroActivity';
+  return createPomodoChannel(channelName);
+}
+
+function createPomodoChannel(channelName: string) {
   return eventChannel(statusObserver => {
     const eventEmitter = new NativeEventEmitter(NativeModules.Pomodoro);
     const listener = (activity: any) => {
       statusObserver(activity);
     };
-    eventEmitter.addListener('StartedPomodoroActivity', listener);
-    return () =>
-      eventEmitter.removeListener('StartedPomodoroActivity', listener);
+    eventEmitter.addListener(channelName, listener);
+    return () => eventEmitter.removeListener(channelName, listener);
   }, buffers.expanding(100));
 }
 

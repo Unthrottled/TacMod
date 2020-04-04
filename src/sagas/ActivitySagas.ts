@@ -5,6 +5,8 @@ import {
   currentActivitySaga,
   handleNewActivity,
   createStartedPomodoroChannel,
+  createBreakPomodoroChannel,
+  pomoBreakSaga,
 } from './activity/CurrentActivitySaga';
 import {registerActivitySaga} from './activity/RegisterActivitySaga';
 import {FOUND_WIFI} from '../events/NetworkEvents';
@@ -27,6 +29,7 @@ function* listenToActivityEvents() {
     pomodoroActivityInitializationSaga,
   );
   yield takeEvery(createStartedPomodoroChannel(), handleNewActivity);
+  yield takeEvery(createBreakPomodoroChannel(), pomoBreakSaga);
 }
 
 export default function* rootSaga() {

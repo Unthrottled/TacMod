@@ -125,7 +125,7 @@ class PomodoroModule(
           DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
       )
       jsModule.emit(
-          "StartedPomodoroActivity",
+          "StartedPomodoroBreak",
           breakActivity
       )
 
