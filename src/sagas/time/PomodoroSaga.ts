@@ -5,6 +5,7 @@ import {
   selectActivityState,
   selectTacticalState,
   selectTimeState,
+  selectSecurityState,
 } from '../../reducers';
 import {
   activitiesEqual,
@@ -136,6 +137,13 @@ function* selectAllTheThings() {
     const {
       pomodoro: {settings},
     } = selectTacticalState(globalState);
+    const {accessToken, refreshToken} = selectSecurityState(globalState);
+
+    const securityStuff: SecurityStuff = {
+      accessToken,
+      refreshToken,
+      
+    };
     return {
       currentActivity: ca,
       previousActivity: pa,

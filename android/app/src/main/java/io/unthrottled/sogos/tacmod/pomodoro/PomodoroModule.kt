@@ -10,6 +10,14 @@ import java.time.Instant
 import java.util.*
 import java.util.concurrent.Executor
 
+data class SecurityStuff(
+    var accessToken: String,
+    val refreshToken: String,
+    val tokenEndpoint: String,
+    val clientId: String,
+    val clientSecret: String?
+)
+
 data class PomodoroSettings(
     val loadDuration: Int, //milliseconds
     val shortRecoveryDuration: Int,
@@ -31,6 +39,7 @@ data class PomodoroParameters(
     val currentActivity: Activity,
     val previousActivity: Activity,
     var numberOfCompletedPomodoro: Int,
+    val securityStuff: SecurityStuff,
     val json: ReadableMap
 )
 
@@ -60,8 +69,13 @@ class PomodoroModule(
         buildActivity(pomodoroParam.getMap("currentActivity")),
         buildActivity(pomodoroParam.getMap("previousActivity")),
         pomodoroParam.getInt("numberOfCompletedPomodoro"),
+        buildSecurityStuff(pomodoroParam),
         pomodoroParam
     )
+  }
+
+  private fun buildSecurityStuff(pomodoroParam: ReadableMap): SecurityStuff {
+    TODO("Not yet implemented")
   }
 
   private fun buildActivity(map: ReadableMap?): Activity {
@@ -97,9 +111,6 @@ class PomodoroModule(
         this.numberOfCompletedPomodoro += 1
       }
 
-      // set current activity to be break
-
-
       val breakDuration = calculateRestTime(updatedPomodoroSettings)
       AlarmService.scheduleAlarm(
           reactContext.applicationContext,
@@ -113,16 +124,7 @@ class PomodoroModule(
           )
       )
 
-      val breakActivity = Arguments.createMap()
-      breakActivity.putDouble("antecedenceTime", Instant.now().toEpochMilli().toDouble())
-      val breakContent = Arguments.createMap()
-      breakContent.putString("uuid", UUID.randomUUID().toString())
-      breakContent.putString("name", "RECOVERY")
-      breakContent.putString("type", "ACTIVE")
-      breakContent.putString("timedType", "TIMER")
-      breakContent.putBoolean("nativeManaged", true)
-      breakContent.putInt("duration", breakDuration)
-      breakActivity.putMap("content", breakContent)
+      val breakActivity = buildBreak(breakDuration)
       val jsModule = reactContext.getJSModule(
           DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
       )
@@ -130,6 +132,8 @@ class PomodoroModule(
           "StartedPomodoroBreak",
           breakActivity
       )
+
+      setCurrentActivity(buildBreak(breakDuration), pomodoroThings)
 
       AlarmService.setCompletionListener {
         // set current activity to working activity
@@ -139,6 +143,8 @@ class PomodoroModule(
             buildActivity(pomodoroThings)
         )
 
+        setCurrentActivity(buildActivity(pomodoroThings), pomodoroThings)
+
         startPomodoro(
             updatedPomodoroSettings.apply {
               updatedPomodoroSettings.currentActivity.json = buildActivity(pomodoroThings)
@@ -146,6 +152,27 @@ class PomodoroModule(
         )
       }
     }
+  }
+
+  private fun setCurrentActivity(
+      buildBreak: WritableMap?,
+      pomodoroThings: PomodoroParameters
+  ) {
+    TODO("Not yet implemented")
+  }
+
+  private fun buildBreak(breakDuration: Int): WritableMap? {
+    val breakActivity = Arguments.createMap()
+    breakActivity.putDouble("antecedenceTime", Instant.now().toEpochMilli().toDouble())
+    val breakContent = Arguments.createMap()
+    breakContent.putString("uuid", UUID.randomUUID().toString())
+    breakContent.putString("name", "RECOVERY")
+    breakContent.putString("type", "ACTIVE")
+    breakContent.putString("timedType", "TIMER")
+    breakContent.putBoolean("nativeManaged", true)
+    breakContent.putInt("duration", breakDuration)
+    breakActivity.putMap("content", breakContent)
+    return breakActivity
   }
 
   private fun buildActivity(pomodoroThings: PomodoroParameters): WritableMap {
