@@ -1,11 +1,18 @@
 package io.unthrottled.sogos.tacmod.pomodoro
 
+import com.auth0.jwt.JWT
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
+import com.google.gson.Gson
 import io.unthrottled.sogos.tacmod.alarm.AlarmParameters
 import io.unthrottled.sogos.tacmod.alarm.AlarmService
 import io.unthrottled.sogos.tacmod.alarm.NotificationMessage
 import io.unthrottled.sogos.tacmod.alarm.VibrationPattern
+import okhttp3.*
+import okhttp3.Callback
+import java.io.BufferedReader
+import java.io.IOException
+import java.time.Duration
 import java.time.Instant
 import java.util.*
 import java.util.concurrent.Executor
@@ -14,7 +21,9 @@ data class SecurityStuff(
     var accessToken: String,
     val refreshToken: String,
     val tokenEndpoint: String,
-    val clientId: String
+    val clientId: String,
+    val verificationCode: String,
+    val guid: String
 )
 
 data class PomodoroSettings(
@@ -24,7 +33,9 @@ data class PomodoroSettings(
 )
 
 data class ActivityContent(
-    val name: String
+    val name: String,
+    val uuid: String,
+    val activityID: String
 )
 
 data class Activity(
@@ -34,6 +45,7 @@ data class Activity(
 )
 
 data class PomodoroParameters(
+    val apiURL: String,
     val pomodoroSettings: PomodoroSettings,
     val currentActivity: Activity,
     val previousActivity: Activity,
@@ -42,11 +54,19 @@ data class PomodoroParameters(
     val json: ReadableMap
 )
 
+data class RefreshTokenResponse(
+    val access_token: String
+)
 
 class PomodoroModule(
     private val reactContext: ReactApplicationContext,
     private val executor: Executor
 ) : ReactContextBaseJavaModule(reactContext) {
+
+  companion object {
+    private val client = OkHttpClient()
+    private val gson = Gson()
+  }
 
   init {
     AlarmService.setReactContextSupplier {
@@ -60,6 +80,7 @@ class PomodoroModule(
       pomodoroParam: ReadableMap
   ): PomodoroParameters {
     return PomodoroParameters(
+        pomodoroParam.getString("apiURL") ?: "lol nope!!",
         PomodoroSettings(
             pomodoroParam.getMap("pomodoroSettings")?.getInt("loadDuration") ?: 1620000,
             pomodoroParam.getMap("pomodoroSettings")?.getInt("loadDuration") ?: 180000,
@@ -78,7 +99,9 @@ class PomodoroModule(
         pomodoroParam.getMap("securityStuff")?.getString("accessToken") ?: "nada",
         pomodoroParam.getMap("securityStuff")?.getString("refreshToken") ?: "nada",
         pomodoroParam.getMap("securityStuff")?.getString("tokenEndpoint") ?: "nada",
-        pomodoroParam.getMap("securityStuff")?.getString("clientId") ?: "nada"
+        pomodoroParam.getMap("securityStuff")?.getString("clientId") ?: "nada",
+        pomodoroParam.getMap("securityStuff")?.getString("verificationCode") ?: "nada",
+        pomodoroParam.getMap("securityStuff")?.getString("guid") ?: "nada"
     )
   }
 
@@ -86,7 +109,9 @@ class PomodoroModule(
     return Activity(
         map?.getDouble("antecedenceTime")?.toLong() ?: Instant.now().toEpochMilli(),
         ActivityContent(
-            map?.getMap("content")?.getString("name") ?: "Lul Dunno"
+            map?.getMap("content")?.getString("name") ?: "Lul Dunno",
+            map?.getMap("content")?.getString("uuid") ?: "Lul Dunno",
+            map?.getMap("content")?.getString("activityID") ?: "Lul Dunno"
         ),
         map ?: Arguments.createMap()
     )
@@ -114,52 +139,49 @@ class PomodoroModule(
       val updatedPomodoroSettings = pomodoroThings.apply {
         this.numberOfCompletedPomodoro += 1
       }
-      checkCurrentActivity(updatedPomodoroSettings)
-          .ifPresent {
-            // attempt to register new activity.
-            val breakDuration = calculateRestTime(updatedPomodoroSettings)
-            runSafely {
-              val moreUpToDatePomoSettings = setCurrentActivity(buildBreak(breakDuration), updatedPomodoroSettings)
-              AlarmService.scheduleAlarm(
-                  reactContext.applicationContext,
-                  AlarmParameters(
-                      NotificationMessage(
-                          "Break is over!",
-                          "Get back to ${moreUpToDatePomoSettings.currentActivity.content.name}"
-                      ),
-                      breakDuration + Instant.now().toEpochMilli(),
-                      calculateVibrationPattern(moreUpToDatePomoSettings)
-                  )
-              )
 
-              val breakActivity = buildBreak(breakDuration)
-              val jsModule = reactContext.getJSModule(
-                  DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+      checkCurrentActivity(updatedPomodoroSettings) { newestPomoSettings ->
+        // attempt to register new activity.
+        val breakDuration = calculateRestTime(newestPomoSettings)
+        setCurrentActivity(buildBreak(breakDuration), newestPomoSettings) { moreUpToDatePomoSettings ->
+          AlarmService.scheduleAlarm(
+              reactContext.applicationContext,
+              AlarmParameters(
+                  NotificationMessage(
+                      "Break is over!",
+                      "Get back to ${moreUpToDatePomoSettings.currentActivity.content.name}"
+                  ),
+                  breakDuration + Instant.now().toEpochMilli(),
+                  calculateVibrationPattern(moreUpToDatePomoSettings)
               )
+          )
+
+          val breakActivity = buildBreak(breakDuration)
+          val jsModule = reactContext.getJSModule(
+              DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+          )
+          jsModule.emit(
+              "StartedPomodoroBreak",
+              breakActivity
+          )
+
+          AlarmService.setCompletionListener {
+            // set current activity to working activity
+            setCurrentActivity(buildActivity(moreUpToDatePomoSettings), moreUpToDatePomoSettings) { mostUpToDatePomoSettings ->
               jsModule.emit(
-                  "StartedPomodoroBreak",
-                  breakActivity
+                  "StartedPomodoroActivity",
+                  buildActivity(mostUpToDatePomoSettings)
               )
 
-              AlarmService.setCompletionListener {
-                // set current activity to working activity
-                val mostUpToDatePomoSettings =
-                    setCurrentActivity(buildActivity(moreUpToDatePomoSettings), moreUpToDatePomoSettings)
-
-                jsModule.emit(
-                    "StartedPomodoroActivity",
-                    buildActivity(mostUpToDatePomoSettings)
-                )
-
-                startPomodoro(
-                    mostUpToDatePomoSettings.apply {
-                      this.currentActivity.json = buildActivity(pomodoroThings)
-                    }
-                )
-              }
+              startPomodoro(
+                  mostUpToDatePomoSettings.apply {
+                    this.currentActivity.json = buildActivity(pomodoroThings)
+                  }
+              )
             }
           }
-
+        }
+      }
     }
   }
 
@@ -175,15 +197,169 @@ class PomodoroModule(
     }
   }
 
-  private fun checkCurrentActivity(updatedPomodoroSettings: PomodoroParameters): Optional<PomodoroParameters> {
-    TODO("Not yet implemented")
+  private fun checkCurrentActivity(
+      updatedPomodoroSettings: PomodoroParameters,
+      callback: (p: PomodoroParameters) -> Unit
+      // todo: error callback
+  ) {
+    getHeaders(updatedPomodoroSettings) { headers, pomoStuffToSend ->
+      performRequest(
+          Request.Builder()
+              .headers(headers)
+              .url(
+                  "${pomoStuffToSend.apiURL}/activity/current"
+              )
+              .build(),
+          {
+            val activity = gson.fromJson(it, Activity::class.java)
+            if(
+                activity.content.activityID == pomoStuffToSend.currentActivity.content.activityID
+              // todo: recovery same?????
+            ) {
+              callback(pomoStuffToSend)
+            } else {
+              System.err.println("Activities not same, do not start!!!!")
+            }
+
+          }
+      ) {
+        // todo: meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+      }
+    }
+  }
+
+  private fun getHeaders(updatedPomodoroSettings: PomodoroParameters, function: (Headers, PomodoroParameters) -> Unit) {
+    if (isTokenValid(updatedPomodoroSettings.securityStuff.accessToken)) {
+      function(
+          buildHeaders(updatedPomodoroSettings),
+          updatedPomodoroSettings
+      )
+    } else {
+      refreshToken(updatedPomodoroSettings) { refreshPomoSettings ->
+        function(
+            buildHeaders(refreshPomoSettings),
+            refreshPomoSettings
+        )
+      }
+    }
+  }
+
+  private fun refreshToken(
+      updatedPomodoroSettings: PomodoroParameters,
+      function: (refreshedPomo: PomodoroParameters) -> Unit
+      // todo: error
+  ) {
+    performRequest(
+        Request.Builder()
+            .url(updatedPomodoroSettings.securityStuff.tokenEndpoint)
+            .post(
+                FormBody.Builder()
+                    .add("grant_type", "refreshToken")
+                    .add("client_id", updatedPomodoroSettings.securityStuff.clientId)
+                    .add("refresh_token", updatedPomodoroSettings.securityStuff.refreshToken)
+                    .build()
+            )
+            .build(),
+        {
+          val accessTokenResponse = gson.fromJson(it, RefreshTokenResponse::class.java)
+          function(
+              updatedPomodoroSettings.apply {
+                this.securityStuff.accessToken = accessTokenResponse.access_token
+              }
+          )
+        }
+    ) {
+//      todo: me
+    }
+  }
+
+  private fun buildHeaders(
+      updatedPomodoroSettings: PomodoroParameters
+  ): Headers {
+    return Headers.Builder()
+        .add("User-Identifier", updatedPomodoroSettings.securityStuff.guid)
+        .add("Verification", updatedPomodoroSettings.securityStuff.verificationCode)
+        .add("Authorization", "Bearer " + updatedPomodoroSettings.securityStuff.accessToken)
+        .build()
+  }
+
+  private fun isTokenValid(accessToken: String): Boolean {
+    return try {
+      val token = JWT.decode(accessToken)
+      Duration.between(
+          token.expiresAt.toInstant(),
+          Instant.now()
+      ).toMinutes() > 5
+    } catch (t: Throwable) {
+      System.err.println("Unable to refresh token for rasins " + t.message)
+      false
+    }
+  }
+
+  private fun performRequest(
+      request: Request,
+      callbutt: (response: String) -> Unit,
+      error: (e: Throwable) -> Unit
+  ) {
+    client.newCall(request).enqueue(object : Callback {
+      override fun onFailure(call: Call, e: IOException) {
+        error(e)
+      }
+
+      override fun onResponse(call: Call, response: Response) {
+        response.use { res ->
+          if (res.isSuccessful) {
+            res.body()?.charStream()?.use {
+              try {
+                val reader = BufferedReader(it)
+                val stringBuilder = StringBuilder()
+                var line: String? = reader.readLine()
+                while (line != null) {
+                  stringBuilder.append(line)
+                  line = reader.readLine()
+                }
+                callbutt(stringBuilder.toString())
+              } catch (e: Throwable) {
+                error(e)
+              }
+            }
+          } else {
+            error(
+                RuntimeException(
+                    "Shit did not work, returned ${res.code().toString()}"
+                )
+            )
+          }
+        }
+      }
+    })
   }
 
   private fun setCurrentActivity(
       buildBreak: WritableMap?,
-      pomodoroThings: PomodoroParameters
-  ): PomodoroParameters {
-    TODO("Not yet implemented")
+      pomodoroThings: PomodoroParameters,
+      callBack: (upDate: PomodoroParameters) -> Unit
+  // todo: error
+  ) {
+    getHeaders(pomodoroThings) { headers, pomoStuffToSend ->
+      performRequest(
+          Request.Builder()
+              .headers(headers)
+              .url(
+                  "${pomoStuffToSend.apiURL}/activity/current"
+              )
+              .post(RequestBody.create(
+                  MediaType.get("application/json"),
+                  gson.toJson(buildBreak?.toHashMap())
+              ))
+              .build(),
+          {
+              callBack(pomoStuffToSend)
+          }
+      ) {
+        // todo: meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+      }
+    }
   }
 
   private fun buildBreak(breakDuration: Int): WritableMap? {

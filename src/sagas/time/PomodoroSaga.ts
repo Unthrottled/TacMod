@@ -7,6 +7,7 @@ import {
   selectTimeState,
   selectSecurityState,
   selectConfigurationState,
+  selectUserState,
 } from '../../reducers';
 import {
   activitiesEqual,
@@ -34,7 +35,7 @@ import {
   handleNewActivity,
 } from '../activity/CurrentActivitySaga';
 import {PomodoroSettings} from '../../types/TacticalTypes';
-import Pomodoro, { SecurityStuff } from '../../native/Pomodoro';
+import Pomodoro, {SecurityStuff} from '../../native/Pomodoro';
 import {buffers, eventChannel} from 'redux-saga';
 import {NativeEventEmitter, NativeModules} from 'react-native';
 
@@ -140,15 +141,23 @@ function* selectAllTheThings() {
     const {
       pomodoro: {settings},
     } = selectTacticalState(globalState);
-    const {accessToken, refreshToken} = selectSecurityState(globalState);
+    const {accessToken, refreshToken, verificationKey} = selectSecurityState(
+      globalState,
+    );
     const {
-      initial: {tokenEndpoint, appClientID},
+      initial: {tokenEndpoint, appClientID, apiURL},
     } = selectConfigurationState(globalState);
+    const {
+      information: {guid},
+    } = selectUserState(globalState);
     const securityStuff: SecurityStuff = {
+      apiURL,
       accessToken,
       refreshToken,
       tokenEndpoint,
       clientId: appClientID,
+      verificationCode: verificationKey,
+      guid,
     };
     return {
       currentActivity: ca,

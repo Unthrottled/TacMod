@@ -3,10 +3,13 @@ import {PomodoroSettings} from '../types/TacticalTypes';
 import {Activity} from '../types/ActivityTypes';
 
 export interface SecurityStuff {
+  apiURL: string;
   accessToken: string;
   refreshToken: string;
   tokenEndpoint: string;
   clientId: string;
+  verificationCode: string;
+  guid: string;
 }
 
 interface PomodoroParameters {
