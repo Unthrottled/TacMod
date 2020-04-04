@@ -106,7 +106,13 @@ export function* pomoBreakSaga(activity: Activity) {
   yield call(handleNewActivity, activity);
 }
 
-export function* pomoErroSaga() {
+interface ErrorPayload {
+  message: string;
+  error: string;
+}
+export function* pomoErroSaga(errorPayload: ErrorPayload) {
+  // todo: what do with error
+  console.tron(errorPayload); // sheeeeeeittttttttt
   yield put(createCanceledPomodoroEvent());
 }
 
