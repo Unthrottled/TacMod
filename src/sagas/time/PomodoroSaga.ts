@@ -62,9 +62,7 @@ export function* pomodoroSaga(activityThatStartedThis: Activity) {
         shouldKeepTiming = !newCurrentActivity;
       } else {
         shouldKeepTiming = false;
-        console.tron('Finna wait for the event to emit');
         yield take(pomodoroChannel);
-        console.tron('k I waited is done :D');
       }
     } else {
       shouldKeepTiming = false;

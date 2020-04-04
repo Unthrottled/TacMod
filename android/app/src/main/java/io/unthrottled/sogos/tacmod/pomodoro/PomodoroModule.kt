@@ -1,9 +1,7 @@
 package io.unthrottled.sogos.tacmod.pomodoro
 
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.*
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import io.unthrottled.sogos.tacmod.alarm.AlarmParameters
 import io.unthrottled.sogos.tacmod.alarm.AlarmService
 import io.unthrottled.sogos.tacmod.alarm.NotificationMessage
@@ -31,7 +29,8 @@ data class PomodoroParameters(
     val pomodoroSettings: PomodoroSettings,
     val currentActivity: Activity,
     val previousActivity: Activity,
-    val numberOfCompletedPomodoro: Int
+    var numberOfCompletedPomodoro: Int,
+    val json: ReadableMap
 )
 
 
@@ -59,7 +58,8 @@ class PomodoroModule(
         ),
         buildActivity(pomodoroParam.getMap("currentActivity")),
         buildActivity(pomodoroParam.getMap("previousActivity")),
-        pomodoroParam.getInt("numberOfCompletedPomodoro")
+        pomodoroParam.getInt("numberOfCompletedPomodoro"),
+        pomodoroParam
     )
   }
 
@@ -90,14 +90,47 @@ class PomodoroModule(
         )
     )
 
-    // todo: how to update ui??? (When brought to foreground recalculate current activity?????)
     AlarmService.setCompletionListener {
-      // set break
+      val updatedPomodoroSettings = pomodoroThings.apply {
+        this.numberOfCompletedPomodoro += 1
+      }
+
+      // set current activity to be break
+
+
+      AlarmService.scheduleAlarm(
+          reactContext.applicationContext,
+          AlarmParameters(
+              NotificationMessage(
+                  "Break is over!",
+                  "Get back to ${updatedPomodoroSettings.currentActivity.content.name}"
+              ),
+              calculateRestTime(updatedPomodoroSettings),
+              calculateVibrationPattern(updatedPomodoroSettings)
+          )
+      )
+
+      val breakActivity = Arguments.createMap()
+      reactContext.getJSModule(
+          DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+      ).emit(
+          "StartedPomodoroActivity",
+          breakActivity
+      )
 
       AlarmService.setCompletionListener {
+        // set current activity to working activity
+
+        reactContext.getJSModule(
+            DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+        ).emit(
+            "StartedPomodoroActivity",
+            pomodoroThings.json.getMap("currentActivity")
+        )
+
         startPomodoro(
-            pomodoroThings// update completion count
-        ) // Recursion!
+            updatedPomodoroSettings
+        )
       }
     }
   }
@@ -111,6 +144,15 @@ class PomodoroModule(
   private fun calculateTimeToAlert(pomodoroThings: PomodoroParameters): Long {
     val loadDuration = pomodoroThings.pomodoroSettings.loadDuration
     val antecedenceTime = pomodoroThings.currentActivity.antecedenceTime
+    return loadDuration + antecedenceTime
+  }
+
+  private fun calculateRestTime(pomodoroThings: PomodoroParameters): Long {
+    val loadDuration =
+        if (pomodoroThings.numberOfCompletedPomodoro % 4 == 0) pomodoroThings.pomodoroSettings.longRecoveryDuration
+        else pomodoroThings.pomodoroSettings.shortRecoveryDuration
+
+    val antecedenceTime = Instant.now().toEpochMilli()
     return loadDuration + antecedenceTime
   }
 

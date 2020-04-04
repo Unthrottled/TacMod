@@ -23,6 +23,8 @@ import {
   getTimedType,
 } from '../../types/ActivityTypes';
 import {INITIALIZED_SECURITY} from '../../events/SecurityEvents';
+import {eventChannel, buffers} from 'redux-saga';
+import {NativeEventEmitter, NativeModules} from 'react-native';
 
 export const isTimedActivity = (activity: Activity) =>
   getActivityType(activity) === ActivityType.ACTIVE &&
@@ -95,6 +97,18 @@ export function* delayWork() {
   } else {
     yield take(FOUND_WIFI);
   }
+}
+
+export function createStartedPomodoroChannel() {
+  return eventChannel(statusObserver => {
+    const eventEmitter = new NativeEventEmitter(NativeModules.Pomodoro);
+    const listener = () => {
+      statusObserver('next!');
+    };
+    eventEmitter.addListener('StartedPomodoroActivity', listener);
+    return () =>
+      eventEmitter.removeListener('StartedPomodoroActivity', listener);
+  }, buffers.expanding(100));
 }
 
 export function* currentActivitySaga() {

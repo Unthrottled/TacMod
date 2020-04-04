@@ -1,7 +1,11 @@
 import {all, fork, takeEvery} from 'redux-saga/effects';
 import {STARTED_ACTIVITY} from '../events/ActivityEvents';
 import {activityLogonSaga} from './activity/LogonActivitySaga';
-import {currentActivitySaga} from './activity/CurrentActivitySaga';
+import {
+  currentActivitySaga,
+  handleNewActivity,
+  createStartedPomodoroChannel,
+} from './activity/CurrentActivitySaga';
 import {registerActivitySaga} from './activity/RegisterActivitySaga';
 import {FOUND_WIFI} from '../events/NetworkEvents';
 import {activitySyncSaga} from './activity/ActivitySyncSaga';
@@ -22,6 +26,7 @@ function* listenToActivityEvents() {
     VIEWED_ACTIVITY_SELECTION,
     pomodoroActivityInitializationSaga,
   );
+  yield takeEvery(createStartedPomodoroChannel(), handleNewActivity);
 }
 
 export default function* rootSaga() {
