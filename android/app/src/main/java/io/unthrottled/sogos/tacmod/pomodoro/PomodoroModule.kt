@@ -50,32 +50,44 @@ class PomodoroModule(
     scheduleLoadAlarm(pomodoroThings)
 
     AlarmService.setCompletionListener {
-      val updatedPomodoroSettings = pomodoroThings.apply {
+      val pomoWithUpdatedCount = pomodoroThings.apply {
         this.numberOfCompletedPomodoro += 1
       }
 
-      checkCurrentActivity(updatedPomodoroSettings) { newestPomoSettings ->
+      checkCurrentActivity(pomoWithUpdatedCount) { pomoSettingsAfterFirstCheck ->
 
-        val breakDuration = calculateRestTime(newestPomoSettings)
-        setCurrentActivity(buildBreak(breakDuration), newestPomoSettings) { moreUpToDatePomoSettings ->
-          scheduleBreakAlarm(moreUpToDatePomoSettings, breakDuration)
+        val breakDuration = calculateRestTime(pomoSettingsAfterFirstCheck)
+        setCurrentActivity(
+            buildBreak(breakDuration),
+            pomoSettingsAfterFirstCheck
+        ) { pomoSettingsAfterSettingBreak ->
+
+          scheduleBreakAlarm(pomoSettingsAfterSettingBreak, breakDuration)
+
           val jsModule = reactContext.getJSModule(
               DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
           )
+
           notifyJavascriptOfBreak(breakDuration, jsModule)
 
           AlarmService.setCompletionListener {
-            checkRecoveryActivity(moreUpToDatePomoSettings) { evenMoreUptoDatePomoSettings ->
+            checkRecoveryActivity(
+                pomoSettingsAfterSettingBreak
+            ) { pomoSettingsAfterCheckingIfRecovery ->
+
               setCurrentActivity(
-                  buildActivityMap(evenMoreUptoDatePomoSettings),
-                  evenMoreUptoDatePomoSettings
-              ) { mostUpToDatePomoSettings ->
+                  buildActivityMap(pomoSettingsAfterCheckingIfRecovery),
+                  pomoSettingsAfterCheckingIfRecovery
+              ) { pomoSettingsAfterSettingLoadAgain ->
+
                 jsModule.emit(
                     "StartedPomodoroActivity",
-                    buildActivityMap(mostUpToDatePomoSettings)
+                    buildActivityMap(pomoSettingsAfterSettingLoadAgain)
                 )
+
+                // recursion!!
                 startPomodoro(
-                    mostUpToDatePomoSettings.apply {
+                    pomoSettingsAfterSettingLoadAgain.apply {
                       this.currentActivity.json = buildActivityMap(pomodoroThings)
                     }
                 )
