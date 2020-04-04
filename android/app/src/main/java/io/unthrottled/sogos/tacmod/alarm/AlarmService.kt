@@ -18,6 +18,20 @@ import io.unthrottled.sogos.tacmod.R
 import java.time.Instant
 import java.util.*
 import kotlin.collections.HashSet
+data class NotificationMessage(
+    val title: String,
+    val message: String
+)
+
+enum class VibrationPattern {
+  SHORT, LONG, RESUME
+}
+
+data class AlarmParameters(
+    val notification: NotificationMessage,
+    val timeToAlert: Long,
+    val vibrationPattern: VibrationPattern
+)
 
 object AlarmService {
   private var previousNotificationId: Int = 69
@@ -32,20 +46,22 @@ object AlarmService {
   private val ranbo = Random(SystemClock.elapsedRealtime())
   private val scheduledNotifications = HashSet<Int>()
 
-  fun scheduleAlarm(reactContext: ReactApplicationContext, alarmParameters: ReadableMap) {
-    stopItGetSomeHelp(reactContext)
+  fun scheduleAlarm(applicationContext: Context, alarmParameters: AlarmParameters) {
+    stopItGetSomeHelp(applicationContext)
     val notification = NotificationCompat.Builder(
-        reactContext.applicationContext,
+        applicationContext,
         NOTIFICATION_CHANNEL_ID
     )
-        .setContentTitle(alarmParameters.getMap("message")?.getString("title"))
-        .setContentText(alarmParameters.getMap("message")?.getString("message"))
+        .setContentTitle(alarmParameters.notification.title)
+        .setContentText(alarmParameters.notification.message)
         .setAutoCancel(true)
         .setSmallIcon(R.mipmap.status_icon)
-        .setLargeIcon(BitmapFactory.decodeResource(
-            reactContext.resources,
-            R.mipmap.ic_launcher
-        ))
+        .setLargeIcon(
+            BitmapFactory.decodeResource(
+                applicationContext.resources,
+                R.mipmap.ic_launcher
+            )
+        )
         .setSound(
             RingtoneManager.getDefaultUri(
                 RingtoneManager.TYPE_NOTIFICATION
@@ -56,7 +72,7 @@ object AlarmService {
 
     val notificationId = generateNotificationId()
 
-    val alarmIntent = Intent(reactContext.applicationContext, AlarmReceiver::class.java)
+    val alarmIntent = Intent(applicationContext, AlarmReceiver::class.java)
     alarmIntent.putExtra(
         ID,
         notificationId
@@ -65,13 +81,13 @@ object AlarmService {
         NOTIFICATION,
         notification
     )
-    val pendingAlarmIntent = buildPendingIntent(reactContext, notificationId, alarmIntent)
+    val pendingAlarmIntent = buildPendingIntent(applicationContext, notificationId, alarmIntent)
 
-    val alarmManager = reactContext.applicationContext.getSystemService(
+    val alarmManager = applicationContext.getSystemService(
         Context.ALARM_SERVICE
     ) as AlarmManager
 
-    val setTime = alarmParameters.getDouble("timeToAlert").toLong()
+    val setTime = alarmParameters.timeToAlert
     val currentTime = Instant.now().toEpochMilli()
     alarmManager.setAndAllowWhileIdle(
         AlarmManager.ELAPSED_REALTIME_WAKEUP,
@@ -80,23 +96,16 @@ object AlarmService {
     )
   }
 
-  private fun buildVibrationPattern(alarmParameters: ReadableMap) =
-      when(getVibrationPattern(alarmParameters)){
-        "shortBreak" -> longArrayOf(0, 100, 120, 500)
-        "longBreak"-> longArrayOf(5000)
+  private fun buildVibrationPattern(alarmParameters: AlarmParameters) =
+      when (alarmParameters.vibrationPattern) {
+        VibrationPattern.SHORT -> longArrayOf(0, 100, 120, 500)
+        VibrationPattern.LONG -> longArrayOf(5000)
         else -> longArrayOf(200, 100, 300, 150, 500)
       }
 
-  private fun getVibrationPattern(alarmParameters: ReadableMap) =
-      if(alarmParameters.hasKey("vibrationPattern")){
-        alarmParameters.getString("vibrationPattern")
-      } else {
-        "all your base"
-      }
-
-  private fun buildPendingIntent(reactContext: ReactApplicationContext, notificationId: Int, alarmIntent: Intent): PendingIntent? {
+  private fun buildPendingIntent(context: Context, notificationId: Int, alarmIntent: Intent): PendingIntent? {
     return PendingIntent.getBroadcast(
-        reactContext.applicationContext,
+        context,
         notificationId,
         alarmIntent,
         PendingIntent.FLAG_CANCEL_CURRENT
@@ -112,23 +121,23 @@ object AlarmService {
     }
   }
 
-  fun stopItGetSomeHelp(reactContext: ReactApplicationContext) {
+  fun stopItGetSomeHelp(context: Context) {
     scheduledNotifications
         .map {
           buildPendingIntent(
-              reactContext,
+              context,
               it,
-              Intent(reactContext.applicationContext, AlarmReceiver::class.java)
+              Intent(context.applicationContext, AlarmReceiver::class.java)
           )
         }.forEach {
-          alarmManager(reactContext).cancel(it)
+          alarmManager(context).cancel(it)
         }
     scheduledNotifications.clear()
     listener = {}
   }
 
-  private fun alarmManager(reactContext: ReactApplicationContext): AlarmManager {
-    return reactContext.getSystemService(
+  private fun alarmManager(context: Context): AlarmManager {
+    return context.getSystemService(
         Context.ALARM_SERVICE
     ) as AlarmManager
   }

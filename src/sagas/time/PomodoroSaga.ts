@@ -105,7 +105,6 @@ function* startPomodoroForActivity(
     getTimerTime(antecedenceTime + (duration || 0)) + addThis;
   yield put(createTimeSetEvent(pomodoroDuration));
 
-  // todo: this
   const {
     currentActivity,
     previousActivity,
@@ -113,12 +112,11 @@ function* startPomodoroForActivity(
     pomodoroSettings,
     numberOfCompletedPomodoro,
   } = yield selectAllTheThings();
-  const {
-    completedPomodoro: {count},
-  }: ActivityState = yield select(selectActivityState);
-  const fireDate = new Date(new Date().valueOf() + pomodoroDuration * 1000);
   Pomodoro.commencePomodoroForActivity({
-    timeToAlert: fireDate.valueOf(),
+    pomodoroSettings,
+    currentActivity,
+    previousActivity,
+    numberOfCompletedPomodoro
   });
 }
 

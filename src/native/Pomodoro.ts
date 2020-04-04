@@ -1,7 +1,12 @@
 import {NativeModules} from 'react-native';
+import {PomodoroSettings} from '../types/TacticalTypes';
+import {Activity} from '../types/ActivityTypes';
 
 interface PomodoroParameters {
-  timeToAlert: number;
+  pomodoroSettings: PomodoroSettings;
+  currentActivity: Activity;
+  previousActivity: Activity;
+  numberOfCompletedPomodoro: number;
 }
 
 interface Pomodoro {
