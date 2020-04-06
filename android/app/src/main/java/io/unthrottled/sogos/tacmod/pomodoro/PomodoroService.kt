@@ -17,6 +17,7 @@ object PomodoroService {
     breakContent.putString("type", "ACTIVE")
     breakContent.putString("timedType", "TIMER")
     breakContent.putBoolean("nativeManaged", true)
+    breakContent.putBoolean("autoStart", true)
     breakContent.putInt("duration", breakDuration)
     breakActivity.putMap("content", breakContent)
     return breakActivity

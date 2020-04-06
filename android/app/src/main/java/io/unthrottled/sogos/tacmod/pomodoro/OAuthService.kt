@@ -1,6 +1,8 @@
 package io.unthrottled.sogos.tacmod.pomodoro
 
+import android.util.Log
 import com.google.gson.Gson
+import io.unthrottled.sogos.tacmod.ACTIVITY_NAME
 import io.unthrottled.sogos.tacmod.pomodoro.APIService.performRequest
 import okhttp3.FormBody
 import okhttp3.Headers
@@ -26,7 +28,7 @@ object OAuthService {
         )
       }) {
         error(it)
-      } // todo: test me
+      }
     }
   }
 
@@ -35,12 +37,13 @@ object OAuthService {
       function: (refreshedPomo: PomodoroParameters) -> Unit,
       error: (e: Throwable) -> Unit
   ) {
+    Log.i(ACTIVITY_NAME, "Refreshing Token!")
     performRequest(
         Request.Builder()
             .url(updatedPomodoroSettings.securityStuff.tokenEndpoint)
             .post(
                 FormBody.Builder()
-                    .add("grant_type", "refreshToken")
+                    .add("grant_type", "refresh_token")
                     .add("client_id", updatedPomodoroSettings.securityStuff.clientId)
                     .add("refresh_token", updatedPomodoroSettings.securityStuff.refreshToken)
                     .build()

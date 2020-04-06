@@ -1,8 +1,10 @@
 package io.unthrottled.sogos.tacmod.pomodoro
 
+import android.util.Log
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.gson.Gson
+import io.unthrottled.sogos.tacmod.ACTIVITY_NAME
 import io.unthrottled.sogos.tacmod.alarm.AlarmParameters
 import io.unthrottled.sogos.tacmod.alarm.AlarmService
 import io.unthrottled.sogos.tacmod.alarm.NotificationMessage
@@ -165,7 +167,7 @@ class PomodoroModule(
       if (activity.content.activityID == pomoStuffToSend.currentActivity.content.activityID) {
         callback(pomoStuffToSend)
       } else {
-        System.err.println("Activities not same, do not start!!!!")
+        Log.i(ACTIVITY_NAME, "Activities not same, do not start!!!!") // todo: what do?
       }
     }) {
       error(it)
@@ -182,7 +184,7 @@ class PomodoroModule(
           activity.content.name == "RECOVERY") {
         callback(pomoStuffToSend)
       } else {
-        System.err.println("Activities not same, do not start!!!!")
+        Log.i(ACTIVITY_NAME,"Activities not same, do not start!!!!") // todo: what do?
       }
     }) {
       error(it)
