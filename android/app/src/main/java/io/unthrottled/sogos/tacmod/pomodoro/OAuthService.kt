@@ -8,26 +8,32 @@ import okhttp3.Request
 
 object OAuthService {
   private val gson = Gson()
-  fun getHeaders(updatedPomodoroSettings: PomodoroParameters, function: (Headers, PomodoroParameters) -> Unit) {
+  fun getHeaders(
+      updatedPomodoroSettings: PomodoroParameters,
+      function: (Headers, PomodoroParameters) -> Unit,
+      error: (e: Throwable) -> Unit
+  ) {
     if (isTokenValid(updatedPomodoroSettings.securityStuff.accessToken)) {
       function(
           buildHeaders(updatedPomodoroSettings),
           updatedPomodoroSettings
       )
     } else {
-      refreshToken(updatedPomodoroSettings) { refreshPomoSettings ->
+      refreshToken(updatedPomodoroSettings, { refreshPomoSettings ->
         function(
             buildHeaders(refreshPomoSettings),
             refreshPomoSettings
         )
+      }) {
+        error(it)
       } // todo: test me
     }
   }
 
   fun refreshToken(
       updatedPomodoroSettings: PomodoroParameters,
-      function: (refreshedPomo: PomodoroParameters) -> Unit
-      // todo: error
+      function: (refreshedPomo: PomodoroParameters) -> Unit,
+      error: (e: Throwable) -> Unit
   ) {
     performRequest(
         Request.Builder()
@@ -49,7 +55,7 @@ object OAuthService {
           )
         }
     ) {
-//      todo: me
+      error(it)
     }
   }
 

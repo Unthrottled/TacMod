@@ -194,7 +194,7 @@ class PomodoroModule(
       doStuff: (activity: Activity, pomoStuff: PomodoroParameters) -> Unit,
       error: (e: Throwable) -> Unit
   ) {
-    getHeaders(updatedPomodoroSettings) { headers, pomoStuffToSend ->
+    getHeaders(updatedPomodoroSettings, { headers, pomoStuffToSend ->
       performRequest(
           Request.Builder()
               .headers(headers)
@@ -209,6 +209,8 @@ class PomodoroModule(
       ) {
         error(it)
       }
+    }) {
+      error(it)
     }
   }
 
@@ -218,7 +220,7 @@ class PomodoroModule(
       callBack: (upDate: PomodoroParameters) -> Unit,
       error: (e: Throwable) -> Unit
   ) {
-    getHeaders(pomodoroThings) { headers, pomoStuffToSend ->
+    getHeaders(pomodoroThings,{ headers, pomoStuffToSend ->
       performRequest(
           Request.Builder()
               .headers(headers)
@@ -236,6 +238,8 @@ class PomodoroModule(
       ) {
         error(it)
       }
+    }) {
+      error(it)
     }
   }
 }
