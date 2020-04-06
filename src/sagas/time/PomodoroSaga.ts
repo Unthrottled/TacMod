@@ -1,40 +1,19 @@
 import {call, delay, put, race, select, take} from 'redux-saga/effects';
-import uuid from 'uuid/v4';
 import {
   GlobalState,
   selectActivityState,
+  selectConfigurationState,
+  selectSecurityState,
   selectTacticalState,
   selectTimeState,
-  selectSecurityState,
-  selectConfigurationState,
   selectUserState,
 } from '../../reducers';
-import {
-  activitiesEqual,
-  Activity,
-  ActivityContent,
-  ActivityTimedType,
-  ActivityType,
-  isActivityRecovery,
-  RECOVERY,
-} from '../../types/ActivityTypes';
+import {activitiesEqual, Activity} from '../../types/ActivityTypes';
 import {
   createTimeDecrementEvent,
   createTimeSetEvent,
 } from '../../events/TimeEvents';
 import {waitForCurrentActivity} from './SandsOfTimeSaga';
-import {
-  createCompletedPomodoroEvent,
-  createStartedActivityEvent,
-  createStartedTimedActivityEvent,
-} from '../../events/ActivityEvents';
-import omit from 'lodash/omit';
-import {performGet} from '../APISagas';
-import {
-  CURRENT_ACTIVITY_URL,
-  handleNewActivity,
-} from '../activity/CurrentActivitySaga';
-import {PomodoroSettings} from '../../types/TacticalTypes';
 import Pomodoro, {SecurityStuff} from '../../native/Pomodoro';
 import {buffers, eventChannel} from 'redux-saga';
 import {NativeEventEmitter, NativeModules} from 'react-native';

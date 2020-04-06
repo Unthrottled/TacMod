@@ -32,7 +32,7 @@ object OAuthService {
     }
   }
 
-  fun refreshToken(
+  private fun refreshToken(
       updatedPomodoroSettings: PomodoroParameters,
       function: (refreshedPomo: PomodoroParameters) -> Unit,
       error: (e: Throwable) -> Unit
@@ -62,7 +62,7 @@ object OAuthService {
     }
   }
 
-  fun buildHeaders(
+  private fun buildHeaders(
       updatedPomodoroSettings: PomodoroParameters
   ): Headers {
     return Headers.Builder()
