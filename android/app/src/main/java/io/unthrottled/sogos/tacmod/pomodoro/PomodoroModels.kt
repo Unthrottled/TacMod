@@ -52,8 +52,8 @@ fun mapToPomodoroParameters(
       pomodoroParam.getString("apiURL") ?: "lol nope!!",
       PomodoroSettings(
           pomodoroParam.getMap("pomodoroSettings")?.getInt("loadDuration") ?: 1620000,
-          pomodoroParam.getMap("pomodoroSettings")?.getInt("loadDuration") ?: 180000,
-          pomodoroParam.getMap("pomodoroSettings")?.getInt("loadDuration") ?: 2400000
+          pomodoroParam.getMap("pomodoroSettings")?.getInt("shortRecoveryDuration") ?: 180000,
+          pomodoroParam.getMap("pomodoroSettings")?.getInt("longRecoveryDuration") ?: 2400000
       ),
       buildActivity(pomodoroParam.getMap("currentActivity")),
       buildActivity(pomodoroParam.getMap("previousActivity")),
@@ -80,8 +80,13 @@ fun buildActivity(map: ReadableMap?): Activity {
       ActivityContent(
           map?.getMap("content")?.getString("name") ?: "Lul Dunno",
           map?.getMap("content")?.getString("uuid") ?: "Lul Dunno",
-          map?.getMap("content")?.getString("activityID") ?: "Lul Dunno"
+          getActivityId(map)
       ),
       map ?: Arguments.createMap()
   )
 }
+
+private fun getActivityId(map: ReadableMap?): String? =
+    if (map?.getMap("content")?.hasKey("activityID") == true)
+      map.getMap("content")?.getString("activityID")
+    else null

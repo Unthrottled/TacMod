@@ -110,7 +110,7 @@ interface ErrorPayload {
   message: string;
   error: string;
 }
-export function* pomoErroSaga(errorPayload: ErrorPayload) {
+export function* pomoErrorSaga(errorPayload: ErrorPayload) {
   // todo: what do with error
   console.tron(errorPayload); // sheeeeeeittttttttt
   yield put(createCanceledPomodoroEvent());

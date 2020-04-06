@@ -3,7 +3,6 @@ import {PomodoroSettings} from '../types/TacticalTypes';
 import {Activity} from '../types/ActivityTypes';
 
 export interface SecurityStuff {
-  apiURL: string;
   accessToken: string;
   refreshToken: string;
   tokenEndpoint: string;
@@ -13,6 +12,7 @@ export interface SecurityStuff {
 }
 
 interface PomodoroParameters {
+  apiURL: string;
   pomodoroSettings: PomodoroSettings;
   currentActivity: Activity;
   previousActivity: Activity;

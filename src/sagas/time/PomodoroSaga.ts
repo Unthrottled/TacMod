@@ -112,6 +112,7 @@ function* startPomodoroForActivity(
   }
 
   const {
+    apiURL,
     currentActivity,
     previousActivity,
     pomodoroSettings,
@@ -119,6 +120,7 @@ function* startPomodoroForActivity(
     securityStuff,
   } = yield selectAllTheThings();
   Pomodoro.commencePomodoroForActivity({
+    apiURL,
     pomodoroSettings,
     currentActivity,
     previousActivity,
@@ -151,7 +153,6 @@ function* selectAllTheThings() {
       information: {guid},
     } = selectUserState(globalState);
     const securityStuff: SecurityStuff = {
-      apiURL,
       accessToken,
       refreshToken,
       tokenEndpoint,
@@ -160,6 +161,7 @@ function* selectAllTheThings() {
       guid,
     };
     return {
+      apiURL,
       currentActivity: ca,
       previousActivity: pa,
       timeElapsed: selectTimeState(globalState).timeElapsed,
