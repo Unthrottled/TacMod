@@ -71,5 +71,4 @@ object OAuthService {
         .add("Authorization", "Bearer " + updatedPomodoroSettings.securityStuff.accessToken)
         .build()
   }
-
 }
