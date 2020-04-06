@@ -96,17 +96,28 @@ class PomodoroModule(
                           }) {
                         notifyJavascriptOfError("Unable to set load activity as current, the second time", it, jsModule)
                       }
-                    }) {
+                    }, {
+                  notifyJavascriptOfCancellation(jsModule)
+                }) {
                   notifyJavascriptOfError("Unable to check to see if the current activity is recovery", it, jsModule)
                 }
               }
             }) {
           notifyJavascriptOfError("Unable to set current activity to recovery", it, jsModule)
         }
+      }, {
+        notifyJavascriptOfCancellation(jsModule)
       }) {
         notifyJavascriptOfError("Unable to check if current activity is the first load activity", it, jsModule)
       }
     }
+  }
+
+  private fun notifyJavascriptOfCancellation(jsModule: DeviceEventManagerModule.RCTDeviceEventEmitter?) {
+    jsModule?.emit(
+        "PomodoroCanceled",
+        Arguments.createMap()
+    )
   }
 
   private fun notifyJavascriptOfError(
@@ -162,6 +173,7 @@ class PomodoroModule(
   private fun checkCurrentActivity(
       updatedPomodoroSettings: PomodoroParameters,
       callback: (p: PomodoroParameters) -> Unit,
+      canceledCallback: () -> Unit,
       error: (e: Throwable) -> Unit
   ) {
     performCurrentActivityFetch(updatedPomodoroSettings, { activity, pomoStuffToSend ->
@@ -169,6 +181,7 @@ class PomodoroModule(
         callback(pomoStuffToSend)
       } else {
         Log.i(ACTIVITY_NAME, "Activities not same, do not start!!!!")
+        canceledCallback()
       }
     }) {
       error(it)
@@ -178,6 +191,7 @@ class PomodoroModule(
   private fun checkRecoveryActivity(
       updatedPomodoroSettings: PomodoroParameters,
       callback: (p: PomodoroParameters) -> Unit,
+      canceledCallback: () -> Unit,
       error: (e: Throwable) -> Unit
   ) {
     performCurrentActivityFetch(updatedPomodoroSettings, { activity, pomoStuffToSend ->
@@ -186,6 +200,7 @@ class PomodoroModule(
         callback(pomoStuffToSend)
       } else {
         Log.i(ACTIVITY_NAME, "Activities not same, do not start!!!!")
+        canceledCallback()
       }
     }) {
       error(it)

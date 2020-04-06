@@ -18,4 +18,3 @@ fun isTokenValid(accessToken: String): Boolean {
     false
   }
 }
-

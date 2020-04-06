@@ -123,8 +123,18 @@ export function* pomoErrorSaga(errorPayload: ErrorPayload) {
   yield put(createRecoveryActivity());
 }
 
+export function* canceledPomodoroSaga() {
+  yield put(createCanceledPomodoroEvent());
+  yield call(updateCurrentActivity);
+}
+
 export function createPomodoroErrorChannel() {
   const channelName = 'PomodoroError';
+  return createPomodoChannel(channelName);
+}
+
+export function createPomodoroCanceledChannel() {
+  const channelName = 'PomodoroCanceled';
   return createPomodoChannel(channelName);
 }
 

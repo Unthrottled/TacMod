@@ -68,7 +68,7 @@ object OAuthService {
     return Headers.Builder()
         .add("User-Identifier", updatedPomodoroSettings.securityStuff.guid)
         .add("Verification", updatedPomodoroSettings.securityStuff.verificationCode)
-        .add("Authorization", "Bearer " + updatedPomodoroSettings.securityStuff.accessToken)
+        .add("Authorization", "Bearer ${updatedPomodoroSettings.securityStuff.accessToken}")
         .build()
   }
 }
