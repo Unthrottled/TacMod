@@ -32,7 +32,6 @@ import ActivityIcon from '../../images/ActivityIcon';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from 'react-navigation-hooks';
 import {requestLogoff} from '../../events/SecurityEvents';
-import {act} from 'react-test-renderer';
 import {createCanceledPomodoroEvent} from '../../events/ActivityEvents';
 import Pomodoro from '../../native/Pomodoro';
 
@@ -134,7 +133,7 @@ const ActivityTimeBar = () => {
   } = useSelector(mapStateToProps);
 
   const {
-    content: {timedType, name},
+    content: {timedType},
   } = currentActivity;
 
   const dispetch: Dispatch<any> = useDispatch();
@@ -143,14 +142,7 @@ const ActivityTimeBar = () => {
     if (isTimer) {
       dispetch(createCanceledPomodoroEvent());
     }
-    dispetch(
-      startNonTimedActivity({
-        name: RECOVERY,
-        type: ActivityType.ACTIVE,
-        timedType: ActivityTimedType.NONE,
-        uuid: uuid(),
-      }),
-    );
+    dispetch(createRecoveryActivity());
   };
 
   const pivotActivity = (name: string, supplements: any) => {
@@ -373,3 +365,12 @@ const ActivityTimeBar = () => {
 };
 
 export default ActivityTimeBar;
+
+export function createRecoveryActivity(): any {
+  return startNonTimedActivity({
+    name: RECOVERY,
+    type: ActivityType.ACTIVE,
+    timedType: ActivityTimedType.NONE,
+    uuid: uuid(),
+  });
+}

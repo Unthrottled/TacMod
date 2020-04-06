@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import io.unthrottled.sogos.tacmod.ACTIVITY_NAME
 import io.unthrottled.sogos.tacmod.alarm.AlarmParameters
 import io.unthrottled.sogos.tacmod.alarm.AlarmService
+import io.unthrottled.sogos.tacmod.alarm.AlarmService.setCompletionListener
 import io.unthrottled.sogos.tacmod.alarm.NotificationMessage
 import io.unthrottled.sogos.tacmod.pomodoro.APIService.performRequest
 import io.unthrottled.sogos.tacmod.pomodoro.OAuthService.getHeaders
@@ -54,7 +55,7 @@ class PomodoroModule(
     val jsModule = reactContext.getJSModule(
         DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
     )
-    AlarmService.setCompletionListener {
+    setCompletionListener {
       val pomoWithUpdatedCount = pomodoroThings.apply {
         this.numberOfCompletedPomodoro += 1
       }
@@ -71,7 +72,7 @@ class PomodoroModule(
 
               notifyJavascriptOfBreak(breakDuration, jsModule)
 
-              AlarmService.setCompletionListener {
+              setCompletionListener {
                 checkRecoveryActivity(
                     pomoSettingsAfterSettingBreak,
                     { pomoSettingsAfterCheckingIfRecovery ->
@@ -167,7 +168,7 @@ class PomodoroModule(
       if (activity.content.activityID == pomoStuffToSend.currentActivity.content.activityID) {
         callback(pomoStuffToSend)
       } else {
-        Log.i(ACTIVITY_NAME, "Activities not same, do not start!!!!") // todo: what do?
+        Log.i(ACTIVITY_NAME, "Activities not same, do not start!!!!")
       }
     }) {
       error(it)
@@ -184,7 +185,7 @@ class PomodoroModule(
           activity.content.name == "RECOVERY") {
         callback(pomoStuffToSend)
       } else {
-        Log.i(ACTIVITY_NAME,"Activities not same, do not start!!!!") // todo: what do?
+        Log.i(ACTIVITY_NAME, "Activities not same, do not start!!!!")
       }
     }) {
       error(it)
@@ -222,7 +223,7 @@ class PomodoroModule(
       callBack: (upDate: PomodoroParameters) -> Unit,
       error: (e: Throwable) -> Unit
   ) {
-    getHeaders(pomodoroThings,{ headers, pomoStuffToSend ->
+    getHeaders(pomodoroThings, { headers, pomoStuffToSend ->
       performRequest(
           Request.Builder()
               .headers(headers)

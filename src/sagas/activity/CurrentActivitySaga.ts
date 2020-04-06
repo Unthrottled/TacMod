@@ -27,6 +27,8 @@ import {
 import {INITIALIZED_SECURITY} from '../../events/SecurityEvents';
 import {eventChannel, buffers} from 'redux-saga';
 import {NativeEventEmitter, NativeModules} from 'react-native';
+import {createRecoveryActivity} from '../../components/time/ActivityTimeBar';
+import {createShowWarningNotificationEvent} from '../../events/MiscEvents';
 
 export const isTimedActivity = (activity: Activity) =>
   getActivityType(activity) === ActivityType.ACTIVE &&
@@ -111,9 +113,14 @@ interface ErrorPayload {
   error: string;
 }
 export function* pomoErrorSaga(errorPayload: ErrorPayload) {
-  // todo: what do with error
-  console.tron('Error in pomodoro', errorPayload); // sheeeeeeittttttttt
+  console.error('Error in pomodoro', errorPayload); // sheeeeeeittttttttt
+  yield put(
+    createShowWarningNotificationEvent(
+      'An error occured, please try again later.',
+    ),
+  );
   yield put(createCanceledPomodoroEvent());
+  yield put(createRecoveryActivity());
 }
 
 export function createPomodoroErrorChannel() {
