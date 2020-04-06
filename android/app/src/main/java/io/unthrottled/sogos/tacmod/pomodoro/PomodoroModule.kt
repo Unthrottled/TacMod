@@ -225,7 +225,7 @@ class PomodoroModule(
           Request.Builder()
               .headers(headers)
               .url(
-                  "${pomoStuffToSend.apiURL}/activity/current"
+                  "${pomoStuffToSend.apiURL}/activity"
               )
               .post(RequestBody.create(
                   MediaType.get("application/json"),
