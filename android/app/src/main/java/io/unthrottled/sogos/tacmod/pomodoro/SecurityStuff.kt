@@ -8,8 +8,8 @@ fun isTokenValid(accessToken: String): Boolean {
   return try {
     val token = JWT.decode(accessToken)
     Duration.between(
-        token.expiresAt.toInstant(),
-        Instant.now()
+        Instant.now(),
+        token.expiresAt.toInstant()
     ).toMinutes() > 5
   } catch (t: Throwable) {
     System.err.println("Unable to refresh token for rasins " + t.message)

@@ -112,7 +112,7 @@ interface ErrorPayload {
 }
 export function* pomoErrorSaga(errorPayload: ErrorPayload) {
   // todo: what do with error
-  console.tron(errorPayload); // sheeeeeeittttttttt
+  console.tron('Error in pomodoro', errorPayload); // sheeeeeeittttttttt
   yield put(createCanceledPomodoroEvent());
 }
 

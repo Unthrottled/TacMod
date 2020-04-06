@@ -20,7 +20,7 @@ object OAuthService {
             buildHeaders(refreshPomoSettings),
             refreshPomoSettings
         )
-      }
+      } // todo: test me
     }
   }
 
