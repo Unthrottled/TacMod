@@ -48,6 +48,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+        }
+    }
+
     defaultConfig {
         applicationId "io.unthrottled.sogos.tacmod"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -110,6 +116,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     implementation "com.android.support:appcompat-v7:28.0.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.0"
+
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
