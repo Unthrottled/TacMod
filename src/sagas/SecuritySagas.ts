@@ -1,4 +1,4 @@
-import {delay, all, call, fork, takeEvery} from 'redux-saga/effects';
+import {delay, all, call, fork, takeEvery, select} from 'redux-saga/effects';
 import {FOCUSED_APPLICATION} from '../events/ApplicationLifecycleEvents';
 import oauthInitializationSaga from './security/SecurityInitializationSaga';
 import {
@@ -8,6 +8,8 @@ import {
 } from '../events/SecurityEvents';
 import {loginSaga} from './security/AuthorizationFlowSagas';
 import logoutSaga from './security/LogoutSaga';
+import {SecurityState} from '../reducers/SecurityReducer';
+import {selectSecurityState} from '../reducers';
 
 function* securityRequestSaga() {
   yield call(oauthInitializationSaga);
@@ -30,8 +32,11 @@ function* listenToLoginEvents() {
 // to complete before sending user off
 // to the authorization server.
 function* waitBeforeLoggingIn() {
-  yield delay(2000);
-  yield call(loginSaga);
+  const {isLoggedIn}: SecurityState = yield select(selectSecurityState);
+  if (isLoggedIn) {
+    yield delay(2000);
+    yield call(loginSaga);
+  }
 }
 
 function* listenToSecurityEvents() {
