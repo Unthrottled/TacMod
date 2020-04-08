@@ -1,5 +1,6 @@
 package io.unthrottled.sogos.tacmod.pomodoro
 
+import android.content.Context
 import android.util.Log
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
@@ -23,8 +24,8 @@ import java.time.Instant
 import java.util.concurrent.Executor
 
 class PomodoroModule(
-    private val reactContext: ReactApplicationContext,
-    private val executor: Executor
+  private val reactContext: ReactApplicationContext,
+  private val executor: Executor
 ) : ReactContextBaseJavaModule(reactContext) {
 
   companion object {
@@ -49,13 +50,13 @@ class PomodoroModule(
     AlarmService.stopItGetSomeHelp(reactContext)
   }
 
-  private fun startPomodoro(pomodoroThings: PomodoroParameters) {
-    scheduleLoadAlarm(pomodoroThings)
+  private fun startPomodoro(pomodoroThings: PomodoroParameters, currentContext: Context = this.reactContext) {
+    scheduleLoadAlarm(pomodoroThings, currentContext)
 
     val jsModule = reactContext.getJSModule(
-        DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+      DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
     )
-    setCompletionListener {
+    setCompletionListener { breakContext ->
       val pomoWithUpdatedCount = pomodoroThings.apply {
         this.numberOfCompletedPomodoro += 1
       }
@@ -64,45 +65,43 @@ class PomodoroModule(
 
         val breakDuration = calculateRestTime(pomoSettingsAfterFirstCheck)
         setCurrentActivity(
-            buildBreak(breakDuration),
-            pomoSettingsAfterFirstCheck,
-            { pomoSettingsAfterSettingBreak ->
+          buildBreak(breakDuration),
+          pomoSettingsAfterFirstCheck,
+          { pomoSettingsAfterSettingBreak ->
 
-              scheduleBreakAlarm(pomoSettingsAfterSettingBreak, breakDuration)
+            scheduleBreakAlarm(pomoSettingsAfterSettingBreak, breakDuration, breakContext)
 
-              notifyJavascriptOfBreak(breakDuration, jsModule)
+            notifyJavascriptOfBreak(breakDuration, jsModule)
 
-              setCompletionListener {
-                checkRecoveryActivity(
-                    pomoSettingsAfterSettingBreak,
-                    { pomoSettingsAfterCheckingIfRecovery ->
+            setCompletionListener { loadContext ->
+              checkRecoveryActivity(
+                pomoSettingsAfterSettingBreak,
+                { pomoSettingsAfterCheckingIfRecovery ->
 
-                      setCurrentActivity(
-                          buildActivityMap(pomoSettingsAfterCheckingIfRecovery),
-                          pomoSettingsAfterCheckingIfRecovery,
-                          { pomoSettingsAfterSettingLoadAgain ->
+                  setCurrentActivity(
+                    buildActivityMap(pomoSettingsAfterCheckingIfRecovery),
+                    pomoSettingsAfterCheckingIfRecovery,
+                    { pomoSettingsAfterSettingLoadAgain ->
 
-                            jsModule.emit(
-                                "StartedPomodoroActivity",
-                                buildActivityMap(pomoSettingsAfterSettingLoadAgain)
-                            )
+                      notifyJavascriptOfActivityStart(jsModule, pomoSettingsAfterSettingLoadAgain)
 
-                            // recursion!!
-                            startPomodoro(
-                                pomoSettingsAfterSettingLoadAgain.apply {
-                                  this.currentActivity.json = buildActivityMap(pomodoroThings)
-                                }
-                            )
-                          }) {
-                        notifyJavascriptOfError("Unable to set load activity as current, the second time", it, jsModule)
-                      }
-                    }, {
-                  notifyJavascriptOfCancellation(jsModule)
-                }) {
-                  notifyJavascriptOfError("Unable to check to see if the current activity is recovery", it, jsModule)
-                }
+                      // recursion!!
+                      startPomodoro(
+                        pomoSettingsAfterSettingLoadAgain.apply {
+                          this.currentActivity.json = buildActivityMap(pomodoroThings)
+                        },
+                        loadContext
+                      )
+                    }) {
+                    notifyJavascriptOfError("Unable to set load activity as current, the second time", it, jsModule)
+                  }
+                }, {
+                notifyJavascriptOfCancellation(jsModule)
+              }) {
+                notifyJavascriptOfError("Unable to check to see if the current activity is recovery", it, jsModule)
               }
-            }) {
+            }
+          }) {
           notifyJavascriptOfError("Unable to set current activity to recovery", it, jsModule)
         }
       }, {
@@ -113,68 +112,91 @@ class PomodoroModule(
     }
   }
 
+  private fun notifyJavascriptOfActivityStart(jsModule: DeviceEventManagerModule.RCTDeviceEventEmitter, pomoSettingsAfterSettingLoadAgain: PomodoroParameters) {
+    try {
+      jsModule.emit(
+        "StartedPomodoroActivity",
+        buildActivityMap(pomoSettingsAfterSettingLoadAgain)
+      )
+    } catch (e: Exception) {
+      Log.e(ACTIVITY_NAME, "Unable to notify javascript of activity start", e)
+    }
+  }
+
   private fun notifyJavascriptOfCancellation(jsModule: DeviceEventManagerModule.RCTDeviceEventEmitter?) {
-    jsModule?.emit(
+    try {
+      jsModule?.emit(
         "PomodoroCanceled",
         Arguments.createMap()
-    )
+      )
+    } catch (e: Exception) {
+      Log.e(ACTIVITY_NAME, "Unable to notify javascript of cancellation", e)
+    }
   }
 
   private fun notifyJavascriptOfError(
-      message: String,
-      error: Throwable,
-      jsModule: DeviceEventManagerModule.RCTDeviceEventEmitter
+    message: String,
+    error: Throwable,
+    jsModule: DeviceEventManagerModule.RCTDeviceEventEmitter
   ) {
     val errorPayload = Arguments.createMap()
     errorPayload.putString("message", message)
     errorPayload.putString("error", error.message)
-    jsModule.emit(
+    try {
+      jsModule.emit(
         "PomodoroError",
         errorPayload
-    )
+      )
+    } catch (e: Exception) {
+      Log.e(ACTIVITY_NAME, "Unable to notify javascript of error", e)
+    }
   }
 
-  private fun scheduleLoadAlarm(pomodoroThings: PomodoroParameters) {
+  private fun scheduleLoadAlarm(pomodoroThings: PomodoroParameters, currentContext: Context) {
     AlarmService.scheduleAlarm(
-        reactContext.applicationContext,
-        AlarmParameters(
-            NotificationMessage(
-                "${pomodoroThings.currentActivity.content.name} pomodoro complete!",
-                "Take a break!"
-            ),
-            calculateTimeToAlert(pomodoroThings),
-            calculateVibrationPattern(pomodoroThings)
-        )
+      currentContext,
+      AlarmParameters(
+        NotificationMessage(
+          "${pomodoroThings.currentActivity.content.name} pomodoro complete!",
+          "Take a break!"
+        ),
+        calculateTimeToAlert(pomodoroThings),
+        calculateVibrationPattern(pomodoroThings)
+      )
     )
   }
 
   private fun notifyJavascriptOfBreak(breakDuration: Int, jsModule: DeviceEventManagerModule.RCTDeviceEventEmitter) {
-    val breakActivity = buildBreak(breakDuration)
-    jsModule.emit(
+    try {
+      val breakActivity = buildBreak(breakDuration)
+      jsModule.emit(
         "StartedPomodoroBreak",
         breakActivity
-    )
+      )
+    } catch (e: Exception) {
+      Log.e(ACTIVITY_NAME, "Unable to notify javascript of break", e)
+    }
   }
 
-  private fun scheduleBreakAlarm(moreUpToDatePomoSettings: PomodoroParameters, breakDuration: Int) {
+  private fun scheduleBreakAlarm(moreUpToDatePomoSettings: PomodoroParameters, breakDuration: Int, currentContext: Context) {
     AlarmService.scheduleAlarm(
-        reactContext.applicationContext,
-        AlarmParameters(
-            NotificationMessage(
-                "Break is over!",
-                "Get back to ${moreUpToDatePomoSettings.currentActivity.content.name}"
-            ),
-            breakDuration + Instant.now().toEpochMilli(),
-            calculateVibrationPattern(moreUpToDatePomoSettings)
-        )
+      currentContext,
+      AlarmParameters(
+        NotificationMessage(
+          "Break is over!",
+          "Get back to ${moreUpToDatePomoSettings.currentActivity.content.name}"
+        ),
+        breakDuration + Instant.now().toEpochMilli(),
+        calculateVibrationPattern(moreUpToDatePomoSettings)
+      )
     )
   }
 
   private fun checkCurrentActivity(
-      updatedPomodoroSettings: PomodoroParameters,
-      callback: (p: PomodoroParameters) -> Unit,
-      canceledCallback: () -> Unit,
-      error: (e: Throwable) -> Unit
+    updatedPomodoroSettings: PomodoroParameters,
+    callback: (p: PomodoroParameters) -> Unit,
+    canceledCallback: () -> Unit,
+    error: (e: Throwable) -> Unit
   ) {
     performCurrentActivityFetch(updatedPomodoroSettings, { activity, pomoStuffToSend ->
       if (activity.content.activityID == pomoStuffToSend.currentActivity.content.activityID) {
@@ -189,14 +211,14 @@ class PomodoroModule(
   }
 
   private fun checkRecoveryActivity(
-      updatedPomodoroSettings: PomodoroParameters,
-      callback: (p: PomodoroParameters) -> Unit,
-      canceledCallback: () -> Unit,
-      error: (e: Throwable) -> Unit
+    updatedPomodoroSettings: PomodoroParameters,
+    callback: (p: PomodoroParameters) -> Unit,
+    canceledCallback: () -> Unit,
+    error: (e: Throwable) -> Unit
   ) {
     performCurrentActivityFetch(updatedPomodoroSettings, { activity, pomoStuffToSend ->
       if (activity.content.activityID == null &&
-          activity.content.name == "RECOVERY") {
+        activity.content.name == "RECOVERY") {
         callback(pomoStuffToSend)
       } else {
         Log.i(ACTIVITY_NAME, "Activities not same, do not start!!!!")
@@ -208,22 +230,22 @@ class PomodoroModule(
   }
 
   private fun performCurrentActivityFetch(
-      updatedPomodoroSettings: PomodoroParameters,
-      doStuff: (activity: Activity, pomoStuff: PomodoroParameters) -> Unit,
-      error: (e: Throwable) -> Unit
+    updatedPomodoroSettings: PomodoroParameters,
+    doStuff: (activity: Activity, pomoStuff: PomodoroParameters) -> Unit,
+    error: (e: Throwable) -> Unit
   ) {
     getHeaders(updatedPomodoroSettings, { headers, pomoStuffToSend ->
       performRequest(
-          Request.Builder()
-              .headers(headers)
-              .url(
-                  "${pomoStuffToSend.apiURL}/activity/current"
-              )
-              .build(),
-          {
-            val activity = gson.fromJson(it, Activity::class.java)
-            doStuff(activity, pomoStuffToSend)
-          }
+        Request.Builder()
+          .headers(headers)
+          .url(
+            "${pomoStuffToSend.apiURL}/activity/current"
+          )
+          .build(),
+        {
+          val activity = gson.fromJson(it, Activity::class.java)
+          doStuff(activity, pomoStuffToSend)
+        }
       ) {
         error(it)
       }
@@ -233,26 +255,26 @@ class PomodoroModule(
   }
 
   private fun setCurrentActivity(
-      buildBreak: WritableMap?,
-      pomodoroThings: PomodoroParameters,
-      callBack: (upDate: PomodoroParameters) -> Unit,
-      error: (e: Throwable) -> Unit
+    buildBreak: WritableMap?,
+    pomodoroThings: PomodoroParameters,
+    callBack: (upDate: PomodoroParameters) -> Unit,
+    error: (e: Throwable) -> Unit
   ) {
     getHeaders(pomodoroThings, { headers, pomoStuffToSend ->
       performRequest(
-          Request.Builder()
-              .headers(headers)
-              .url(
-                  "${pomoStuffToSend.apiURL}/activity"
-              )
-              .post(RequestBody.create(
-                  MediaType.get("application/json"),
-                  gson.toJson(buildBreak?.toHashMap())
-              ))
-              .build(),
-          {
-            callBack(pomoStuffToSend)
-          }
+        Request.Builder()
+          .headers(headers)
+          .url(
+            "${pomoStuffToSend.apiURL}/activity"
+          )
+          .post(RequestBody.create(
+            MediaType.get("application/json"),
+            gson.toJson(buildBreak?.toHashMap())
+          ))
+          .build(),
+        {
+          callBack(pomoStuffToSend)
+        }
       ) {
         error(it)
       }

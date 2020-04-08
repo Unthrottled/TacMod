@@ -36,7 +36,7 @@ data class AlarmParameters(
 object AlarmService {
   private var previousNotificationId: Int = 69
   private lateinit var reactContextSupplier: () -> ReactApplicationContext
-  private var listener: () -> Unit = {}
+  private var listener: (context: Context) -> Unit = {}
 
   private const val ID = "tacmod_alarm_id"
   private const val NOTIFICATION = "tacmod_notification"
@@ -159,7 +159,7 @@ object AlarmService {
 
     scheduledNotifications.remove(notificationId)
 
-    listener()
+    listener(context)
     if(this::reactContextSupplier.isInitialized){
       reactContextSupplier().getJSModule(
           DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
@@ -170,7 +170,7 @@ object AlarmService {
     }
   }
 
-  fun setCompletionListener(completionListener: () -> Unit){
+  fun setCompletionListener(completionListener: (currentContext: Context) -> Unit){
     this.listener = completionListener
   }
 
