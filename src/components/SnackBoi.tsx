@@ -16,6 +16,7 @@ const SnackBoi: FC = () => {
   return (
     <View>
       <Snackbar
+        duration={1000000}
         visible={shown}
         style={{
           backgroundColor: 'red',

@@ -114,11 +114,7 @@ interface ErrorPayload {
 }
 export function* pomoErrorSaga(errorPayload: ErrorPayload) {
   console.error('Error in pomodoro', errorPayload); // sheeeeeeittttttttt
-  yield put(
-    createShowWarningNotificationEvent(
-      'An error occurred, please try again later.',
-    ),
-  );
+  yield put(createShowWarningNotificationEvent(JSON.stringify(errorPayload)));
   yield put(createCanceledPomodoroEvent());
   yield put(createRecoveryActivity());
 }
