@@ -50,12 +50,20 @@ object OAuthService {
             )
             .build(),
         {
-          val accessTokenResponse = gson.fromJson(it, RefreshTokenResponse::class.java)
-          function(
+          try {
+            val accessTokenResponse = gson.fromJson(it, RefreshTokenResponse::class.java)
+            function(
               updatedPomodoroSettings.apply {
                 this.securityStuff.accessToken = accessTokenResponse.access_token
+                if(accessTokenResponse.refresh_token != null){
+                  Log.i(ACTIVITY_NAME, "Refresh token being replaced")
+                  this.securityStuff.refreshToken = accessTokenResponse.refresh_token
+                }
               }
-          )
+            )
+          } catch (e: Throwable) {
+            error(e)
+          }
         }
     ) {
       error(it)

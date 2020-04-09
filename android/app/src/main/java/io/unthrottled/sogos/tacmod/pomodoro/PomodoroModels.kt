@@ -5,12 +5,12 @@ import com.facebook.react.bridge.ReadableMap
 import java.time.Instant
 
 data class SecurityStuff(
-    var accessToken: String,
-    val refreshToken: String,
-    val tokenEndpoint: String,
-    val clientId: String,
-    val verificationCode: String,
-    val guid: String
+  var accessToken: String,
+  var refreshToken: String,
+  val tokenEndpoint: String,
+  val clientId: String,
+  val verificationCode: String,
+  val guid: String
 )
 
 data class PomodoroSettings(
@@ -42,7 +42,8 @@ data class PomodoroParameters(
 )
 
 data class RefreshTokenResponse(
-    val access_token: String
+    val access_token: String,
+    val refresh_token: String?
 )
 
 fun mapToPomodoroParameters(
