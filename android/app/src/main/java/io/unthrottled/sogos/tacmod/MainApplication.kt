@@ -12,6 +12,7 @@ import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
 import com.facebook.soloader.SoLoader
 import io.unthrottled.sogos.tacmod.alarm.AlarmService.NOTIFICATION_CHANNEL_ID
+import io.unthrottled.sogos.tacmod.pomodoro.APIService
 import io.unthrottled.sogos.tacmod.pomodoro.PomodoroPackage
 import io.unthrottled.sogos.tacmod.stream.StreamPackage
 import java.lang.reflect.InvocationTargetException
@@ -43,6 +44,7 @@ class MainApplication : Application(), ReactApplication {
 
   override fun onCreate() {
     super.onCreate()
+    APIService.initialize(this.applicationContext)
     SoLoader.init(this,  /* native exopackage */false)
     initializeFlipper(this) // Remove this line if you don't want Flipper enabled
 
