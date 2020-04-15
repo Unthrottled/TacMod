@@ -17,6 +17,8 @@ import io.unthrottled.sogos.tacmod.pomodoro.PomodoroService.buildBreak
 import io.unthrottled.sogos.tacmod.pomodoro.PomodoroService.calculateRestTime
 import io.unthrottled.sogos.tacmod.pomodoro.PomodoroService.calculateTimeToAlert
 import io.unthrottled.sogos.tacmod.pomodoro.PomodoroService.calculateVibrationPattern
+import io.unthrottled.sogos.tacmod.utils.AlarmAlertWakeLock
+import io.unthrottled.sogos.tacmod.utils.AlarmAlertWakeLock.releaseCpuLock
 import okhttp3.MediaType
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -48,9 +50,11 @@ class PomodoroModule(
   @ReactMethod
   fun stopItGetSomeHelp() {
     AlarmService.stopItGetSomeHelp(reactContext)
+    releaseCpuLock()
   }
 
   private fun startPomodoro(pomodoroThings: PomodoroParameters, currentContext: Context = this.reactContext) {
+    AlarmAlertWakeLock.acquireCpuWakeLock(reactContext)
     scheduleLoadAlarm(pomodoroThings, currentContext)
 
     val jsModule = reactContext.getJSModule(

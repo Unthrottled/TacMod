@@ -8,39 +8,7 @@ import java.security.cert.X509Certificate
 import javax.net.ssl.*
 
 object APIService {
-  private val client: OkHttpClient
-
-  init {
-    val (ssl, trust) = createFactory()
-    client = OkHttpClient.Builder()
-      .hostnameVerifier { hostName, _->
-        hostName.endsWith("unthrottled.io")
-      }
-      .sslSocketFactory(ssl, trust)
-      .build()
-  }
-
-  // todo: not do this
-  private fun createFactory(): Pair<SSLSocketFactory, X509TrustManager> {
-    val sslContext: SSLContext = SSLContext.getInstance("SSL")
-    val trustManagerFactory: TrustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-    val certTruster = arrayOf<TrustManager>(object : X509TrustManager {
-      override fun getAcceptedIssuers(): Array<X509Certificate>? {
-        return arrayOf()
-      }
-
-      override fun checkServerTrusted(chain: Array<X509Certificate?>?,
-                                      authType: String?) {
-      }
-
-      override fun checkClientTrusted(chain: Array<X509Certificate?>?,
-                                      authType: String?) {
-      }
-    })
-    sslContext.init(null, certTruster, SecureRandom())
-    return sslContext.socketFactory to trustManagerFactory.trustManagers.first() as X509TrustManager
-  }
-
+  private val client: OkHttpClient = OkHttpClient()
 
   fun performRequest(
       request: Request,
