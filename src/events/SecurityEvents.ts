@@ -1,4 +1,3 @@
-import {OAuthConfig} from '../types/ConfigurationTypes';
 import {AuthorizeResult} from 'react-native-app-auth';
 
 export const LOGGED_ON: 'LOGGED_ON' = 'LOGGED_ON';

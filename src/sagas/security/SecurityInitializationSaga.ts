@@ -1,9 +1,6 @@
 import {put, select, take} from 'redux-saga/effects';
 import {shouldCheckForAuthorizationGrant} from '../../security/OAuth';
-import {
-  CHECKED_AUTH,
-  createSecurityInitializedEvent,
-} from '../../events/SecurityEvents';
+import {CHECKED_AUTH, createSecurityInitializedEvent,} from '../../events/SecurityEvents';
 
 function* oauthInitializationSaga() {
   const {security} = yield select();

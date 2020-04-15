@@ -13,10 +13,7 @@ import {
   objectiveCreationSaga,
   objectiveTerminationSaga,
 } from './strategy/ObjectiveCreationSagas';
-import {
-  objectiveHistoryFetchSaga,
-  objectiveObservationSaga,
-} from './strategy/ObjectiveSagas';
+import {objectiveHistoryFetchSaga, objectiveObservationSaga,} from './strategy/ObjectiveSagas';
 import {FOUND_WIFI} from '../events/NetworkEvents';
 import {strategySyncSaga} from './strategy/StrategySyncSaga';
 

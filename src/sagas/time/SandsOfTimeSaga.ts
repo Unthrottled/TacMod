@@ -44,6 +44,6 @@ export function* waitForCurrentActivity() {
   return firstActivity
     ? firstActivity.payload
     : newActivity
-    ? newActivity.payload
-    : userActivity.payload;
+      ? newActivity.payload
+      : userActivity.payload;
 }

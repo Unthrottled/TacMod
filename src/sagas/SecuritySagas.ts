@@ -1,11 +1,7 @@
-import {delay, all, call, fork, takeEvery, select} from 'redux-saga/effects';
+import {all, call, delay, fork, select, takeEvery} from 'redux-saga/effects';
 import {FOCUSED_APPLICATION} from '../events/ApplicationLifecycleEvents';
 import oauthInitializationSaga from './security/SecurityInitializationSaga';
-import {
-  EXPIRED_SESSION,
-  REQUESTED_LOGOFF,
-  REQUESTED_LOGON,
-} from '../events/SecurityEvents';
+import {EXPIRED_SESSION, REQUESTED_LOGOFF, REQUESTED_LOGON,} from '../events/SecurityEvents';
 import {loginSaga} from './security/AuthorizationFlowSagas';
 import logoutSaga from './security/LogoutSaga';
 import {SecurityState} from '../reducers/SecurityReducer';

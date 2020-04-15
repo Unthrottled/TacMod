@@ -22,6 +22,7 @@ interface PomodoroParameters {
 
 interface Pomodoro {
   commencePomodoroForActivity: (params: PomodoroParameters) => void;
+
   stopItGetSomeHelp(): void;
 }
 

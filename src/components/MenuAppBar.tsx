@@ -8,10 +8,10 @@ import OfflineMode from './OfflineMode';
 const MenuAppBar: FC = () => {
   return (
     <Appbar.Header>
-      <ManualSync />
-      <OfflineMode />
-      <View style={{flex: 1}} />
-      <MenuOptions />
+      <ManualSync/>
+      <OfflineMode/>
+      <View style={{flex: 1}}/>
+      <MenuOptions/>
     </Appbar.Header>
   );
 };

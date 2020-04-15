@@ -3,4 +3,5 @@ export interface TokenInformation {
   issuedAt: number; //epoch second
 }
 
-export class SessionExpiredException extends Error {}
+export class SessionExpiredException extends Error {
+}

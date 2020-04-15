@@ -3,6 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import MenuAppBar from './MenuAppBar';
 import ActivityHub from "./time/ActivityHub";
 import SnackBoi from "./SnackBoi";
+
 const styles = StyleSheet.create({
   container: {
     height: '100%',
@@ -11,10 +12,10 @@ const styles = StyleSheet.create({
 });
 const LoggedInLayout: FC = ({children, ...otherProperties}) => (
   <View {...otherProperties} style={styles.container}>
-    <MenuAppBar />
-    <ActivityHub />
+    <MenuAppBar/>
+    <ActivityHub/>
     {children}
-    <SnackBoi />
+    <SnackBoi/>
   </View>
 );
 

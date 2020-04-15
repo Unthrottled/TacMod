@@ -1,10 +1,7 @@
 import {ColorType} from './StrategyTypes';
 import {EventTypes} from './EventTypes';
 import {ActivityStrategy, RECOVERY} from './ActivityTypes';
-import {
-  PomodoroState,
-  TacticalActivityState,
-} from '../reducers/TacticalReducer';
+import {PomodoroState, TacticalActivityState,} from '../reducers/TacticalReducer';
 
 export type TacticalState = {
   activity: TacticalActivityState;

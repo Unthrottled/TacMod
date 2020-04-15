@@ -1,9 +1,4 @@
-import {
-  FOUND_INTERNET,
-  FOUND_WIFI,
-  LOST_INTERNET,
-  LOST_WIFI,
-} from '../events/NetworkEvents';
+import {FOUND_INTERNET, FOUND_WIFI, LOST_INTERNET, LOST_WIFI,} from '../events/NetworkEvents';
 
 export interface NetworkState {
   isOnline: boolean;

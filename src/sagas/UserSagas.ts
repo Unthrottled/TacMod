@@ -1,10 +1,7 @@
 import {all, call, put, select, takeEvery} from 'redux-saga/effects';
 import {LOGGED_ON} from '../events/SecurityEvents';
 import {performGetWithoutVerification} from './APISagas';
-import {
-  createFailedToGetUserEvent,
-  createReceivedUserEvent,
-} from '../events/UserEvents';
+import {createFailedToGetUserEvent, createReceivedUserEvent,} from '../events/UserEvents';
 import {GlobalState, selectSecurityState, selectUserState} from '../reducers';
 import {FOCUSED_APPLICATION} from '../events/ApplicationLifecycleEvents';
 import {SecurityState} from '../reducers/SecurityReducer';

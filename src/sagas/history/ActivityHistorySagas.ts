@@ -46,10 +46,10 @@ export function* archiveFetchSaga(
 }
 
 export function* historyInitializationSaga({
-  payload: {
-    information: {guid},
-  },
-}: PayloadEvent<UserResponse>) {
+                                             payload: {
+                                               information: {guid},
+                                             },
+                                           }: PayloadEvent<UserResponse>) {
   const fromDate = meowMinusSeven.valueOf() - 1;
   const toDate = meow.valueOf() + 1;
   const initialHistoryFeed = yield call(
@@ -83,8 +83,8 @@ export function* historyObservationSaga() {
 }
 
 export function* historyAdjustmentSaga({
-  payload: {from, to},
-}: PayloadEvent<DateRange>) {
+                                         payload: {from, to},
+                                       }: PayloadEvent<DateRange>) {
   const fullHistoryFeed = yield call(getOrUpdateFullFeed, to, from);
   yield call(updateSelection, fullHistoryFeed, to, from);
 }

@@ -10,10 +10,7 @@ import {
 import {tokenReceptionReducer} from './security/TokenReducer';
 import {RECEIVED_USER} from '../events/UserEvents';
 import {TokenInformation} from '../types/SecurityTypes';
-import {
-  TIME_IS_WACK,
-  UNINITIALIZED_APPLICATION,
-} from '../events/ApplicationLifecycleEvents';
+import {TIME_IS_WACK, UNINITIALIZED_APPLICATION,} from '../events/ApplicationLifecycleEvents';
 
 export type SecurityState = {
   isLoggedIn: boolean;

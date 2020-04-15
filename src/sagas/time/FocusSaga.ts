@@ -1,4 +1,4 @@
-import {takeEvery, flush, call, put, select, take} from 'redux-saga/effects';
+import {call, flush, put, select, take, takeEvery} from 'redux-saga/effects';
 import {buffers, eventChannel} from 'redux-saga';
 import {AppState} from 'react-native';
 import {createAppGainedFocusEvent} from '../../events/ApplicationLifecycleEvents';

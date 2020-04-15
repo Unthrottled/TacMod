@@ -55,10 +55,12 @@ export interface CachedActivity {
   uploadType: EventTypes.CREATED | EventTypes.UPDATED | EventTypes.DELETED;
   activity: Activity;
 }
+
 export interface ActivityRegistryFailure {
   error: any;
   activity: Activity;
 }
+
 export const RECOVERY = 'RECOVERY';
 
 export const getActivityContent = (activity: Activity): ActivityContent =>

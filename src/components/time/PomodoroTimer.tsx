@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useState} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {TimeDisplay} from './TimeDisplay';
 import ActivitySelection from '../ActivitySelection';
@@ -6,11 +6,7 @@ import {GENERIC_ACTIVITY_NAME, OpenedSelection} from './ActivityHub';
 import {timeFontSize} from './ActivityTimeBar';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {useSelector} from 'react-redux';
-import {
-  GlobalState,
-  selectActivityState,
-  selectTimeState,
-} from '../../reducers';
+import {GlobalState, selectActivityState, selectTimeState,} from '../../reducers';
 import {Avatar, Text} from 'react-native-paper';
 
 const classes = StyleSheet.create({
@@ -24,7 +20,7 @@ const classes = StyleSheet.create({
 
 type ChangeActivityCallback = (
   name: string,
-  stuff: {activityID?: string},
+  stuff: { activityID?: string },
 ) => void;
 
 interface Props {
@@ -37,13 +33,13 @@ interface Props {
 }
 
 export const PomodoroTimer: FC<Props> = ({
-  onPause,
-  fontSize,
-  pivotActivity,
-  swapActivity,
-  onResume,
-  hidePause,
-}) => {
+                                           onPause,
+                                           fontSize,
+                                           pivotActivity,
+                                           swapActivity,
+                                           onResume,
+                                           hidePause,
+                                         }) => {
   const pauseTimer = () => {
     onPause && onPause();
   };
@@ -76,7 +72,7 @@ export const PomodoroTimer: FC<Props> = ({
   return (
     <View style={classes.stopwatchContainer}>
       <View style={{margin: 'auto'}}>
-        <TimeDisplay fontSize={timeFontSize} timeElapsed={timeElapsed} />
+        <TimeDisplay fontSize={timeFontSize} timeElapsed={timeElapsed}/>
       </View>
       <View style={classes.actionButton}>
         {!hidePause && (
@@ -88,13 +84,13 @@ export const PomodoroTimer: FC<Props> = ({
                 justifyContent: 'space-evenly',
               }}>
               <TouchableOpacity onPress={openPivotSelection}>
-                <MaterialIcon color={'white'} name={'swap-vert'} size={50} />
+                <MaterialIcon color={'white'} name={'swap-vert'} size={50}/>
               </TouchableOpacity>
               <TouchableOpacity onPress={pauseTimer}>
-                <MaterialIcon color={'white'} name={'pause'} size={50} />
+                <MaterialIcon color={'white'} name={'pause'} size={50}/>
               </TouchableOpacity>
               <TouchableOpacity onPress={openSwappoSelection}>
-                <MaterialIcon color={'white'} name={'swap-horiz'} size={50} />
+                <MaterialIcon color={'white'} name={'swap-horiz'} size={50}/>
               </TouchableOpacity>
             </View>
             <View style={{flexDirection: 'row'}}>
@@ -117,9 +113,9 @@ export const PomodoroTimer: FC<Props> = ({
         onActivitySelection={activity => {
           closeSelection();
           changeActivityFunction.changeActivity &&
-            changeActivityFunction.changeActivity(activity.name, {
-              activityID: activity.id,
-            });
+          changeActivityFunction.changeActivity(activity.name, {
+            activityID: activity.id,
+          });
         }}
         onGenericActivitySelection={() =>
           changeActivityFunction.changeActivity &&

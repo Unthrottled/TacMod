@@ -1,7 +1,7 @@
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import React from 'react';
-import {TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import {GlobalState, selectNetworkState, selectUserState} from '../reducers';
 import {useDispatch, useSelector} from 'react-redux';
 import {createRequestedSyncEvent} from '../events/UserEvents';
@@ -26,7 +26,7 @@ const ManualSync = () => {
 
   return shouldDisplay ? (
     <TouchableOpacity onPress={() => dispetch(createRequestedSyncEvent())}>
-      <MaterialIcon name={'sync'} size={25} />
+      <MaterialIcon name={'sync'} size={25}/>
     </TouchableOpacity>
   ) : null;
 };

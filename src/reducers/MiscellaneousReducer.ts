@@ -1,8 +1,4 @@
-import {
-  DISMISSED_NOTIFICATION,
-  REQUESTED_NOTIFICATION,
-  SAVED_REDIRECT,
-} from '../events/MiscEvents';
+import {DISMISSED_NOTIFICATION, REQUESTED_NOTIFICATION, SAVED_REDIRECT,} from '../events/MiscEvents';
 
 export interface NotificationState {
   message: string;

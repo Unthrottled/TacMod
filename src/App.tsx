@@ -14,7 +14,7 @@ const App: FC = () => {
       <Provider store={store}>
         <PersistGate persistor={persistor}>
           <PaperProvider theme={theme}>
-            <RootView />
+            <RootView/>
           </PaperProvider>
         </PersistGate>
       </Provider>

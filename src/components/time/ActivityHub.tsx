@@ -2,12 +2,7 @@ import React, {useState} from 'react';
 import {FAB, Portal} from 'react-native-paper';
 import uuid from 'uuid/v4';
 import {ActivityTimedType, ActivityType} from '../../types/ActivityTypes';
-import {
-  GlobalState,
-  selectConfigurationState,
-  selectTacticalActivityState,
-  selectTacticalState,
-} from '../../reducers';
+import {GlobalState, selectConfigurationState, selectTacticalActivityState, selectTacticalState,} from '../../reducers';
 import {TacticalActivity} from '../../types/TacticalTypes';
 import {useDispatch, useSelector} from 'react-redux';
 import {startTimedActivity} from '../../actions/ActivityActions';

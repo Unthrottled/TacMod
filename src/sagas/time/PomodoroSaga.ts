@@ -9,10 +9,7 @@ import {
   selectUserState,
 } from '../../reducers';
 import {activitiesEqual, Activity} from '../../types/ActivityTypes';
-import {
-  createTimeDecrementEvent,
-  createTimeSetEvent,
-} from '../../events/TimeEvents';
+import {createTimeDecrementEvent, createTimeSetEvent,} from '../../events/TimeEvents';
 import {waitForCurrentActivity} from './SandsOfTimeSaga';
 import Pomodoro, {SecurityStuff} from '../../native/Pomodoro';
 import {buffers, eventChannel} from 'redux-saga';

@@ -1,5 +1,4 @@
 import React from 'react';
-import {View} from 'react-native';
 import {Text} from 'react-native-paper';
 
 const getDisplayTime = (hours: number, minutes: number, seconds: number) => {
@@ -14,10 +13,10 @@ const getDisplayTime = (hours: number, minutes: number, seconds: number) => {
 };
 
 export const TimeDisplay = ({
-  timeElapsed,
-  fontSize,
-  color,
-}: {
+                              timeElapsed,
+                              fontSize,
+                              color,
+                            }: {
   timeElapsed: number;
   fontSize?: number;
   color?: string;

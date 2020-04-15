@@ -6,10 +6,7 @@ import activityReducer, {ActivityState} from './ActivityReducer';
 import networkReducer, {NetworkState} from './NetworkReducer';
 import HistoryReducer, {HistoryState} from './HistoryReducer';
 import StrategyReducer, {StrategyState} from './StrategyReducer';
-import TacticalReducer, {
-  PomodoroState,
-  TacticalActivityState,
-} from './TacticalReducer';
+import TacticalReducer, {PomodoroState, TacticalActivityState,} from './TacticalReducer';
 import MiscellaneousReducer, {MiscellaneousState} from './MiscellaneousReducer';
 import {TacticalState} from '../types/TacticalTypes';
 import {Reducer} from 'react';

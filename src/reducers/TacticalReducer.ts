@@ -1,9 +1,4 @@
-import {
-  CachedTacticalActivity,
-  PomodoroSettings,
-  TacticalActivity,
-  TacticalState,
-} from '../types/TacticalTypes';
+import {CachedTacticalActivity, PomodoroSettings, TacticalActivity, TacticalState,} from '../types/TacticalTypes';
 import {
   CACHED_SETTINGS,
   FOUND_POMODORO_SETTINGS,

@@ -29,11 +29,11 @@ export const tokenReceptionReducer = (
     ),
     ...(tokenReceptionPayload.refreshToken
       ? {
-          refreshToken: tokenReceptionPayload.refreshToken,
-          refreshTokenInformation: getRefreshTokenInformation(
-            tokenReceptionPayload.refreshToken,
-          ),
-        }
+        refreshToken: tokenReceptionPayload.refreshToken,
+        refreshTokenInformation: getRefreshTokenInformation(
+          tokenReceptionPayload.refreshToken,
+        ),
+      }
       : {}),
     idToken: tokenReceptionPayload.idToken,
   };

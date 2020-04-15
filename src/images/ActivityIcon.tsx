@@ -5,6 +5,7 @@ import {ColorType} from '../types/StrategyTypes';
 
 interface ActivityIconProps {
   activity: TacticalActivity;
+
   [key: string]: any;
 }
 

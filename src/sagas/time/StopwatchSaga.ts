@@ -2,10 +2,7 @@ import {call, delay, put, race, select} from 'redux-saga/effects';
 import {waitForCurrentActivity} from './SandsOfTimeSaga';
 import {activitiesEqual, Activity} from '../../types/ActivityTypes';
 import {selectActivityState} from '../../reducers';
-import {
-  createTimeIncrementEvent,
-  createTimeSetEvent,
-} from '../../events/TimeEvents';
+import {createTimeIncrementEvent, createTimeSetEvent,} from '../../events/TimeEvents';
 
 export const getTime = (antecedenceTime: number) =>
   Math.floor((new Date().getTime() - antecedenceTime || 0) / 1000);
@@ -30,8 +27,8 @@ export function* stopWatchSaga(activityThatStartedThis: Activity) {
     );
     if (areActivitiesSame) {
       yield put(createTimeIncrementEvent());
-        const after = new Date().valueOf();
-        const waitFor = 1000 - (after - before);
+      const after = new Date().valueOf();
+      const waitFor = 1000 - (after - before);
       const {currentActivity: newCurrentActivity} = yield race({
         currentActivity: call(waitForCurrentActivity),
         timeElapsed: delay(waitFor < 0 ? 0 : waitFor),

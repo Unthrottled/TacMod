@@ -1,10 +1,6 @@
 import {call, put, select} from 'redux-saga/effects';
 import {waitForWifi} from '../NetworkSagas';
-import {
-  AuthConfiguration,
-  AuthorizeResult,
-  refresh,
-} from 'react-native-app-auth';
+import {AuthConfiguration, AuthorizeResult, refresh,} from 'react-native-app-auth';
 import {
   createExpiredSessionEvent,
   createTokenFailureEvent,

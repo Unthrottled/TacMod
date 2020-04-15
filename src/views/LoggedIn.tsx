@@ -68,7 +68,7 @@ const LoggedIn: FC = () => {
           style={{
             ...bannerStyles.container,
           }}>
-          <TacModIcon />
+          <TacModIcon/>
           <Caption style={bannerStyles.secondary}>
             SOGoS's Tactical Module
           </Caption>
@@ -94,7 +94,7 @@ const LoggedIn: FC = () => {
           navigate({routeName: 'Settings'});
         }}>
         <View style={styles.cardContent}>
-          <SettingsIcon />
+          <SettingsIcon/>
           <Headline style={{textAlign: 'center', fontWeight: '300'}}>
             Settings
           </Headline>
@@ -103,8 +103,8 @@ const LoggedIn: FC = () => {
           </Paragraph>
         </View>
       </Card>
-      <ActivityTimeBar />
-      <PausedPomodoro />
+      <ActivityTimeBar/>
+      <PausedPomodoro/>
     </LoggedInLayout>
   );
 };

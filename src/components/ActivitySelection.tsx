@@ -2,23 +2,14 @@ import {TacticalActivity} from '../types/TacticalTypes';
 import {GlobalState, selectTacticalActivityState} from '../reducers';
 import {useDispatch, useSelector} from 'react-redux';
 import {Avatar, FAB, Headline, Portal} from 'react-native-paper';
-import {
-  Animated,
-  FlatList,
-  SafeAreaView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Animated, FlatList, SafeAreaView, StyleSheet, TouchableOpacity, View,} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {numberObjectToArray} from '../miscellanous/Tools';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {OpenedSelection} from './time/ActivityHub';
 import OtherIcon from 'react-native-vector-icons/Fontisto';
 import ActivityIcon from '../images/ActivityIcon';
-import {
-  createViewedActivitySelectionEvent,
-} from '../events/TacticalEvents';
+import {createViewedActivitySelectionEvent,} from '../events/TacticalEvents';
 
 const generic69 = 'GENERIC69';
 const mapStateToProps = (state: GlobalState) => {
@@ -121,9 +112,9 @@ const ActivitySelection = (props: Props) => {
 
   const backdropOpacity = open
     ? backdrop.interpolate({
-        inputRange: [0, 0.5, 1],
-        outputRange: [0, 1, 1],
-      })
+      inputRange: [0, 0.5, 1],
+      outputRange: [0, 1, 1],
+    })
     : backdrop;
 
   return (
@@ -164,7 +155,7 @@ const ActivitySelection = (props: Props) => {
                       }}>
                       {activity.name}
                     </Headline>
-                    <Icon name={'chevron-down'} color={'white'} />
+                    <Icon name={'chevron-down'} color={'white'}/>
                   </View>
                   {activity.id === generic69 ? (
                     props.genericIcon === OpenedSelection.POMODORO ? (

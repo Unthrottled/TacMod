@@ -2,10 +2,7 @@ import {call, put, select} from 'redux-saga/effects';
 import {isOnline} from '../NetworkSagas';
 import {CachedObjective, Objective} from '../../types/StrategyTypes';
 import {performDelete, performPost, performPut} from '../APISagas';
-import {
-  createCachedObjectiveEvent,
-  createSyncedObjectiveEvent,
-} from '../../events/StrategyEvents';
+import {createCachedObjectiveEvent, createSyncedObjectiveEvent,} from '../../events/StrategyEvents';
 import {selectUserState} from '../../reducers';
 import {createCachedDataEvent} from '../../events/UserEvents';
 import {PayloadEvent} from '../../events/Event';

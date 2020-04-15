@@ -1,10 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import LoggedInLayout from '../components/LoggedInLayout';
-import {
-  createUpdatedPomodoroSettingsEvent,
-  createViewedSettingsEvent,
-} from '../events/TacticalEvents';
+import {createUpdatedPomodoroSettingsEvent, createViewedSettingsEvent,} from '../events/TacticalEvents';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectPomodoroState} from '../reducers';
 import {useNavigation} from 'react-navigation-hooks';
@@ -173,7 +170,7 @@ const Settings = () => {
             We all cannot be the same. Therefore we thought it would be handy to
             allow you to adjust the experience to your preferences!
           </Paragraph>
-          <MaterialIcon name={'settings'}  color='#333831' size={60} />
+          <MaterialIcon name={'settings'} color="#333831" size={60}/>
         </View>
       </View>
       <View>

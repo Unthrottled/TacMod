@@ -1,8 +1,5 @@
-import {all, call, delay, takeEvery, put} from 'redux-saga/effects';
-import {
-  createSyncedTacModDownloadedEvent,
-  RECEIVED_USER,
-} from '../events/UserEvents';
+import {all, call, delay, put, takeEvery} from 'redux-saga/effects';
+import {createSyncedTacModDownloadedEvent, RECEIVED_USER,} from '../events/UserEvents';
 import {PayloadEvent} from '../events/Event';
 import {UserResponse} from '../types/UserTypes';
 import {performPost} from './APISagas';

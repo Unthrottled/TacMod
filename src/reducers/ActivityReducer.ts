@@ -10,12 +10,7 @@ import {
   SYNCED_ACTIVITIES,
 } from '../events/ActivityEvents';
 import {objectToKeyValueArray} from '../miscellanous/Tools';
-import {
-  Activity,
-  ActivityTimedType,
-  ActivityType,
-  CachedActivity,
-} from '../types/ActivityTypes';
+import {Activity, ActivityTimedType, ActivityType, CachedActivity,} from '../types/ActivityTypes';
 import {StringDictionary} from '../types/BaseTypes';
 import reduceRight from 'lodash/reduceRight';
 import {LOGGED_OFF} from '../events/SecurityEvents';

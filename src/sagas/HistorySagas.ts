@@ -15,11 +15,7 @@ import {
   historyInitializationSaga,
   historyObservationSaga,
 } from './history/ActivityHistorySagas';
-import {
-  capstoneHistorySaga,
-  FullRangeAndFeed,
-  getFullHistory,
-} from './history/CapstoneHistorySaga';
+import {capstoneHistorySaga, FullRangeAndFeed, getFullHistory,} from './history/CapstoneHistorySaga';
 import {DateRange} from '../reducers/HistoryReducer';
 import {STARTED_ACTIVITY} from '../events/ActivityEvents';
 import {
@@ -55,15 +51,15 @@ function* listenToActivityEvents() {
 }
 
 export function* historyAdjustmentCapstoneSaga({
-  payload: dateRange,
-}: PayloadEvent<DateRange>) {
+                                                 payload: dateRange,
+                                               }: PayloadEvent<DateRange>) {
   const fullRangeAndFeed = yield call(getFullHistory, dateRange);
   yield call(capstoneHistorySaga, dateRange, fullRangeAndFeed);
 }
 
 export function* historyInitializationCapstoneSaga({
-  payload: {full},
-}: PayloadEvent<ActivityUpdatePayload>) {
+                                                     payload: {full},
+                                                   }: PayloadEvent<ActivityUpdatePayload>) {
   const fullRangeAndActivities: FullRangeAndFeed = {
     timeRange: full.between,
     activities: full.activities,

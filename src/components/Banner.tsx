@@ -42,7 +42,7 @@ export const bannerStyles = StyleSheet.create({
 const Banner: FC = ({children}) => (
   <View style={bannerStyles.banner}>
     <View style={bannerStyles.container}>
-      <TacModIcon />
+      <TacModIcon/>
       <Caption style={bannerStyles.secondary}>SOGoS's Tactical Module</Caption>
       <Paragraph style={bannerStyles.secondary}>
         You know what needs to be done thanks to SOGoS. This will help in the

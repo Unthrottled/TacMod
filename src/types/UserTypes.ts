@@ -13,9 +13,10 @@ export interface UserOnBoarding {
   TacModDownloaded?: boolean;
   TacModThanked?: boolean;
 }
+
 export type UserResponse = {
   information: User;
-  security: {verificationKey: string};
+  security: { verificationKey: string };
   misc: {
     onboarding: UserOnBoarding;
   };

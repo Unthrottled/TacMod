@@ -3,10 +3,7 @@ import {isOnline} from '../NetworkSagas';
 import {performDelete, performPost, performPut} from '../APISagas';
 import {selectUserState} from '../../reducers';
 import {createCachedDataEvent} from '../../events/UserEvents';
-import {
-  CachedTacticalActivity,
-  TacticalActivity,
-} from '../../types/TacticalTypes';
+import {CachedTacticalActivity, TacticalActivity,} from '../../types/TacticalTypes';
 import {
   createCachedTacticalActivityEvent,
   createDeletedTacticalActivityEvent,
@@ -19,8 +16,8 @@ import {PayloadEvent} from '../../events/Event';
 import {EventTypes} from '../../types/EventTypes';
 
 export function* activityCreationSaga({
-  payload,
-}: PayloadEvent<TacticalActivity>) {
+                                        payload,
+                                      }: PayloadEvent<TacticalActivity>) {
   yield call(
     activityAPIInteractionSaga,
     payload,
@@ -30,8 +27,8 @@ export function* activityCreationSaga({
 }
 
 export function* activityChangesSaga({
-  payload,
-}: PayloadEvent<TacticalActivity>) {
+                                       payload,
+                                     }: PayloadEvent<TacticalActivity>) {
   yield call(
     activityAPIInteractionSaga,
     payload,
@@ -61,8 +58,8 @@ export function* activityRankSaga({payload}: PayloadEvent<TacticalActivity[]>) {
 }
 
 export function* activityTerminationSaga({
-  payload,
-}: PayloadEvent<TacticalActivity>) {
+                                           payload,
+                                         }: PayloadEvent<TacticalActivity>) {
   yield call(
     activityAPIInteractionSaga,
     payload,

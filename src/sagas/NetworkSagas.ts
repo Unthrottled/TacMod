@@ -1,13 +1,4 @@
-import {
-  all,
-  call,
-  fork,
-  put,
-  select,
-  take,
-  flush,
-  takeEvery,
-} from 'redux-saga/effects';
+import {all, call, flush, fork, put, select, take, takeEvery,} from 'redux-saga/effects';
 import {buffers, eventChannel} from 'redux-saga';
 import {
   createFoundInternetEvent,
@@ -26,7 +17,8 @@ export const createNetworkChannel = () => {
     NetInfo.addEventListener(state => {
       statusObserver(state.isConnected);
     });
-    return () => {};
+    return () => {
+    };
   }, buffers.expanding(100));
 };
 

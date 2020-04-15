@@ -19,19 +19,9 @@ import {
   activityRankSaga,
   activityTerminationSaga,
 } from './tactical/TacticalActivityCreationSagas';
-import {
-  fetchSettings,
-  settingsSyncSaga,
-  updatePomodoroSaga,
-} from './tactical/PomodoroSettingsSagas';
-import {
-  tacticalActivitiesFetchSaga,
-  tacticalActivityObservationSaga,
-} from './tactical/TacticalActivitiesSagas';
-import {
-  tacticalActivityHiddenSaga,
-  tacticalActivityShownSaga,
-} from './tactical/TacticalActivityVisibilitySagas';
+import {fetchSettings, settingsSyncSaga, updatePomodoroSaga,} from './tactical/PomodoroSettingsSagas';
+import {tacticalActivitiesFetchSaga, tacticalActivityObservationSaga,} from './tactical/TacticalActivitiesSagas';
+import {tacticalActivityHiddenSaga, tacticalActivityShownSaga,} from './tactical/TacticalActivityVisibilitySagas';
 
 function* initializeTacticalSettings() {
   yield take(RECEIVED_USER);

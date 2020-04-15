@@ -7,10 +7,7 @@ import {
   createRegisteredPomodoroSettingsEvent,
   createSyncedSettingsEvent,
 } from '../../events/TacticalEvents';
-import {
-  createCachedDataEvent,
-  createSyncedDataEvent,
-} from '../../events/UserEvents';
+import {createCachedDataEvent, createSyncedDataEvent,} from '../../events/UserEvents';
 import {isOnline} from '../NetworkSagas';
 import {performGet, performPost} from '../APISagas';
 import {delayWork} from '../activity/CurrentActivitySaga';

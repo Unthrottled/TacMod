@@ -2,15 +2,15 @@ import {all, fork, takeEvery} from 'redux-saga/effects';
 import {STARTED_ACTIVITY} from '../events/ActivityEvents';
 import {activityLogonSaga} from './activity/LogonActivitySaga';
 import {
+  canceledPomodoroSaga,
+  createBreakPomodoroChannel,
+  createPomodoroCanceledChannel,
+  createPomodoroErrorChannel,
+  createStartedPomodoroChannel,
   currentActivitySaga,
   handleNewActivity,
-  createStartedPomodoroChannel,
-  createBreakPomodoroChannel,
   pomoBreakSaga,
-  createPomodoroErrorChannel,
   pomoErrorSaga,
-  canceledPomodoroSaga,
-  createPomodoroCanceledChannel,
 } from './activity/CurrentActivitySaga';
 import {registerActivitySaga} from './activity/RegisterActivitySaga';
 import {FOUND_WIFI} from '../events/NetworkEvents';

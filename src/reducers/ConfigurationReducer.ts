@@ -4,12 +4,7 @@ import {
   RECEIVED_PARTIAL_INITIAL_CONFIGURATION,
   RECEIVED_REMOTE_OAUTH_CONFIGURATION,
 } from '../events/ConfigurationEvents';
-import {
-  InitialConfig,
-  MiscellaneousConfig,
-  NOT_ASKED,
-  OAuthConfig,
-} from '../types/ConfigurationTypes';
+import {InitialConfig, MiscellaneousConfig, NOT_ASKED, OAuthConfig,} from '../types/ConfigurationTypes';
 
 export type ConfigurationState = {
   oauth: OAuthConfig;

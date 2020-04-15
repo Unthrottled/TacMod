@@ -6,8 +6,8 @@ import {createUpdatedFullFeedEvent} from '../../events/HistoryEvents';
 import {PayloadEvent} from '../../events/Event';
 
 export function* apiBeforeCapstoneSaga({
-  payload: activity,
-}: PayloadEvent<Activity>) {
+                                         payload: activity,
+                                       }: PayloadEvent<Activity>) {
   const historyState: HistoryState = yield select(selectHistoryState);
   yield put(
     createUpdatedFullFeedEvent({
@@ -34,8 +34,8 @@ export function* addActivityAfter(activity: Activity) {
 }
 
 export function* apiAfterCapstoneSaga({
-  payload: activity,
-}: PayloadEvent<Activity>) {
+                                        payload: activity,
+                                      }: PayloadEvent<Activity>) {
   yield call(addActivityAfter, activity);
 }
 

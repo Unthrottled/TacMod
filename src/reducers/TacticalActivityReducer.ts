@@ -1,7 +1,4 @@
-import {
-  numberObjectToArray,
-  objectToKeyValueArray,
-} from '../miscellanous/Tools';
+import {numberObjectToArray, objectToKeyValueArray,} from '../miscellanous/Tools';
 import {INITIAL_TACTICAL_STATE} from './TacticalReducer';
 import {
   ARCHIVED_ACTIVITY,
@@ -15,11 +12,7 @@ import {
   UPDATED_ACTIVITY,
 } from '../events/TacticalEvents';
 import {dictionaryReducer} from './StrategyReducer';
-import {
-  CachedTacticalActivity,
-  TacticalActivity,
-  TacticalState,
-} from '../types/TacticalTypes';
+import {CachedTacticalActivity, TacticalActivity, TacticalState,} from '../types/TacticalTypes';
 import {NumberDictionary, StringDictionary} from '../types/BaseTypes';
 import reduceRight from 'lodash/reduceRight';
 

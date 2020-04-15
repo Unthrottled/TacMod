@@ -30,8 +30,8 @@ export function* removalReRankSaga(tacticalActivity: TacticalActivity) {
 }
 
 export function* tacticalActivityHiddenSaga({
-  payload,
-}: PayloadEvent<TacticalActivity>) {
+                                              payload,
+                                            }: PayloadEvent<TacticalActivity>) {
   const tacticalActivity: TacticalActivity = {
     ...payload,
     hidden: true,
@@ -45,8 +45,8 @@ export function* tacticalActivityHiddenSaga({
 }
 
 export function* tacticalActivityShownSaga({
-  payload,
-}: PayloadEvent<TacticalActivity>) {
+                                             payload,
+                                           }: PayloadEvent<TacticalActivity>) {
   const tacticalActivity: TacticalActivity = {
     ...payload,
     hidden: false,

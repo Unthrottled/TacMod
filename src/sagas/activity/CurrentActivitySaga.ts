@@ -1,19 +1,15 @@
 import {performGetWithoutSessionExtension} from '../APISagas';
 import {
+  createCanceledPomodoroEvent,
+  createCompletedPomodoroEvent,
   createFoundPreviousActivityActivityEvent,
   createInitializedCurrentActivityEvent,
   createResumedStartedNonTimedActivityEvent,
   createResumedStartedTimedActivityEvent,
-  createCompletedPomodoroEvent,
-  createCanceledPomodoroEvent,
 } from '../../events/ActivityEvents';
 import {call, delay, put, select, take} from 'redux-saga/effects';
 import {RECEIVED_USER} from '../../events/UserEvents';
-import {
-  selectActivityState,
-  selectNetworkState,
-  selectSecurityState,
-} from '../../reducers';
+import {selectActivityState, selectNetworkState, selectSecurityState,} from '../../reducers';
 import {FOUND_WIFI} from '../../events/NetworkEvents';
 import {isOnline} from '../NetworkSagas';
 import {
@@ -25,7 +21,7 @@ import {
   getTimedType,
 } from '../../types/ActivityTypes';
 import {INITIALIZED_SECURITY} from '../../events/SecurityEvents';
-import {eventChannel, buffers} from 'redux-saga';
+import {buffers, eventChannel} from 'redux-saga';
 import {NativeEventEmitter, NativeModules} from 'react-native';
 import {createRecoveryActivity} from '../../components/time/ActivityTimeBar';
 import {createShowWarningNotificationEvent} from '../../events/MiscEvents';
@@ -112,6 +108,7 @@ interface ErrorPayload {
   message: string;
   error: string;
 }
+
 export function* pomoErrorSaga(errorPayload: ErrorPayload) {
   console.error('Error in pomodoro', errorPayload); // sheeeeeeittttttttt
   yield put(createShowWarningNotificationEvent(JSON.stringify(errorPayload)));

@@ -1,12 +1,4 @@
-import {
-  all,
-  call,
-  fork,
-  put,
-  select,
-  take,
-  takeEvery,
-} from 'redux-saga/effects';
+import {all, call, fork, put, select, take, takeEvery,} from 'redux-saga/effects';
 import {
   selectActivityState,
   selectPomodoroState,
@@ -16,13 +8,12 @@ import {
 } from '../reducers';
 import {
   CACHED_DATA,
-  createCheckedCachesEvent, createRequestedSyncEvent,
+  createCheckedCachesEvent,
+  createRequestedSyncEvent,
   RECEIVED_USER,
   SYNCED_DATA,
 } from '../events/UserEvents';
-import {
-  FOCUSED_APPLICATION,
-} from '../events/ApplicationLifecycleEvents';
+import {FOCUSED_APPLICATION,} from '../events/ApplicationLifecycleEvents';
 
 export function* checkCaches() {
   yield take(FOCUSED_APPLICATION);

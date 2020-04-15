@@ -1,11 +1,8 @@
 import * as React from 'react';
+import {useEffect, useState} from 'react';
 import {Animated, StyleSheet, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  GlobalState,
-  selectActivityState,
-  selectTacticalActivityState,
-} from '../../reducers';
+import {GlobalState, selectActivityState, selectTacticalActivityState,} from '../../reducers';
 import Stopwatch from './Stopwatch';
 import {resumeActivity, timeFontSize} from './ActivityTimeBar';
 import uuid from 'uuid/v4';
@@ -25,8 +22,6 @@ import {startNonTimedActivity} from '../../actions/ActivityActions';
 import {StringDictionary} from '../../types/BaseTypes';
 import {FAB, IconButton, Portal, Text} from 'react-native-paper';
 import ActivityIcon from '../../images/ActivityIcon';
-import {useState} from 'react';
-import {useEffect} from 'react';
 
 const classes = StyleSheet.create(
   StyleSheet.create({
@@ -85,9 +80,7 @@ const PausedPomodoro = () => {
     content: {timedType},
   } = currentActivity;
 
-  const mappedTacticalActivities: StringDictionary<
-    TacticalActivity
-  > = numberObjectToArray(activities).reduce(dictionaryReducer, {});
+  const mappedTacticalActivities: StringDictionary<TacticalActivity> = numberObjectToArray(activities).reduce(dictionaryReducer, {});
   const tacticalActivity =
     mappedTacticalActivities[getActivityID(currentActivity)];
 
@@ -135,9 +128,9 @@ const PausedPomodoro = () => {
 
   const backdropOpacity = isPausedPomodoro
     ? backdrop.interpolate({
-        inputRange: [0, 0.5, 1],
-        outputRange: [0, 1, 1],
-      })
+      inputRange: [0, 0.5, 1],
+      outputRange: [0, 1, 1],
+    })
     : backdrop;
 
   const isPivot =
@@ -146,13 +139,13 @@ const PausedPomodoro = () => {
 
   const colourz = isPivot
     ? {
-        play: '#ffffff',
-        background: 'rgb(76,175,80)',
-      }
+      play: '#ffffff',
+      background: 'rgb(76,175,80)',
+    }
     : {
-        play: '#39af41',
-        background: 'rgba(8,11,19,0.9)',
-      };
+      play: '#39af41',
+      background: 'rgba(8,11,19,0.9)',
+    };
   return isPausedPomodoro ? (
     <Portal>
       <View pointerEvents={'box-none'} style={classes.container}>
@@ -181,12 +174,12 @@ const PausedPomodoro = () => {
                   </Text>
                 </View>
                 {tacticalActivity && (
-                  <ActivityIcon activity={tacticalActivity} />
+                  <ActivityIcon activity={tacticalActivity}/>
                 )}
               </View>
             )}
 
-            <Stopwatch fontSize={timeFontSize} />
+            <Stopwatch fontSize={timeFontSize}/>
             <IconButton
               icon={'play-circle'}
               size={125}

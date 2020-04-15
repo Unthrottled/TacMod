@@ -6,6 +6,7 @@ import {createSyncedDataEvent} from '../../events/UserEvents';
 import {createShowWarningNotificationEvent} from '../../events/MiscEvents';
 
 export const BULK_UPLOAD_URL = '/activity/bulk';
+
 export function* activitySyncSaga() {
   const globalState = yield select();
   const {

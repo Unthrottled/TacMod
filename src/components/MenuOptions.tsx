@@ -23,10 +23,10 @@ const MenuOptions = () => {
       visible={open}
       onDismiss={() => setOpen(false)}
       anchor={
-        <Appbar.Action icon={'dots-vertical'} onPress={() => setOpen(true)} />
+        <Appbar.Action icon={'dots-vertical'} onPress={() => setOpen(true)}/>
       }>
-      <Menu.Item onPress={navigateToSettings} title={'Settings'} />
-      <Menu.Item onPress={logUserOut} title={'Logout'} />
+      <Menu.Item onPress={navigateToSettings} title={'Settings'}/>
+      <Menu.Item onPress={logUserOut} title={'Logout'}/>
     </Menu>
   );
 };

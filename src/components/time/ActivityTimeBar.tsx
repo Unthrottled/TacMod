@@ -2,16 +2,9 @@ import React, {Dispatch, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import uuid from 'uuid/v4';
 import {Animated, StyleSheet, View} from 'react-native';
-import {
-  GlobalState,
-  selectActivityState,
-  selectTacticalState,
-} from '../../reducers';
+import {GlobalState, selectActivityState, selectTacticalState,} from '../../reducers';
 import {buildCommenceActivityContents} from './ActivityHub';
-import {
-  startNonTimedActivity,
-  startTimedActivity,
-} from '../../actions/ActivityActions';
+import {startNonTimedActivity, startTimedActivity,} from '../../actions/ActivityActions';
 import {
   Activity,
   ActivityTimedType,
@@ -83,23 +76,23 @@ export const resumeActivity = (
       ...previousActivity.content,
       ...(previousActivity.content.duration
         ? {
-            duration: Math.max(
-              previousActivity.content.duration +
-                (previousActivity.antecedenceTime -
-                  currentActivity.antecedenceTime),
-              0,
-            ),
-          }
+          duration: Math.max(
+            previousActivity.content.duration +
+            (previousActivity.antecedenceTime -
+              currentActivity.antecedenceTime),
+            0,
+          ),
+        }
         : {}),
       ...(previousActivity.content.workStartedWomboCombo
         ? {
-            workStartedWomboCombo: Math.max(
-              new Date().valueOf() -
-                (currentActivity.antecedenceTime -
-                  previousActivity.content.workStartedWomboCombo),
-              0,
-            ),
-          }
+          workStartedWomboCombo: Math.max(
+            new Date().valueOf() -
+            (currentActivity.antecedenceTime -
+              previousActivity.content.workStartedWomboCombo),
+            0,
+          ),
+        }
         : {}),
       uuid: uuid(),
     }),
@@ -198,8 +191,8 @@ const ActivityTimeBar = () => {
         ...omit(previousActivity.content, ['autoStart', 'nativeManaged']),
         ...(previousActivity.content.duration
           ? {
-              duration: pomodoroSettings.loadDuration,
-            }
+            duration: pomodoroSettings.loadDuration,
+          }
           : {}),
         uuid: uuid(),
       }),
@@ -209,11 +202,11 @@ const ActivityTimeBar = () => {
   const isRecovery = isActivityRecovery(currentActivity);
   const backgroundStyle = isRecovery
     ? {
-        backgroundColor: 'rgb(33,150,243)',
-      }
+      backgroundColor: 'rgb(33,150,243)',
+    }
     : {
-        backgroundColor: '#30ad5a',
-      };
+      backgroundColor: '#30ad5a',
+    };
 
   const mappedTacticalActivities = mapTacticalActivitiesToID(activities);
   const tacticalActivity =
@@ -244,9 +237,9 @@ const ActivityTimeBar = () => {
 
   const backdropOpacity = isTimeBarActivity
     ? backdrop.interpolate({
-        inputRange: [0, 0.5, 1],
-        outputRange: [0, 1, 1],
-      })
+      inputRange: [0, 0.5, 1],
+      outputRange: [0, 1, 1],
+    })
     : backdrop;
 
   const [menuVisible, setMenuVisible] = useState(false);
@@ -294,7 +287,7 @@ const ActivityTimeBar = () => {
                   onPress={openMenu}
                 />
               }>
-              <Menu.Item onPress={logUserOut} title={'Logout'} />
+              <Menu.Item onPress={logUserOut} title={'Logout'}/>
             </Menu>
           </View>
           <View
@@ -318,7 +311,7 @@ const ActivityTimeBar = () => {
                     }}>
                     {tacticalActivity.name}
                   </Headline>
-                  <Icon name={'chevron-down'} color={'white'} />
+                  <Icon name={'chevron-down'} color={'white'}/>
                 </View>
                 <ActivityIcon
                   activity={tacticalActivity}

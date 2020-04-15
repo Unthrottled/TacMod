@@ -18,5 +18,6 @@ export default function* logoutSaga() {
     yield call(revoke, oAuthConfig, {
       tokenToRevoke: security.refreshToken,
     });
-  } catch (e) {}
+  } catch (e) {
+  }
 }

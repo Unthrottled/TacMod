@@ -6,6 +6,7 @@ export interface KeyResult {
   valueStatement: string;
   antecedenceTime?: number;
 }
+
 export interface ColorType {
   hex: string;
   opacity: number;
