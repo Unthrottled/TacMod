@@ -17,7 +17,7 @@ import io.unthrottled.sogos.tacmod.pomodoro.PomodoroService.buildBreak
 import io.unthrottled.sogos.tacmod.pomodoro.PomodoroService.calculateRestTime
 import io.unthrottled.sogos.tacmod.pomodoro.PomodoroService.calculateTimeToAlert
 import io.unthrottled.sogos.tacmod.pomodoro.PomodoroService.calculateVibrationPattern
-import io.unthrottled.sogos.tacmod.utils.AlarmAlertWakeLock
+import io.unthrottled.sogos.tacmod.utils.AlarmAlertWakeLock.acquireCpuWakeLock
 import io.unthrottled.sogos.tacmod.utils.AlarmAlertWakeLock.releaseCpuLock
 import okhttp3.MediaType
 import okhttp3.Request
@@ -44,7 +44,7 @@ class PomodoroModule(
 
   @ReactMethod
   fun commencePomodoroForActivity(pomodoroThings: ReadableMap) {
-    AlarmAlertWakeLock.acquireCpuWakeLock(reactContext)
+    acquireCpuWakeLock(reactContext)
     startPomodoro(mapToPomodoroParameters(pomodoroThings))
   }
 
@@ -62,42 +62,40 @@ class PomodoroModule(
       val breakDuration = calculateRestTime(pomodoroThings)
       scheduleBreakAlarm(pomodoroThings, breakDuration, currentContext)
 
-      setCompletionListener {breakContext ->
+      setCompletionListener { breakContext ->
         checkRecoveryActivity(
           pomodoroThings,
           { pomoSettingsAfterCheckingIfRecovery ->
             val pomoSettingsWithBreakAsPreviousActivity = swapActivities(pomoSettingsAfterCheckingIfRecovery)
 
             // todo: make sure load duration has been reset!!
-            val buildBreak = buildActivityMap(pomoSettingsWithBreakAsPreviousActivity)
             setCurrentActivity(
-              buildBreak,
-              pomoSettingsAfterCheckingIfRecovery,
+              buildActivityMap(pomoSettingsWithBreakAsPreviousActivity),
+              pomoSettingsWithBreakAsPreviousActivity,
               { pomoSettingsAfterSettingLoadAgain ->
 
                 notifyJavascriptOfActivityStart(jsModule, pomoSettingsAfterSettingLoadAgain)
 
-
                 // recursion!!
                 startPomodoro(
                   pomoSettingsAfterSettingLoadAgain.apply {
-                    this.currentActivity.json = buildActivityMap(pomodoroThings) // todo: make sure that updating current activity
+                    this.currentActivity.json = buildActivityMap(pomoSettingsAfterSettingLoadAgain) // todo: make sure that updating current activity
                   },
                   breakContext
                 )
               }) {
-              notifyJavascriptOfError("Unable to set load activity as current, the second time", it, jsModule)
+              notifyJavascriptOfError("Unable to resume current activity after break", it, jsModule)
             }
           }, {
           notifyJavascriptOfCancellation(jsModule)
-        }){
+        }) {
           notifyJavascriptOfError("Unable to check to see if the current activity is recovery", it, jsModule)
         }
       }
     } else {
       scheduleLoadAlarm(pomodoroThings, currentContext)
 
-      setCompletionListener {loadContext ->
+      setCompletionListener { loadContext ->
         val pomoWithUpdatedCount = pomodoroThings.apply {
           this.numberOfCompletedPomodoro += 1
         }
@@ -132,7 +130,15 @@ class PomodoroModule(
   }
 
   private fun swapActivities(pomoSettingsAfterCheckingIfRecovery: PomodoroParameters): PomodoroParameters {
-    TODO("Not yet implemented")
+    return PomodoroParameters(
+      pomoSettingsAfterCheckingIfRecovery.apiURL,
+      pomoSettingsAfterCheckingIfRecovery.pomodoroSettings,
+      pomoSettingsAfterCheckingIfRecovery.previousActivity,
+      pomoSettingsAfterCheckingIfRecovery.currentActivity,
+      pomoSettingsAfterCheckingIfRecovery.numberOfCompletedPomodoro,
+      pomoSettingsAfterCheckingIfRecovery.securityStuff,
+      pomoSettingsAfterCheckingIfRecovery.json
+    )
   }
 
   private fun notifyJavascriptOfActivityStart(jsModule: DeviceEventManagerModule.RCTDeviceEventEmitter, pomoSettingsAfterSettingLoadAgain: PomodoroParameters) {
