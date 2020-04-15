@@ -66,12 +66,17 @@ class PomodoroModule(
         checkRecoveryActivity(
           pomodoroThings,
           { pomoSettingsAfterCheckingIfRecovery ->
+            val pomoSettingsWithBreakAsPreviousActivity = swapActivities(pomoSettingsAfterCheckingIfRecovery)
+
+            // todo: make sure load duration has been reset!!
+            val buildBreak = buildActivityMap(pomoSettingsWithBreakAsPreviousActivity)
             setCurrentActivity(
-              buildActivityMap(pomoSettingsAfterCheckingIfRecovery),
+              buildBreak,
               pomoSettingsAfterCheckingIfRecovery,
               { pomoSettingsAfterSettingLoadAgain ->
 
                 notifyJavascriptOfActivityStart(jsModule, pomoSettingsAfterSettingLoadAgain)
+
 
                 // recursion!!
                 startPomodoro(
@@ -96,20 +101,22 @@ class PomodoroModule(
         val pomoWithUpdatedCount = pomodoroThings.apply {
           this.numberOfCompletedPomodoro += 1
         }
+
         checkCurrentActivity(pomoWithUpdatedCount, { pomoSettingsAfterActivityCheck ->
           val breakDuration = calculateRestTime(pomoSettingsAfterActivityCheck)
+
+          val pomoSettingsWithBreakAsCurrentActivity = swapActivities(pomoSettingsAfterActivityCheck)
+
           setCurrentActivity(
             buildBreak(breakDuration),
-            pomoSettingsAfterActivityCheck,
+            pomoSettingsWithBreakAsCurrentActivity,
             { pomoSettingsAfterSettingBreak ->
 
               notifyJavascriptOfBreak(breakDuration, jsModule)
 
               // recursion!!
               startPomodoro(
-                pomoSettingsAfterSettingBreak.apply {
-                  this.currentActivity.json = buildActivityMap(pomodoroThings) // todo: make sure that updating current activity
-                },
+                pomoSettingsAfterSettingBreak,
                 loadContext
               )
             }) {
@@ -122,6 +129,10 @@ class PomodoroModule(
         }
       }
     }
+  }
+
+  private fun swapActivities(pomoSettingsAfterCheckingIfRecovery: PomodoroParameters): PomodoroParameters {
+    TODO("Not yet implemented")
   }
 
   private fun notifyJavascriptOfActivityStart(jsModule: DeviceEventManagerModule.RCTDeviceEventEmitter, pomoSettingsAfterSettingLoadAgain: PomodoroParameters) {

@@ -3,6 +3,8 @@ package io.unthrottled.sogos.tacmod.utils
 import android.content.Context
 import android.os.PowerManager
 import android.os.PowerManager.WakeLock
+import android.util.Log
+import io.unthrottled.sogos.tacmod.ACTIVITY_NAME
 
 object AlarmAlertWakeLock {
   private const val TAG = "TacMod:AlarmAlertWakeLock"
@@ -24,6 +26,7 @@ object AlarmAlertWakeLock {
 
   fun releaseCpuLock() {
     if (sCpuWakeLock != null) {
+      Log.i(ACTIVITY_NAME, "Releasing wakelock")
       sCpuWakeLock!!.release()
       sCpuWakeLock = null
     }
