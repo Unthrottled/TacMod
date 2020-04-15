@@ -32,6 +32,7 @@ object PomodoroService {
     loadContent.putString("type", "ACTIVE")
     loadContent.putString("timedType", "TIMER")
     loadContent.putBoolean("nativeManaged", true)
+    // todo: revisit with current and previous things :|
     loadContent.putString("activityID", pomodoroThings.json.getMap("currentActivity")?.getMap("content")?.getString("activityID"))
     loadContent.putInt("duration", pomodoroThings.pomodoroSettings.loadDuration)
     loadActivity.putMap("content", loadContent)

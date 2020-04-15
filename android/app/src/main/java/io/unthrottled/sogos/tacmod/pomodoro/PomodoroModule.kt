@@ -44,6 +44,7 @@ class PomodoroModule(
 
   @ReactMethod
   fun commencePomodoroForActivity(pomodoroThings: ReadableMap) {
+    AlarmAlertWakeLock.acquireCpuWakeLock(reactContext)
     startPomodoro(mapToPomodoroParameters(pomodoroThings))
   }
 
@@ -54,64 +55,71 @@ class PomodoroModule(
   }
 
   private fun startPomodoro(pomodoroThings: PomodoroParameters, currentContext: Context = this.reactContext) {
-    AlarmAlertWakeLock.acquireCpuWakeLock(reactContext)
-    scheduleLoadAlarm(pomodoroThings, currentContext)
-
     val jsModule = reactContext.getJSModule(
       DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
     )
-    setCompletionListener { breakContext ->
-      val pomoWithUpdatedCount = pomodoroThings.apply {
-        this.numberOfCompletedPomodoro += 1
-      }
+    if (isBreak(pomodoroThings.currentActivity)) {
+      val breakDuration = calculateRestTime(pomodoroThings)
+      scheduleBreakAlarm(pomodoroThings, breakDuration, currentContext)
 
-      checkCurrentActivity(pomoWithUpdatedCount, { pomoSettingsAfterFirstCheck ->
+      setCompletionListener {breakContext ->
+        checkRecoveryActivity(
+          pomodoroThings,
+          { pomoSettingsAfterCheckingIfRecovery ->
+            setCurrentActivity(
+              buildActivityMap(pomoSettingsAfterCheckingIfRecovery),
+              pomoSettingsAfterCheckingIfRecovery,
+              { pomoSettingsAfterSettingLoadAgain ->
 
-        val breakDuration = calculateRestTime(pomoSettingsAfterFirstCheck)
-        setCurrentActivity(
-          buildBreak(breakDuration),
-          pomoSettingsAfterFirstCheck,
-          { pomoSettingsAfterSettingBreak ->
+                notifyJavascriptOfActivityStart(jsModule, pomoSettingsAfterSettingLoadAgain)
 
-            scheduleBreakAlarm(pomoSettingsAfterSettingBreak, breakDuration, breakContext)
-
-            notifyJavascriptOfBreak(breakDuration, jsModule)
-
-            setCompletionListener { loadContext ->
-              checkRecoveryActivity(
-                pomoSettingsAfterSettingBreak,
-                { pomoSettingsAfterCheckingIfRecovery ->
-
-                  setCurrentActivity(
-                    buildActivityMap(pomoSettingsAfterCheckingIfRecovery),
-                    pomoSettingsAfterCheckingIfRecovery,
-                    { pomoSettingsAfterSettingLoadAgain ->
-
-                      notifyJavascriptOfActivityStart(jsModule, pomoSettingsAfterSettingLoadAgain)
-
-                      // recursion!!
-                      startPomodoro(
-                        pomoSettingsAfterSettingLoadAgain.apply {
-                          this.currentActivity.json = buildActivityMap(pomodoroThings)
-                        },
-                        loadContext
-                      )
-                    }) {
-                    notifyJavascriptOfError("Unable to set load activity as current, the second time", it, jsModule)
-                  }
-                }, {
-                notifyJavascriptOfCancellation(jsModule)
+                // recursion!!
+                startPomodoro(
+                  pomoSettingsAfterSettingLoadAgain.apply {
+                    this.currentActivity.json = buildActivityMap(pomodoroThings) // todo: make sure that updating current activity
+                  },
+                  breakContext
+                )
               }) {
-                notifyJavascriptOfError("Unable to check to see if the current activity is recovery", it, jsModule)
-              }
+              notifyJavascriptOfError("Unable to set load activity as current, the second time", it, jsModule)
             }
-          }) {
-          notifyJavascriptOfError("Unable to set current activity to recovery", it, jsModule)
+          }, {
+          notifyJavascriptOfCancellation(jsModule)
+        }){
+          notifyJavascriptOfError("Unable to check to see if the current activity is recovery", it, jsModule)
         }
-      }, {
-        notifyJavascriptOfCancellation(jsModule)
-      }) {
-        notifyJavascriptOfError("Unable to check if current activity is the first load activity", it, jsModule)
+      }
+    } else {
+      scheduleLoadAlarm(pomodoroThings, currentContext)
+
+      setCompletionListener {loadContext ->
+        val pomoWithUpdatedCount = pomodoroThings.apply {
+          this.numberOfCompletedPomodoro += 1
+        }
+        checkCurrentActivity(pomoWithUpdatedCount, { pomoSettingsAfterActivityCheck ->
+          val breakDuration = calculateRestTime(pomoSettingsAfterActivityCheck)
+          setCurrentActivity(
+            buildBreak(breakDuration),
+            pomoSettingsAfterActivityCheck,
+            { pomoSettingsAfterSettingBreak ->
+
+              notifyJavascriptOfBreak(breakDuration, jsModule)
+
+              // recursion!!
+              startPomodoro(
+                pomoSettingsAfterSettingBreak.apply {
+                  this.currentActivity.json = buildActivityMap(pomodoroThings) // todo: make sure that updating current activity
+                },
+                loadContext
+              )
+            }) {
+            notifyJavascriptOfError("Unable to set current activity to recovery", it, jsModule)
+          }
+        }, {
+          notifyJavascriptOfCancellation(jsModule)
+        }) {
+          notifyJavascriptOfError("Unable to check if current activity is the first load activity", it, jsModule)
+        }
       }
     }
   }
@@ -221,8 +229,7 @@ class PomodoroModule(
     error: (e: Throwable) -> Unit
   ) {
     performCurrentActivityFetch(updatedPomodoroSettings, { activity, pomoStuffToSend ->
-      if (activity.content.activityID == null &&
-        activity.content.name == "RECOVERY") {
+      if (isBreak(activity)) {
         callback(pomoStuffToSend)
       } else {
         Log.i(ACTIVITY_NAME, "Activities not same, do not start!!!!")
@@ -232,6 +239,10 @@ class PomodoroModule(
       error(it)
     }
   }
+
+  private fun isBreak(activity: Activity) =
+    activity.content.activityID == null &&
+      activity.content.name == "RECOVERY"
 
   private fun performCurrentActivityFetch(
     updatedPomodoroSettings: PomodoroParameters,
