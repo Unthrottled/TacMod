@@ -215,7 +215,7 @@ class PomodoroModule(
       AlarmParameters(
         NotificationMessage(
           "Break is over!",
-          "Get back to ${moreUpToDatePomoSettings.currentActivity.content.name}"
+          "Get back to ${moreUpToDatePomoSettings.previousActivity.content.name}"
         ),
         breakDuration + Instant.now().toEpochMilli(),
         calculateVibrationPattern(moreUpToDatePomoSettings)
