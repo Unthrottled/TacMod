@@ -104,6 +104,8 @@ class PomodoroModule(
           val breakDuration = calculateRestTime(pomoSettingsAfterActivityCheck)
 
           val pomoSettingsWithBreakAsCurrentActivity = swapActivities(pomoSettingsAfterActivityCheck)
+          pomoSettingsWithBreakAsCurrentActivity.currentActivity =
+            buildActivity(buildBreak(breakDuration)) // todo: does this uuid matter?
 
           setCurrentActivity(
             buildBreak(breakDuration),

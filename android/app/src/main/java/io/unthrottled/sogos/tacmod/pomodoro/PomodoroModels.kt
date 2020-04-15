@@ -34,8 +34,8 @@ data class Activity(
 data class PomodoroParameters(
     val apiURL: String,
     val pomodoroSettings: PomodoroSettings,
-    val currentActivity: Activity,
-    val previousActivity: Activity,
+    var currentActivity: Activity,
+    var previousActivity: Activity,
     var numberOfCompletedPomodoro: Int,
     val securityStuff: SecurityStuff,
     val json: ReadableMap
