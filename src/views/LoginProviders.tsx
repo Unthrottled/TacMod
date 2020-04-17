@@ -1,9 +1,12 @@
-import React, {FC} from 'react';
-import {useDispatch} from 'react-redux';
+import React, {FC, useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {createRequestLogonEvent} from '../events/SecurityEvents';
 import {StyleSheet, View} from 'react-native';
 import {Button} from 'react-native-paper';
 import Banner from '../components/Banner';
+import {selectSecurityState} from '../reducers';
+import {createApplicationInitializedEvent} from '../events/ApplicationLifecycleEvents';
+import {useNavigation} from 'react-navigation-hooks';
 
 const styles = StyleSheet.create({
   container: {
@@ -30,9 +33,27 @@ const styles = StyleSheet.create({
 
 const LoginProviders: FC = () => {
   const dispetch = useDispatch();
+
+  useEffect(() => {
+    dispetch(createApplicationInitializedEvent());
+  }, [dispetch]);
+
   const login = (identityProvider: string) => () => {
     dispetch(createRequestLogonEvent(identityProvider));
   };
+  const {isLoggedIn, isLoggingOut, isInitialized} = useSelector(
+    selectSecurityState,
+  );
+
+  const {navigate} = useNavigation();
+  useEffect(() => {
+    if (!isInitialized) {
+      dispetch(createApplicationInitializedEvent());
+    }
+    if (isLoggedIn && !isLoggingOut) {
+      navigate({routeName: 'AuthLoading'});
+    }
+  }, [dispetch, isInitialized, isLoggedIn, isLoggingOut, navigate]);
 
   return (
     <View style={styles.container}>
