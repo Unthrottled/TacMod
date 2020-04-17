@@ -13,13 +13,15 @@ import {
   objectiveCreationSaga,
   objectiveTerminationSaga,
 } from './strategy/ObjectiveCreationSagas';
-import {objectiveHistoryFetchSaga, objectiveObservationSaga,} from './strategy/ObjectiveSagas';
+import {
+  objectiveHistoryFetchSaga,
+  objectiveObservationSaga,
+} from './strategy/ObjectiveSagas';
 import {FOUND_WIFI} from '../events/NetworkEvents';
 import {strategySyncSaga} from './strategy/StrategySyncSaga';
 
 export function* objectiveObservationInitializationSaga() {
-  yield take(RECEIVED_USER);
-  yield fork(objectiveHistoryFetchSaga);
+  yield takeEvery(RECEIVED_USER, objectiveHistoryFetchSaga);
   yield takeEvery(VIEWED_OBJECTIVES, objectiveObservationSaga);
 }
 

@@ -38,8 +38,7 @@ function* watchForSettingsUpdates() {
 
 function* tacticalActivitiesObservationInitializationSaga() {
   yield takeEvery(VIEWED_ACTIVITIES, tacticalActivityObservationSaga);
-  yield take(RECEIVED_USER);
-  yield fork(tacticalActivitiesFetchSaga);
+  yield takeEvery(RECEIVED_USER, tacticalActivitiesFetchSaga);
 }
 
 function* listenForTacticalEvents() {
