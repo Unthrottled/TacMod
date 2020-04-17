@@ -19,5 +19,6 @@ export default function* logoutSaga() {
       tokenToRevoke: security.refreshToken,
     });
   } catch (e) {
+    console.tron('unable to revoke token', JSON.stringify(e));
   }
 }

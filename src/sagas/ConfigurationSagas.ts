@@ -1,9 +1,20 @@
 import {all, fork, takeEvery} from 'redux-saga/effects';
-import {REQUESTED_INITIAL_CONFIGURATION, REQUESTED_OAUTH_CONFIGURATION,} from '../events/ConfigurationEvents';
+import {
+  REQUESTED_INITIAL_CONFIGURATION,
+  REQUESTED_OAUTH_CONFIGURATION,
+} from '../events/ConfigurationEvents';
 import {FOCUSED_APPLICATION} from '../events/ApplicationLifecycleEvents';
 import {securityRequestSaga} from './configuration/OAuthConfigurationSagas';
 import {authorizationServiceConfigurationSaga} from './configuration/ConfigurationSetupSagas';
-import {initialConfigurationResponseSaga, initialConfigurationSaga,} from './configuration/InitialConfigurationSagas';
+import {
+  initialConfigurationResponseSaga,
+  initialConfigurationSaga,
+} from './configuration/InitialConfigurationSagas';
+import {InitialConfig} from '../types/ConfigurationTypes';
+
+export const isCognito = (initialConfiguration: InitialConfig): boolean => {
+  return initialConfiguration && initialConfiguration.provider === 'COGNITO';
+};
 
 function* listenToApplicationEvents() {
   yield takeEvery(FOCUSED_APPLICATION, initialConfigurationSaga);

@@ -31,7 +31,8 @@ const LoggedOut: FC = () => {
   }, [dispetch]);
 
   const login = async () => {
-    dispetch(createRequestLogonEvent());
+    // todo: choose identity provider
+    dispetch(createRequestLogonEvent('Google'));
   };
 
   const {isLoggedIn, isLoggingOut, isInitialized} = useSelector(

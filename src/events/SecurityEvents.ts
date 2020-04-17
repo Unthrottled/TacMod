@@ -1,4 +1,5 @@
 import {AuthorizeResult} from 'react-native-app-auth';
+import {PayloadEvent} from './Event';
 
 export const LOGGED_ON: 'LOGGED_ON' = 'LOGGED_ON';
 export const LOGGED_OFF: 'LOGGED_OFF' = 'LOGGED_OFF';
@@ -19,8 +20,11 @@ export const requestLogoff = () => ({
   type: REQUESTED_LOGOFF,
 });
 
-export const createRequestLogonEvent = () => ({
+export const createRequestLogonEvent = (
+  identityProvider: string,
+): PayloadEvent<string> => ({
   type: REQUESTED_LOGON,
+  payload: identityProvider,
 });
 
 export const createExpiredSessionEvent = () => ({
