@@ -30,15 +30,13 @@ const LoggedOut: FC = () => {
     dispetch(createApplicationInitializedEvent());
   }, [dispetch]);
 
+  const {navigate} = useNavigation();
   const login = async () => {
-    // todo: choose identity provider
-    dispetch(createRequestLogonEvent('Google'));
+    navigate({routeName: 'LoginProviders'});
   };
-
   const {isLoggedIn, isLoggingOut, isInitialized} = useSelector(
     selectSecurityState,
   );
-  const {navigate} = useNavigation();
   useEffect(() => {
     if (!isInitialized) {
       dispetch(createApplicationInitializedEvent());

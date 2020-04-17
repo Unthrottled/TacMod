@@ -39,24 +39,32 @@ export const bannerStyles = StyleSheet.create({
   },
 });
 
-const Banner: FC = ({children}) => (
+interface Props {
+  hideExcerpt?: boolean;
+}
+
+const Banner: FC<Props> = ({hideExcerpt, children}) => (
   <View style={bannerStyles.banner}>
     <View style={bannerStyles.container}>
-      <TacModIcon/>
+      <TacModIcon />
       <Caption style={bannerStyles.secondary}>SOGoS's Tactical Module</Caption>
-      <Paragraph style={bannerStyles.secondary}>
-        You know what needs to be done thanks to SOGoS. This will help in the
-        execution and achievement of your objectives.
-      </Paragraph>
-      <Paragraph style={[bannerStyles.secondary, bannerStyles.sogosLink]}>
-        Use{' '}
-        <Text
-          onPress={() => Linking.openURL('https://sogos.unthrottled.io')}
-          style={bannerStyles.link}>
-          sogos.unthrottled.io
-        </Text>{' '}
-        for strategic management
-      </Paragraph>
+      {!hideExcerpt && (
+        <>
+          <Paragraph style={bannerStyles.secondary}>
+            You know what needs to be done thanks to SOGoS. This will help in
+            the execution and achievement of your objectives.
+          </Paragraph>
+          <Paragraph style={[bannerStyles.secondary, bannerStyles.sogosLink]}>
+            Use{' '}
+            <Text
+              onPress={() => Linking.openURL('https://sogos.unthrottled.io')}
+              style={bannerStyles.link}>
+              sogos.unthrottled.io
+            </Text>{' '}
+            for strategic management
+          </Paragraph>
+        </>
+      )}
       {children}
     </View>
   </View>
