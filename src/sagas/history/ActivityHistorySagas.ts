@@ -15,6 +15,7 @@ import {Activity, getActivityContent} from '../../types/ActivityTypes';
 import {PayloadEvent} from '../../events/Event';
 import {DateRange} from '../../types/HistoryTypes';
 import {UserResponse} from '../../types/UserTypes';
+import { shouldTime } from '../../miscellanous/Projection';
 
 export const createHistoryAPIURL = (guid: string, from: number, to: number) =>
   `/history/${guid}/feed?from=${from}&to=${to}`;
