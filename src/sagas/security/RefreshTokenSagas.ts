@@ -21,11 +21,7 @@ export function* refreshTokenSaga(oauthConfig: AuthConfiguration) {
       const authResult = yield call(refresh, oauthConfig, {
         refreshToken: realSecurityState.refreshToken,
       });
-      const withOfflineToken: AuthorizeResult = {
-        ...authResult,
-        refreshToken: realSecurityState.refreshToken,
-      };
-      yield put(createTokenReceptionEvent(withOfflineToken));
+      yield put(createTokenReceptionEvent(authResult));
       tokenSemaphore = false;
     }
   } catch (e) {
